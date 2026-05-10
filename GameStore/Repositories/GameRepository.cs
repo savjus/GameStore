@@ -52,17 +52,17 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
         return _dbContext.SaveChangesAsync();
     }
 
-    public Task<bool> KeyExistsAsync(string gameKey, Guid excludeGameId)
-    {
-        return _dbContext.Games.AnyAsync(game => game.Key == gameKey && game.Id != excludeGameId);
-    }
-
     public Task<Game?> GetByIdWithLinksAsync(Guid id)
     {
         return _dbContext.Games
             .Include(game => game.GameGenres)
             .Include(game => game.GamePlatforms)
             .FirstOrDefaultAsync(game => game.Id == id);
+    }
+
+    public Task<bool> KeyExistsAsync(string gameKey, Guid excludeGameId)
+    {
+        return _dbContext.Games.AnyAsync(game => game.Key == gameKey && game.Id != excludeGameId);
     }
 
     public Task<bool> KeyExistsAsync(string gameKey)

@@ -69,7 +69,7 @@ public class GenresController(IGameService gameService, IGenreService genreServi
             : StatusCode(result.StatusCode, result.Error);
     }
 
-    [HttpDelete("{key}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult<GenreResponseDto>> DeleteGenre(Guid id)
     {
         var result = await _genreService.DeleteGenreAsync(id);
