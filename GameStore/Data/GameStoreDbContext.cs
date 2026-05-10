@@ -54,5 +54,16 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
                 .WithMany(platform => platform.GamePlatforms)
                 .HasForeignKey(link => link.PlatformId);
         });
+
+        modelBuilder.Entity<GameGenre>(entity =>
+        {
+            entity.HasKey(link => new { link.GameId, link.GenreId });
+            entity.HasOne(link => link.Game)
+                .WithMany(game => game.GameGenres)
+                .HasForeignKey(link => link.GameId);
+            entity.HasOne(link => link.Genre)
+                .WithMany(genre => genre.GameGenres)
+                .HasForeignKey(link => link.Genre);
+        });
     }
 }
