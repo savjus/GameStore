@@ -36,5 +36,12 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
                   .HasForeignKey(g => g.ParentGenreId)
                   .OnDelete(DeleteBehavior.Restrict);
         });
+
+        modelBuilder.Entity<Platform>(entity =>
+        {
+            entity.HasKey(platform => platform.Id);
+            entity.Property(platform => platform.Type).IsRequired();
+            entity.HasIndex(platform => platform.Type).IsUnique();
+        });
     }
 }
