@@ -1,12 +1,12 @@
+using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
-using GameStore.Repositories;
 
 namespace GameStore.Services;
 
-public class GenreService(IGenreRepository genreRepository) : IGenreService
+public class GenreService(IUnitOfWork unitOfWork) : IGenreService
 {
-    private readonly IGenreRepository _genreRepository = genreRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ServiceResult<GenreResponseDto>> AddGenreAsync(AddGenreRequest request)
     {
@@ -19,7 +19,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
 
         if (request.Genre.ParentGenreId.HasValue)
         {
-            var parentExists = await _genreRepository.ExistsAsync(request.Genre.ParentGenreId.Value);
+            var parentExists = await _unitOfWork.Genres.ExistsAsync(request.Genre.ParentGenreId.Value);
             if (!parentExists)
             {
                 return ServiceResult.Fail<GenreResponseDto>(
@@ -35,8 +35,8 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
             ParentGenreId = request.Genre.ParentGenreId,
         };
 
-        await _genreRepository.AddAsync(genre);
-        await _genreRepository.SaveChangesAsync();
+        await _unitOfWork.Genres.AddAsync(genre);
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(genre), StatusCodes.Status201Created);
     }
@@ -57,7 +57,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
                 "Genre name is required.");
         }
 
-        var genre = await _genreRepository.GetByIdAsync(request.Genre.Id);
+        var genre = await _unitOfWork.Genres.GetByIdAsync(request.Genre.Id);
         if (genre == null)
         {
             return ServiceResult.Fail<GenreResponseDto>(
@@ -67,7 +67,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
 
         if (request.Genre.ParentGenreId.HasValue)
         {
-            var parentExists = await _genreRepository.ExistsAsync(request.Genre.ParentGenreId.Value);
+            var parentExists = await _unitOfWork.Genres.ExistsAsync(request.Genre.ParentGenreId.Value);
             if (!parentExists)
             {
                 return ServiceResult.Fail<GenreResponseDto>(
@@ -79,7 +79,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
         genre.Name = request.Genre.Name.Trim();
         genre.ParentGenreId = request.Genre.ParentGenreId;
 
-        await _genreRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(genre), StatusCodes.Status200OK);
     }
@@ -93,7 +93,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
                 "Genre id is required.");
         }
 
-        var genre = await _genreRepository.GetByIdAsync(id);
+        var genre = await _unitOfWork.Genres.GetByIdAsync(id);
         if (genre == null)
         {
             return ServiceResult.Fail<GenreResponseDto>(
@@ -101,8 +101,8 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
                 "Genre not found.");
         }
 
-        await _genreRepository.DeleteAsync(genre);
-        await _genreRepository.SaveChangesAsync();
+        await _unitOfWork.Genres.DeleteAsync(genre);
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(genre), StatusCodes.Status200OK);
     }
@@ -116,7 +116,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
                 "Genre id is required.");
         }
 
-        var genre = await _genreRepository.GetByIdAsync(id);
+        var genre = await _unitOfWork.Genres.GetByIdAsync(id);
         return genre == null
             ? ServiceResult.Fail<GenreResponseDto>(
                 StatusCodes.Status404NotFound,
@@ -126,7 +126,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
 
     public async Task<ServiceResult<List<GenreResponseDto>>> GetAllGenresAsync()
     {
-        var genres = await _genreRepository.GetAllAsync();
+        var genres = await _unitOfWork.Genres.GetAllAsync();
         var response = genres.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -140,7 +140,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
                 "Game key is required.");
         }
 
-        var genres = await _genreRepository.GetByGameKeyAsync(key) ?? [];
+        var genres = await _unitOfWork.Genres.GetByGameKeyAsync(key) ?? [];
         var response = genres.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -154,7 +154,7 @@ public class GenreService(IGenreRepository genreRepository) : IGenreService
                 "Parent genre id is required.");
         }
 
-        var genres = await _genreRepository.GetByParentIdAsync(parentId) ?? [];
+        var genres = await _unitOfWork.Genres.GetByParentIdAsync(parentId) ?? [];
         var response = genres.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }

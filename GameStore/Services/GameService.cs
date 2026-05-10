@@ -1,19 +1,14 @@
 using System.Text;
 using System.Text.Json;
+using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
-using GameStore.Repositories;
 
 namespace GameStore.Services;
 
-public class GameService(
-    IGameRepository gameRepository,
-    IGenreRepository genreRepository,
-    IPlatformRepository platformRepository) : IGameService
+public class GameService(IUnitOfWork unitOfWork) : IGameService
 {
-    private readonly IGameRepository _gameRepository = gameRepository;
-    private readonly IGenreRepository _genreRepository = genreRepository;
-    private readonly IPlatformRepository _platformRepository = platformRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ServiceResult<GameResponseDto>> GetGameByKeyAsync(string key)
     {
@@ -24,7 +19,7 @@ public class GameService(
                 "Game key is required.");
         }
 
-        var game = await _gameRepository.GetByKeyAsync(key);
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
         return game == null
             ? ServiceResult.Fail<GameResponseDto>(
                 StatusCodes.Status404NotFound,
@@ -41,7 +36,7 @@ public class GameService(
                 "Game id is required.");
         }
 
-        var game = await _gameRepository.GetByIdAsync(id);
+        var game = await _unitOfWork.Games.GetByIdAsync(id);
         return game == null
             ? ServiceResult.Fail<GameResponseDto>(
                 StatusCodes.Status404NotFound,
@@ -51,7 +46,7 @@ public class GameService(
 
     public async Task<ServiceResult<List<GameResponseDto>>> GetAllGamesAsync()
     {
-        var games = await _gameRepository.GetAllAsync();
+        var games = await _unitOfWork.Games.GetAllAsync();
         var response = games.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -65,7 +60,7 @@ public class GameService(
                 "Platform id is required.");
         }
 
-        var platformExists = await _platformRepository.ExistsAsync(platformId);
+        var platformExists = await _unitOfWork.Platforms.ExistsAsync(platformId);
         if (!platformExists)
         {
             return ServiceResult.Fail<List<GameResponseDto>>(
@@ -73,7 +68,7 @@ public class GameService(
                 "Platform not found.");
         }
 
-        var games = await _gameRepository.GetByPlatformIdAsync(platformId);
+        var games = await _unitOfWork.Games.GetByPlatformIdAsync(platformId);
         var response = games.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -87,7 +82,7 @@ public class GameService(
                 "Genre id is required.");
         }
 
-        var genreExists = await _genreRepository.ExistsAsync(genreId);
+        var genreExists = await _unitOfWork.Genres.ExistsAsync(genreId);
         if (!genreExists)
         {
             return ServiceResult.Fail<List<GameResponseDto>>(
@@ -95,7 +90,7 @@ public class GameService(
                 "Genre not found.");
         }
 
-        var games = await _gameRepository.GetByGenreIdAsync(genreId);
+        var games = await _unitOfWork.Games.GetByGenreIdAsync(genreId);
         var response = games.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -114,7 +109,7 @@ public class GameService(
             ? GenerateKey(gameName)
             : request.Game.Key.Trim();
 
-        var keyExists = await _gameRepository.KeyExistsAsync(gameKey);
+        var keyExists = await _unitOfWork.Games.KeyExistsAsync(gameKey);
         if (keyExists)
         {
             return ServiceResult.Fail<GameResponseDto>(
@@ -133,7 +128,7 @@ public class GameService(
         if (request.Genres.Count > 0)
         {
             var distinctGenreIds = request.Genres.Distinct().ToList();
-            var existingGenres = await _genreRepository.GetByIdsAsync(distinctGenreIds);
+            var existingGenres = await _unitOfWork.Genres.GetByIdsAsync(distinctGenreIds);
 
             if (existingGenres.Count != distinctGenreIds.Count)
             {
@@ -157,7 +152,7 @@ public class GameService(
         if (request.Platforms.Count > 0)
         {
             var distinctPlatformIds = request.Platforms.Distinct().ToList();
-            var existingPlatforms = await _platformRepository.GetByIdsAsync(distinctPlatformIds);
+            var existingPlatforms = await _unitOfWork.Platforms.GetByIdsAsync(distinctPlatformIds);
 
             if (existingPlatforms.Count != distinctPlatformIds.Count)
             {
@@ -178,8 +173,8 @@ public class GameService(
             }
         }
 
-        await _gameRepository.AddAsync(game);
-        await _gameRepository.SaveChangesAsync();
+        await _unitOfWork.Games.AddAsync(game);
+        await _unitOfWork.SaveChangesAsync();
 
         var response = new GameResponseDto
         {
@@ -208,7 +203,7 @@ public class GameService(
                 "Game name is required.");
         }
 
-        var game = await _gameRepository.GetByIdWithLinksAsync(request.Game.Id);
+        var game = await _unitOfWork.Games.GetByIdWithLinksAsync(request.Game.Id);
         if (game == null)
         {
             return ServiceResult.Fail<GameResponseDto>(
@@ -221,7 +216,7 @@ public class GameService(
             ? GenerateKey(gameName)
             : request.Game.Key.Trim();
 
-        var keyExists = await _gameRepository.KeyExistsAsync(gameKey, game.Id);
+        var keyExists = await _unitOfWork.Games.KeyExistsAsync(gameKey, game.Id);
         if (keyExists)
         {
             return ServiceResult.Fail<GameResponseDto>(
@@ -236,7 +231,7 @@ public class GameService(
         var distinctGenreIds = request.Genres.Distinct().ToList();
         var existingGenres = distinctGenreIds.Count == 0
             ? []
-            : await _genreRepository.GetByIdsAsync(distinctGenreIds);
+            : await _unitOfWork.Genres.GetByIdsAsync(distinctGenreIds);
 
         if (existingGenres.Count != distinctGenreIds.Count)
         {
@@ -248,7 +243,7 @@ public class GameService(
         var distinctPlatformIds = request.Platforms.Distinct().ToList();
         var existingPlatforms = distinctPlatformIds.Count == 0
             ? []
-            : await _platformRepository.GetByIdsAsync(distinctPlatformIds);
+            : await _unitOfWork.Platforms.GetByIdsAsync(distinctPlatformIds);
 
         if (existingPlatforms.Count != distinctPlatformIds.Count)
         {
@@ -281,7 +276,7 @@ public class GameService(
             });
         }
 
-        await _gameRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(game), StatusCodes.Status200OK);
     }
@@ -295,7 +290,7 @@ public class GameService(
                 "Game key is required.");
         }
 
-        var game = await _gameRepository.GetByKeyAsync(key);
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
         if (game == null)
         {
             return ServiceResult.Fail<GameResponseDto>(
@@ -303,8 +298,8 @@ public class GameService(
                 "Game not found.");
         }
 
-        await _gameRepository.DeleteAsync(game);
-        await _gameRepository.SaveChangesAsync();
+        await _unitOfWork.Games.DeleteAsync(game);
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(game), StatusCodes.Status200OK);
     }
@@ -318,7 +313,7 @@ public class GameService(
                 "Game key is required.");
         }
 
-        var game = await _gameRepository.GetByKeyAsync(key);
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
         if (game == null)
         {
             return ServiceResult.Fail<GameFileDto>(

@@ -1,12 +1,12 @@
+using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
-using GameStore.Repositories;
 
 namespace GameStore.Services;
 
-public class PlatformService(IPlatformRepository platformRepository) : IPlatformService
+public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
 {
-    private readonly IPlatformRepository _platformRepository = platformRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ServiceResult<PlatformResponseDto>> AddPlatformAsync(AddPlatformRequest request)
     {
@@ -23,8 +23,8 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
             Type = request.Platform.Type.Trim(),
         };
 
-        await _platformRepository.AddAsync(platform);
-        await _platformRepository.SaveChangesAsync();
+        await _unitOfWork.Platforms.AddAsync(platform);
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(platform), StatusCodes.Status201Created);
     }
@@ -38,7 +38,7 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
                 "Platform id is required.");
         }
 
-        var platform = await _platformRepository.GetByIdAsync(id);
+        var platform = await _unitOfWork.Platforms.GetByIdAsync(id);
         if (platform == null)
         {
             return ServiceResult.Fail<PlatformResponseDto>(
@@ -51,7 +51,7 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
 
     public async Task<ServiceResult<List<PlatformResponseDto>>> GetAllPlatformsAsync()
     {
-        var platforms = await _platformRepository.GetAllAsync();
+        var platforms = await _unitOfWork.Platforms.GetAllAsync();
         var response = platforms.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -65,7 +65,7 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
                 "Game key is required.");
         }
 
-        var platforms = await _platformRepository.GetByGameKeyAsync(key);
+        var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(key);
         var response = platforms.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
@@ -86,7 +86,7 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
                 "Platform type is required.");
         }
 
-        var platform = await _platformRepository.GetByIdAsync(request.Platform.Id);
+        var platform = await _unitOfWork.Platforms.GetByIdAsync(request.Platform.Id);
         if (platform == null)
         {
             return ServiceResult.Fail<PlatformResponseDto>(
@@ -95,7 +95,7 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
         }
 
         platform.Type = request.Platform.Type.Trim();
-        await _platformRepository.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(platform), StatusCodes.Status200OK);
     }
@@ -109,7 +109,7 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
                 "Platform id is required.");
         }
 
-        var platform = await _platformRepository.GetByIdAsync(id);
+        var platform = await _unitOfWork.Platforms.GetByIdAsync(id);
         if (platform == null)
         {
             return ServiceResult.Fail<PlatformResponseDto>(
@@ -117,8 +117,8 @@ public class PlatformService(IPlatformRepository platformRepository) : IPlatform
                 "Platform not found.");
         }
 
-        await _platformRepository.DeleteAsync(platform);
-        await _platformRepository.SaveChangesAsync();
+        await _unitOfWork.Platforms.DeleteAsync(platform);
+        await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(platform), StatusCodes.Status200OK);
     }
