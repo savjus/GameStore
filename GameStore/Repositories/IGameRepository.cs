@@ -19,4 +19,10 @@ public interface IGameRepository
     Task DeleteAsync(Game game);
 
     Task SaveChangesAsync();
+
+    Task<bool> KeyExistsAsync(string gameKey, Guid excludeGameId);
+
+    Task<Game?> GetByIdWithLinksAsync(Guid id);
+
+    Task<bool> KeyExistsAsync(string gameKey);
 }
