@@ -43,5 +43,16 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             entity.Property(platform => platform.Type).IsRequired();
             entity.HasIndex(platform => platform.Type).IsUnique();
         });
+
+        modelBuilder.Entity<GamePlatform>(entity =>
+        {
+            entity.HasKey(link => new { link.GameId, link.PlatformId });
+            entity.HasOne(link => link.Game)
+                .WithMany(game => game.GamePlatforms)
+                .HasForeignKey(link => link.GameId);
+            entity.HasOne(link => link.Platform)
+                .WithMany(platform => platform.GamePlatforms)
+                .HasForeignKey(link => link.PlatformId);
+        });
     }
 }
