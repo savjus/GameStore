@@ -8,6 +8,8 @@ public class Genre
 
     public Guid? ParentGenreId { get; set; }
 
+    public Genre? ParentGenre { get; set; }
+
     public ICollection<Genre> SubGenres { get; set; } = [];
 
     public ICollection<GameGenre> GameGenres { get; set; } = [];

@@ -25,5 +25,16 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             entity.HasIndex(game => game.Key).IsUnique();
             entity.Property(game => game.Description).HasMaxLength(2000);
         });
+
+        modelBuilder.Entity<Genre>(entity =>
+        {
+            entity.HasKey(genre => genre.Id);
+            entity.Property(genre => genre.Name).IsRequired();
+            entity.HasIndex(genre => genre.Name).IsUnique();
+            entity.HasOne(g => g.ParentGenre)
+                  .WithMany(g => g.SubGenres)
+                  .HasForeignKey(g => g.ParentGenreId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }
