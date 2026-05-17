@@ -17,6 +17,4 @@ public interface IPlatformRepository
     Task AddAsync(Platform platform);
 
     Task DeleteAsync(Platform platform);
-
-    Task SaveChangesAsync();
 }

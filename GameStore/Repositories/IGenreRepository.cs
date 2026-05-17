@@ -19,6 +19,4 @@ public interface IGenreRepository
     Task AddAsync(Genre genre);
 
     Task DeleteAsync(Genre genre);
-
-    Task SaveChangesAsync();
 }
