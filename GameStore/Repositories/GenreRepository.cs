@@ -25,6 +25,17 @@ public class GenreRepository(GameStoreDbContext dbContext) : IGenreRepository
         return _dbContext.Genres.AnyAsync(genre => genre.Id == id);
     }
 
+    public Task<bool> NameExistsAsync(string name, Guid? excludeId = null)
+    {
+        var query = _dbContext.Genres.AsNoTracking().Where(genre => genre.Name == name);
+        if (excludeId.HasValue)
+        {
+            query = query.Where(genre => genre.Id != excludeId.Value);
+        }
+
+        return query.AnyAsync();
+    }
+
     public Task<List<Genre>> GetAllAsync()
     {
         return _dbContext.Genres.AsNoTracking().ToListAsync();

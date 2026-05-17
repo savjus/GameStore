@@ -6,6 +6,8 @@ public interface IPlatformRepository
 {
     Task<bool> ExistsAsync(Guid id);
 
+    Task<bool> TypeExistsAsync(string type, Guid? excludeId = null);
+
     Task<Platform?> GetByIdAsync(Guid id);
 
     Task<List<Platform>> GetAllAsync();

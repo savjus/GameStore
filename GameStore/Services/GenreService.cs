@@ -28,10 +28,19 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
             }
         }
 
+        var trimmedName = request.Genre.Name.Trim();
+        var nameExists = await _unitOfWork.Genres.NameExistsAsync(trimmedName);
+        if (nameExists)
+        {
+            return ServiceResult.Fail<GenreResponseDto>(
+                StatusCodes.Status409Conflict,
+                "A genre with the same name already exists.");
+        }
+
         var genre = new Genre
         {
             Id = Guid.NewGuid(),
-            Name = request.Genre.Name.Trim(),
+            Name = trimmedName,
             ParentGenreId = request.Genre.ParentGenreId,
         };
 
@@ -65,6 +74,15 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
                 "Genre not found.");
         }
 
+        var trimmedName = request.Genre.Name.Trim();
+        var nameExists = await _unitOfWork.Genres.NameExistsAsync(trimmedName, request.Genre.Id);
+        if (nameExists)
+        {
+            return ServiceResult.Fail<GenreResponseDto>(
+                StatusCodes.Status409Conflict,
+                "A genre with the same name already exists.");
+        }
+
         if (request.Genre.ParentGenreId.HasValue)
         {
             var parentExists = await _unitOfWork.Genres.ExistsAsync(request.Genre.ParentGenreId.Value);
@@ -76,7 +94,7 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
             }
         }
 
-        genre.Name = request.Genre.Name.Trim();
+        genre.Name = trimmedName;
         genre.ParentGenreId = request.Genre.ParentGenreId;
 
         await _unitOfWork.SaveChangesAsync();

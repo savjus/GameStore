@@ -17,10 +17,19 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
                 "Platform type is required.");
         }
 
+        var trimmedType = request.Platform.Type.Trim();
+        var typeExists = await _unitOfWork.Platforms.TypeExistsAsync(trimmedType);
+        if (typeExists)
+        {
+            return ServiceResult.Fail<PlatformResponseDto>(
+                StatusCodes.Status409Conflict,
+                "A platform with the same type already exists.");
+        }
+
         var platform = new Platform
         {
             Id = Guid.NewGuid(),
-            Type = request.Platform.Type.Trim(),
+            Type = trimmedType,
         };
 
         await _unitOfWork.Platforms.AddAsync(platform);
@@ -80,7 +89,16 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
                 "Platform not found.");
         }
 
-        platform.Type = request.Platform.Type.Trim();
+        var trimmedType = request.Platform.Type.Trim();
+        var typeExists = await _unitOfWork.Platforms.TypeExistsAsync(trimmedType, request.Platform.Id);
+        if (typeExists)
+        {
+            return ServiceResult.Fail<PlatformResponseDto>(
+                StatusCodes.Status409Conflict,
+                "A platform with the same type already exists.");
+        }
+
+        platform.Type = trimmedType;
         await _unitOfWork.SaveChangesAsync();
 
         return ServiceResult.Success(MapToResponse(platform), StatusCodes.Status200OK);

@@ -13,6 +13,17 @@ public class PlatformRepository(GameStoreDbContext dbContext) : IPlatformReposit
         return _dbContext.Platforms.AnyAsync(platform => platform.Id == id);
     }
 
+    public Task<bool> TypeExistsAsync(string type, Guid? excludeId = null)
+    {
+        var query = _dbContext.Platforms.AsNoTracking().Where(platform => platform.Type == type);
+        if (excludeId.HasValue)
+        {
+            query = query.Where(platform => platform.Id != excludeId.Value);
+        }
+
+        return query.AnyAsync();
+    }
+
     public Task<Platform?> GetByIdAsync(Guid id)
     {
         return _dbContext.Platforms.AsNoTracking().FirstOrDefaultAsync(platform => platform.Id == id);

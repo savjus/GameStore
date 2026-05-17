@@ -6,6 +6,8 @@ public interface IGenreRepository
 {
     Task<bool> ExistsAsync(Guid id);
 
+    Task<bool> NameExistsAsync(string name, Guid? excludeId = null);
+
     Task<List<Genre>> GetByIdsAsync(IReadOnlyCollection<Guid> ids);
 
     Task<Genre?> GetByIdAsync(Guid id);
