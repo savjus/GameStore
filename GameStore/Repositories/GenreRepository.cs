@@ -27,25 +27,28 @@ public class GenreRepository(GameStoreDbContext dbContext) : IGenreRepository
 
     public Task<List<Genre>> GetAllAsync()
     {
-        return _dbContext.Genres.ToListAsync();
+        return _dbContext.Genres.AsNoTracking().ToListAsync();
     }
 
     public Task<List<Genre>> GetByGameKeyAsync(string key)
     {
         return _dbContext.GameGenres
+            .AsNoTracking()
             .Where(link => link.Game.Key == key)
             .Select(link => link.Genre)
+            .AsNoTracking()
             .ToListAsync();
     }
 
     public Task<Genre?> GetByIdAsync(Guid id)
     {
-        return _dbContext.Genres.FirstOrDefaultAsync(genre => genre.Id == id);
+        return _dbContext.Genres.AsNoTracking().FirstOrDefaultAsync(genre => genre.Id == id);
     }
 
     public Task<List<Genre>> GetByIdsAsync(IReadOnlyCollection<Guid> ids)
     {
         return _dbContext.Genres
+            .AsNoTracking()
             .Where(genre => ids.Contains(genre.Id))
             .ToListAsync();
     }
@@ -53,6 +56,7 @@ public class GenreRepository(GameStoreDbContext dbContext) : IGenreRepository
     public Task<List<Genre>> GetByParentIdAsync(Guid platformId)
     {
         return _dbContext.Genres
+            .AsNoTracking()
             .Where(genre => genre.ParentGenreId == platformId)
             .ToListAsync();
     }

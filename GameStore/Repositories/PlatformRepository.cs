@@ -15,25 +15,28 @@ public class PlatformRepository(GameStoreDbContext dbContext) : IPlatformReposit
 
     public Task<Platform?> GetByIdAsync(Guid id)
     {
-        return _dbContext.Platforms.FirstOrDefaultAsync(platform => platform.Id == id);
+        return _dbContext.Platforms.AsNoTracking().FirstOrDefaultAsync(platform => platform.Id == id);
     }
 
     public Task<List<Platform>> GetAllAsync()
     {
-        return _dbContext.Platforms.ToListAsync();
+        return _dbContext.Platforms.AsNoTracking().ToListAsync();
     }
 
     public Task<List<Platform>> GetByGameKeyAsync(string key)
     {
         return _dbContext.GamePlatforms
+            .AsNoTracking()
             .Where(link => link.Game.Key == key)
             .Select(link => link.Platform)
+            .AsNoTracking()
             .ToListAsync();
     }
 
     public Task<List<Platform>> GetByIdsAsync(IReadOnlyCollection<Guid> ids)
     {
         return _dbContext.Platforms
+            .AsNoTracking()
             .Where(platform => ids.Contains(platform.Id))
             .ToListAsync();
     }

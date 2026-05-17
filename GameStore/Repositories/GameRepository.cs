@@ -22,28 +22,28 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
 
     public Task<List<Game>> GetAllAsync()
     {
-        return _dbContext.Games.ToListAsync();
+        return _dbContext.Games.AsNoTracking().ToListAsync();
     }
 
     public Task<Game?> GetByIdAsync(Guid id)
     {
-        return _dbContext.Games.FirstOrDefaultAsync(g => g.Id == id);
+        return _dbContext.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id);
     }
 
     public Task<Game?> GetByKeyAsync(string key)
     {
-        return _dbContext.Games.FirstOrDefaultAsync(game => game.Key == key);
+        return _dbContext.Games.AsNoTracking().FirstOrDefaultAsync(game => game.Key == key);
     }
 
     public Task<List<Game>> GetByGenreIdAsync(Guid genreId)
     {
-        return _dbContext.Games.Where(game => game.GameGenres.Any(genre => genre.GenreId == genreId))
+        return _dbContext.Games.AsNoTracking().Where(game => game.GameGenres.Any(genre => genre.GenreId == genreId))
             .ToListAsync();
     }
 
     public Task<List<Game>> GetByPlatformIdAsync(Guid platformId)
     {
-        return _dbContext.Games.Where(game => game.GamePlatforms.Any(platform => platform.PlatformId == platformId))
+        return _dbContext.Games.AsNoTracking().Where(game => game.GamePlatforms.Any(platform => platform.PlatformId == platformId))
             .ToListAsync();
     }
 
@@ -55,6 +55,7 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
     public Task<Game?> GetByIdWithLinksAsync(Guid id)
     {
         return _dbContext.Games
+            .AsNoTracking()
             .Include(game => game.GameGenres)
             .Include(game => game.GamePlatforms)
             .FirstOrDefaultAsync(game => game.Id == id);
