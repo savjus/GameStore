@@ -23,4 +23,6 @@ public interface IGameRepository
     Task<bool> KeyExistsAsync(string gameKey, Guid excludeGameId);
 
     Task<bool> KeyExistsAsync(string gameKey);
+
+    Task<int> GetTotalCountAsync();
 }

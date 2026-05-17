@@ -69,4 +69,9 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
     {
         return _dbContext.Games.AnyAsync(game => game.Key == gameKey);
     }
+
+    public Task<int> GetTotalCountAsync()
+    {
+        return _dbContext.Games.CountAsync();
+    }
 }
