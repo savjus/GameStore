@@ -131,20 +131,6 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
 
-    public async Task<ServiceResult<List<GenreResponseDto>>> GetGenresByGameKeyAsync(string key)
-    {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return ServiceResult.Fail<List<GenreResponseDto>>(
-                StatusCodes.Status400BadRequest,
-                "Game key is required.");
-        }
-
-        var genres = await _unitOfWork.Genres.GetByGameKeyAsync(key) ?? [];
-        var response = genres.Select(MapToResponse).ToList();
-        return ServiceResult.Success(response, StatusCodes.Status200OK);
-    }
-
     public async Task<ServiceResult<List<GenreResponseDto>>> GetGenresByParentIdAsync(Guid parentId)
     {
         if (parentId == Guid.Empty)

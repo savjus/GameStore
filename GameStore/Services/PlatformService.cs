@@ -56,20 +56,6 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
 
-    public async Task<ServiceResult<List<PlatformResponseDto>>> GetPlatformsByGameKeyAsync(string key)
-    {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return ServiceResult.Fail<List<PlatformResponseDto>>(
-                StatusCodes.Status400BadRequest,
-                "Game key is required.");
-        }
-
-        var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(key);
-        var response = platforms.Select(MapToResponse).ToList();
-        return ServiceResult.Success(response, StatusCodes.Status200OK);
-    }
-
     public async Task<ServiceResult<PlatformResponseDto>> UpdatePlatformAsync(UpdatePlatformRequest request)
     {
         if (request.Platform == null || request.Platform.Id == Guid.Empty)

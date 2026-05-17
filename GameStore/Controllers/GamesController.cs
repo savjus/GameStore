@@ -6,11 +6,9 @@ namespace GameStore.Controllers;
 
 [ApiController]
 [Route("games")]
-public class GamesController(IGameService gameService, IGenreService genreService, IPlatformService platformService) : ControllerBase
+public class GamesController(IGameService gameService) : ControllerBase
 {
     private readonly IGameService _gameService = gameService;
-    private readonly IGenreService _genreService = genreService;
-    private readonly IPlatformService _platformService = platformService;
 
     [HttpGet("{key}")]
     [ResponseCache(Duration = 60)]
@@ -87,7 +85,7 @@ public class GamesController(IGameService gameService, IGenreService genreServic
     [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GenreResponseDto>>> GetGenresByGameKey(string key)
     {
-        var result = await _genreService.GetGenresByGameKeyAsync(key);
+        var result = await _gameService.GetGenresByGameKeyAsync(key);
         return result.IsSuccess
             ? StatusCode(result.StatusCode, result.Value)
             : StatusCode(result.StatusCode, result.Error);
@@ -97,7 +95,7 @@ public class GamesController(IGameService gameService, IGenreService genreServic
     [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<PlatformResponseDto>>> GetPlatformsByGameKey(string key)
     {
-        var result = await _platformService.GetPlatformsByGameKeyAsync(key);
+        var result = await _gameService.GetPlatformsByGameKeyAsync(key);
         return result.IsSuccess
             ? StatusCode(result.StatusCode, result.Value)
             : StatusCode(result.StatusCode, result.Error);

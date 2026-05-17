@@ -14,7 +14,5 @@ public interface IGenreService
 
     Task<ServiceResult<List<GenreResponseDto>>> GetAllGenresAsync();
 
-    Task<ServiceResult<List<GenreResponseDto>>> GetGenresByGameKeyAsync(string key);
-
     Task<ServiceResult<List<GenreResponseDto>>> GetGenresByParentIdAsync(Guid parentId);
 }

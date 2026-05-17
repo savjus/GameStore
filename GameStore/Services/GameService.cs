@@ -73,6 +73,20 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
 
+    public async Task<ServiceResult<List<GenreResponseDto>>> GetGenresByGameKeyAsync(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return ServiceResult.Fail<List<GenreResponseDto>>(
+                StatusCodes.Status400BadRequest,
+                "Game key is required.");
+        }
+
+        var genres = await _unitOfWork.Genres.GetByGameKeyAsync(key) ?? [];
+        var response = genres.Select(MapToResponseGenre).ToList();
+        return ServiceResult.Success(response, StatusCodes.Status200OK);
+    }
+
     public async Task<ServiceResult<List<GameResponseDto>>> GetGamesByGenreAsync(Guid genreId)
     {
         if (genreId == Guid.Empty)
@@ -92,6 +106,20 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
 
         var games = await _unitOfWork.Games.GetByGenreIdAsync(genreId);
         var response = games.Select(MapToResponse).ToList();
+        return ServiceResult.Success(response, StatusCodes.Status200OK);
+    }
+
+    public async Task<ServiceResult<List<PlatformResponseDto>>> GetPlatformsByGameKeyAsync(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return ServiceResult.Fail<List<PlatformResponseDto>>(
+                StatusCodes.Status400BadRequest,
+                "Game key is required.");
+        }
+
+        var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(key);
+        var response = platforms.Select(MapToResponsePlatform).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
     }
 
@@ -344,6 +372,25 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
             Name = game.Name,
             Key = game.Key,
             Description = game.Description,
+        };
+    }
+
+    private static GenreResponseDto MapToResponseGenre(Genre genre)
+    {
+        return new GenreResponseDto
+        {
+            Id = genre.Id,
+            Name = genre.Name,
+            ParentGenreId = genre.ParentGenreId,
+        };
+    }
+
+    private static PlatformResponseDto MapToResponsePlatform(Platform platform)
+    {
+        return new PlatformResponseDto
+        {
+            Id = platform.Id,
+            Type = platform.Type,
         };
     }
 

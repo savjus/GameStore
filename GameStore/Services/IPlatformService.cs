@@ -10,8 +10,6 @@ public interface IPlatformService
 
     Task<ServiceResult<List<PlatformResponseDto>>> GetAllPlatformsAsync();
 
-    Task<ServiceResult<List<PlatformResponseDto>>> GetPlatformsByGameKeyAsync(string key);
-
     Task<ServiceResult<PlatformResponseDto>> UpdatePlatformAsync(UpdatePlatformRequest request);
 
     Task<ServiceResult<PlatformResponseDto>> DeletePlatformAsync(Guid id);

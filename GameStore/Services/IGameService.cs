@@ -20,5 +20,9 @@ public interface IGameService
 
     Task<ServiceResult<GameResponseDto>> DeleteGameAsync(string key);
 
+    Task<ServiceResult<List<GenreResponseDto>>> GetGenresByGameKeyAsync(string key);
+
+    Task<ServiceResult<List<PlatformResponseDto>>> GetPlatformsByGameKeyAsync(string key);
+
     Task<ServiceResult<GameFileDto>> GetGameFileAsync(string key);
 }
