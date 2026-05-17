@@ -85,12 +85,27 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
 
         if (request.Genre.ParentGenreId.HasValue)
         {
+            if (request.Genre.ParentGenreId.Value == request.Genre.Id)
+            {
+                return ServiceResult.Fail<GenreResponseDto>(
+                    StatusCodes.Status400BadRequest,
+                    "A genre cannot be its own parent.");
+            }
+
             var parentExists = await _unitOfWork.Genres.ExistsAsync(request.Genre.ParentGenreId.Value);
             if (!parentExists)
             {
                 return ServiceResult.Fail<GenreResponseDto>(
                     StatusCodes.Status400BadRequest,
                     "Parent genre does not exist.");
+            }
+
+            var hasCycle = await CreatesGenreHierarchyCycleAsync(request.Genre.Id, request.Genre.ParentGenreId.Value);
+            if (hasCycle)
+            {
+                return ServiceResult.Fail<GenreResponseDto>(
+                    StatusCodes.Status400BadRequest,
+                    "Updating the parent genre would create a cycle.");
             }
         }
 
@@ -161,6 +176,27 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
         var genres = await _unitOfWork.Genres.GetByParentIdAsync(parentId) ?? [];
         var response = genres.Select(MapToResponse).ToList();
         return ServiceResult.Success(response, StatusCodes.Status200OK);
+    }
+
+    private async Task<bool> CreatesGenreHierarchyCycleAsync(Guid genreId, Guid newParentId)
+    {
+        var current = await _unitOfWork.Genres.GetByIdAsync(newParentId);
+        while (current != null)
+        {
+            if (current.Id == genreId)
+            {
+                return true;
+            }
+
+            if (!current.ParentGenreId.HasValue)
+            {
+                break;
+            }
+
+            current = await _unitOfWork.Genres.GetByIdAsync(current.ParentGenreId.Value);
+        }
+
+        return false;
     }
 
     private static GenreResponseDto MapToResponse(Genre genre)
