@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace GameStore.Models.Dtos;
 
 public class UpdateGameRequest
 {
+    [Required]
     public required GameUpdateDto Game { get; set; }
 
     public List<Guid> Genres { get; set; } = [];

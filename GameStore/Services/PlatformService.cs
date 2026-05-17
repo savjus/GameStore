@@ -10,13 +10,6 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
 
     public async Task<ServiceResult<PlatformResponseDto>> AddPlatformAsync(AddPlatformRequest request)
     {
-        if (request.Platform == null || string.IsNullOrWhiteSpace(request.Platform.Type))
-        {
-            return ServiceResult.Fail<PlatformResponseDto>(
-                StatusCodes.Status400BadRequest,
-                "Platform type is required.");
-        }
-
         var trimmedType = request.Platform.Type.Trim();
         var typeExists = await _unitOfWork.Platforms.TypeExistsAsync(trimmedType);
         if (typeExists)
@@ -67,18 +60,11 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
 
     public async Task<ServiceResult<PlatformResponseDto>> UpdatePlatformAsync(UpdatePlatformRequest request)
     {
-        if (request.Platform == null || request.Platform.Id == Guid.Empty)
+        if (request.Platform.Id == Guid.Empty)
         {
             return ServiceResult.Fail<PlatformResponseDto>(
                 StatusCodes.Status400BadRequest,
                 "Platform id is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Platform.Type))
-        {
-            return ServiceResult.Fail<PlatformResponseDto>(
-                StatusCodes.Status400BadRequest,
-                "Platform type is required.");
         }
 
         var platform = await _unitOfWork.Platforms.GetByIdAsync(request.Platform.Id);

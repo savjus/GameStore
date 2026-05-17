@@ -125,13 +125,6 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
 
     public async Task<ServiceResult<GameResponseDto>> AddGameAsync(AddGameRequest request)
     {
-        if (request.Game == null || string.IsNullOrWhiteSpace(request.Game.Name))
-        {
-            return ServiceResult.Fail<GameResponseDto>(
-                StatusCodes.Status400BadRequest,
-                "Game name is required.");
-        }
-
         var gameName = request.Game.Name.Trim();
         var gameKey = string.IsNullOrWhiteSpace(request.Game.Key)
             ? GenerateKey(gameName)
@@ -217,18 +210,11 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
 
     public async Task<ServiceResult<GameResponseDto>> UpdateGameAsync(UpdateGameRequest request)
     {
-        if (request.Game == null || request.Game.Id == Guid.Empty)
+        if (request.Game.Id == Guid.Empty)
         {
             return ServiceResult.Fail<GameResponseDto>(
                 StatusCodes.Status400BadRequest,
                 "Game id is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Game.Name))
-        {
-            return ServiceResult.Fail<GameResponseDto>(
-                StatusCodes.Status400BadRequest,
-                "Game name is required.");
         }
 
         var game = await _unitOfWork.Games.GetByIdWithLinksAsync(request.Game.Id);

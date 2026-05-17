@@ -11,13 +11,6 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
 
     public async Task<ServiceResult<GenreResponseDto>> AddGenreAsync(AddGenreRequest request)
     {
-        if (request.Genre == null || string.IsNullOrWhiteSpace(request.Genre.Name))
-        {
-            return ServiceResult.Fail<GenreResponseDto>(
-                StatusCodes.Status400BadRequest,
-                "Genre name is required.");
-        }
-
         if (request.Genre.ParentGenreId.HasValue)
         {
             var parentExists = await _unitOfWork.Genres.ExistsAsync(request.Genre.ParentGenreId.Value);
@@ -53,18 +46,11 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
 
     public async Task<ServiceResult<GenreResponseDto>> UpdateGenreAsync(UpdateGenreRequest request)
     {
-        if (request.Genre == null || request.Genre.Id == Guid.Empty)
+        if (request.Genre.Id == Guid.Empty)
         {
             return ServiceResult.Fail<GenreResponseDto>(
                 StatusCodes.Status400BadRequest,
                 "Genre id is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Genre.Name))
-        {
-            return ServiceResult.Fail<GenreResponseDto>(
-                StatusCodes.Status400BadRequest,
-                "Genre name is required.");
         }
 
         var genre = await _unitOfWork.Genres.GetByIdAsync(request.Genre.Id);
