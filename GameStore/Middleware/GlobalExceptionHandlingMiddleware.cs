@@ -34,22 +34,22 @@ public class GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<Glo
         {
             case ArgumentNullException:
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                errorResponse.Message = "Required field is missing or null";
+                errorResponse.Message = "Required field is missing or null.";
                 break;
 
             case ArgumentException:
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                errorResponse.Message = exception.Message;
+                errorResponse.Message = "Invalid request data.";
                 break;
 
             case InvalidOperationException:
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
-                errorResponse.Message = exception.Message;
+                errorResponse.Message = "The request could not be completed because of a conflict.";
                 break;
 
             case KeyNotFoundException:
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
-                errorResponse.Message = "Resource not found";
+                errorResponse.Message = "Resource not found.";
                 break;
 
             default:
