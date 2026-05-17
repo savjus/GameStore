@@ -56,7 +56,7 @@ public class GenresController(IGameService gameService, IGenreService genreServi
     {
         var result = await _genreService.AddGenreAsync(request);
         return result.IsSuccess
-            ? StatusCode(result.StatusCode, result.Value)
+            ? CreatedAtAction(nameof(GetGenreById), new { id = result.Value!.Id }, result.Value)
             : StatusCode(result.StatusCode, result.Error);
     }
 

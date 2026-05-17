@@ -46,7 +46,7 @@ public class PlatformsController(IGameService gameService, IPlatformService plat
     {
         var result = await _platformService.AddPlatformAsync(request);
         return result.IsSuccess
-            ? StatusCode(result.StatusCode, result.Value)
+            ? CreatedAtAction(nameof(GetPlatformById), new { id = result.Value!.Id }, result.Value)
             : StatusCode(result.StatusCode, result.Error);
     }
 

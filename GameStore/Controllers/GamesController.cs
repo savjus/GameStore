@@ -45,7 +45,7 @@ public class GamesController(IGameService gameService) : ControllerBase
     {
         var result = await _gameService.AddGameAsync(request);
         return result.IsSuccess
-            ? StatusCode(result.StatusCode, result.Value)
+            ? CreatedAtAction(nameof(GetGameById), new { id = result.Value!.Id }, result.Value)
             : StatusCode(result.StatusCode, result.Error);
     }
 
