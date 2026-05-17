@@ -1,6 +1,7 @@
 using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
 
@@ -134,8 +135,25 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
                 "Genre not found.");
         }
 
+        var childGenres = await _unitOfWork.Genres.GetByParentIdAsync(id);
+        if (childGenres != null && childGenres.Count > 0)
+        {
+            return ServiceResult.Fail<GenreResponseDto>(
+                StatusCodes.Status409Conflict,
+                "Cannot delete a parent genre while child genres still exist.");
+        }
+
         await _unitOfWork.Genres.DeleteAsync(genre);
-        await _unitOfWork.SaveChangesAsync();
+        try
+        {
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            return ServiceResult.Fail<GenreResponseDto>(
+                StatusCodes.Status409Conflict,
+                "Cannot delete a genre that is still referenced by child genres.");
+        }
 
         return ServiceResult.Success(MapToResponse(genre), StatusCodes.Status204NoContent);
     }
