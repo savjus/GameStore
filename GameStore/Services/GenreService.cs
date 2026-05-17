@@ -104,7 +104,7 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
         await _unitOfWork.Genres.DeleteAsync(genre);
         await _unitOfWork.SaveChangesAsync();
 
-        return ServiceResult.Success(MapToResponse(genre), StatusCodes.Status200OK);
+        return ServiceResult.Success(MapToResponse(genre), StatusCodes.Status204NoContent);
     }
 
     public async Task<ServiceResult<GenreResponseDto>> GetGenreByIdAsync(Guid id)

@@ -106,7 +106,7 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
         await _unitOfWork.Platforms.DeleteAsync(platform);
         await _unitOfWork.SaveChangesAsync();
 
-        return ServiceResult.Success(MapToResponse(platform), StatusCodes.Status200OK);
+        return ServiceResult.Success(MapToResponse(platform), StatusCodes.Status204NoContent);
     }
 
     private static PlatformResponseDto MapToResponse(Platform platform)

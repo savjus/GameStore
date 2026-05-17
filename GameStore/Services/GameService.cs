@@ -329,7 +329,7 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
         await _unitOfWork.Games.DeleteAsync(game);
         await _unitOfWork.SaveChangesAsync();
 
-        return ServiceResult.Success(MapToResponse(game), StatusCodes.Status200OK);
+        return ServiceResult.Success(MapToResponse(game), StatusCodes.Status204NoContent);
     }
 
     public async Task<ServiceResult<GameFileDto>> GetGameFileAsync(string key)
