@@ -1,3 +1,4 @@
+using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
 using GameStore.Repositories;
@@ -59,10 +60,12 @@ public class GenreServiceTests
         var genreRepository = new Mock<IGenreRepository>();
         genreRepository.Setup(repo => repo.AddAsync(It.IsAny<Genre>()))
             .Returns(Task.CompletedTask);
-        genreRepository.Setup(repo => repo.SaveChangesAsync())
-            .Returns(Task.CompletedTask);
 
-        var service = CreateService(genreRepository);
+        var unitOfWork = CreateUnitOfWork(genreRepository);
+        unitOfWork.Setup(u => u.SaveChangesAsync())
+            .ReturnsAsync(0);
+
+        var service = new GenreService(unitOfWork.Object);
 
         var result = await service.AddGenreAsync(request);
 
@@ -104,22 +107,33 @@ public class GenreServiceTests
             .ReturnsAsync(genre);
         genreRepository.Setup(repo => repo.DeleteAsync(genre))
             .Returns(Task.CompletedTask);
-        genreRepository.Setup(repo => repo.SaveChangesAsync())
-            .Returns(Task.CompletedTask);
 
-        var service = CreateService(genreRepository);
+        var unitOfWork = CreateUnitOfWork(genreRepository);
+        unitOfWork.Setup(u => u.SaveChangesAsync())
+            .ReturnsAsync(0);
+
+        var service = new GenreService(unitOfWork.Object);
 
         var result = await service.DeleteGenreAsync(genreId);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+        Assert.Equal(StatusCodes.Status204NoContent, result.StatusCode);
         Assert.NotNull(result.Value);
         Assert.Equal(genreId, result.Value!.Id);
     }
 
+    private static Mock<IUnitOfWork> CreateUnitOfWork(Mock<IGenreRepository>? genreRepository = null)
+    {
+        var genreRepo = genreRepository ?? new Mock<IGenreRepository>();
+
+        var unitOfWork = new Mock<IUnitOfWork>();
+        unitOfWork.SetupGet(u => u.Genres).Returns(genreRepo.Object);
+        return unitOfWork;
+    }
+
     private static GenreService CreateService(Mock<IGenreRepository>? genreRepository = null)
     {
-        var repo = genreRepository ?? new Mock<IGenreRepository>();
-        return new GenreService(repo.Object);
+        var unitOfWork = CreateUnitOfWork(genreRepository);
+        return new GenreService(unitOfWork.Object);
     }
 }

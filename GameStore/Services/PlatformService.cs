@@ -11,6 +11,13 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
     public async Task<ServiceResult<PlatformResponseDto>> AddPlatformAsync(AddPlatformRequest request)
     {
         var trimmedType = request.Platform.Type.Trim();
+        if (string.IsNullOrWhiteSpace(trimmedType))
+        {
+            return ServiceResult.Fail<PlatformResponseDto>(
+                StatusCodes.Status400BadRequest,
+                "Platform type is required.");
+        }
+
         var typeExists = await _unitOfWork.Platforms.TypeExistsAsync(trimmedType);
         if (typeExists)
         {

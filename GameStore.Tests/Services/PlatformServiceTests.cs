@@ -1,3 +1,4 @@
+using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
 using GameStore.Repositories;
@@ -56,10 +57,12 @@ public class PlatformServiceTests
         var platformRepository = new Mock<IPlatformRepository>();
         platformRepository.Setup(repo => repo.GetByIdAsync(platformId))
             .ReturnsAsync(platform);
-        platformRepository.Setup(repo => repo.SaveChangesAsync())
-            .Returns(Task.CompletedTask);
 
-        var service = CreateService(platformRepository);
+        var unitOfWork = CreateUnitOfWork(platformRepository);
+        unitOfWork.Setup(u => u.SaveChangesAsync())
+            .ReturnsAsync(0);
+
+        var service = new PlatformService(unitOfWork.Object);
 
         var result = await service.UpdatePlatformAsync(request);
 
@@ -81,9 +84,18 @@ public class PlatformServiceTests
         Assert.Equal("Platform id is required.", result.Error);
     }
 
+    private static Mock<IUnitOfWork> CreateUnitOfWork(Mock<IPlatformRepository>? platformRepository = null)
+    {
+        var platformRepo = platformRepository ?? new Mock<IPlatformRepository>();
+
+        var unitOfWork = new Mock<IUnitOfWork>();
+        unitOfWork.SetupGet(u => u.Platforms).Returns(platformRepo.Object);
+        return unitOfWork;
+    }
+
     private static PlatformService CreateService(Mock<IPlatformRepository>? platformRepository = null)
     {
-        var repo = platformRepository ?? new Mock<IPlatformRepository>();
-        return new PlatformService(repo.Object);
+        var unitOfWork = CreateUnitOfWork(platformRepository);
+        return new PlatformService(unitOfWork.Object);
     }
 }

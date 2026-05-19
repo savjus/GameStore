@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
 using GameStore.Repositories;
@@ -94,8 +95,6 @@ public class GameServiceTests
         gameRepository.Setup(repo => repo.AddAsync(It.IsAny<Game>()))
             .Callback<Game>(game => createdGame = game)
             .Returns(Task.CompletedTask);
-        gameRepository.Setup(repo => repo.SaveChangesAsync())
-            .Returns(Task.CompletedTask);
 
         var genreRepository = new Mock<IGenreRepository>();
         genreRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
@@ -105,7 +104,10 @@ public class GameServiceTests
         platformRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
             .ReturnsAsync([new Platform { Id = platformId, Type = "Desktop" }]);
 
-        var service = CreateService(gameRepository, genreRepository, platformRepository);
+        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository);
+        unitOfWork.Setup(u => u.SaveChangesAsync())
+            .ReturnsAsync(0);
+        var service = new GameService(unitOfWork.Object);
 
         var result = await service.AddGameAsync(request);
 
@@ -235,8 +237,6 @@ public class GameServiceTests
             .ReturnsAsync(game);
         gameRepository.Setup(repo => repo.KeyExistsAsync("new-key", gameId))
             .ReturnsAsync(false);
-        gameRepository.Setup(repo => repo.SaveChangesAsync())
-            .Returns(Task.CompletedTask);
 
         var genreRepository = new Mock<IGenreRepository>();
         genreRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
@@ -246,7 +246,10 @@ public class GameServiceTests
         platformRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
             .ReturnsAsync([new Platform { Id = platformId, Type = "Desktop" }]);
 
-        var service = CreateService(gameRepository, genreRepository, platformRepository);
+        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository);
+        unitOfWork.Setup(u => u.SaveChangesAsync())
+            .ReturnsAsync(0);
+        var service = new GameService(unitOfWork.Object);
 
         var result = await service.UpdateGameAsync(request);
 
@@ -304,7 +307,7 @@ public class GameServiceTests
         Assert.Equal("super-game", document.RootElement.GetProperty("Key").GetString());
     }
 
-    private static GameService CreateService(
+    private static Mock<IUnitOfWork> CreateUnitOfWork(
         Mock<IGameRepository>? gameRepository = null,
         Mock<IGenreRepository>? genreRepository = null,
         Mock<IPlatformRepository>? platformRepository = null)
@@ -313,6 +316,19 @@ public class GameServiceTests
         var genreRepo = genreRepository ?? new Mock<IGenreRepository>();
         var platformRepo = platformRepository ?? new Mock<IPlatformRepository>();
 
-        return new GameService(gameRepo.Object, genreRepo.Object, platformRepo.Object);
+        var unitOfWork = new Mock<IUnitOfWork>();
+        unitOfWork.SetupGet(u => u.Games).Returns(gameRepo.Object);
+        unitOfWork.SetupGet(u => u.Genres).Returns(genreRepo.Object);
+        unitOfWork.SetupGet(u => u.Platforms).Returns(platformRepo.Object);
+        return unitOfWork;
+    }
+
+    private static GameService CreateService(
+        Mock<IGameRepository>? gameRepository = null,
+        Mock<IGenreRepository>? genreRepository = null,
+        Mock<IPlatformRepository>? platformRepository = null)
+    {
+        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository);
+        return new GameService(unitOfWork.Object);
     }
 }

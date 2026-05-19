@@ -11,6 +11,14 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
 
     public async Task<ServiceResult<GenreResponseDto>> AddGenreAsync(AddGenreRequest request)
     {
+        var trimmedName = request.Genre.Name.Trim();
+        if (string.IsNullOrWhiteSpace(trimmedName))
+        {
+            return ServiceResult.Fail<GenreResponseDto>(
+                StatusCodes.Status400BadRequest,
+                "Genre name is required.");
+        }
+
         if (request.Genre.ParentGenreId.HasValue)
         {
             var parentExists = await _unitOfWork.Genres.ExistsAsync(request.Genre.ParentGenreId.Value);
@@ -22,7 +30,6 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
             }
         }
 
-        var trimmedName = request.Genre.Name.Trim();
         var nameExists = await _unitOfWork.Genres.NameExistsAsync(trimmedName);
         if (nameExists)
         {
