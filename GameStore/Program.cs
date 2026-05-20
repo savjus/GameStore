@@ -6,8 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
 builder.Services.AddCors(options =>
@@ -55,6 +59,10 @@ app.UseResponseCaching();
 
 app.UseAuthorization();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.MapControllers();
+app.MapDefaultEndpoints();
 
 app.Run();

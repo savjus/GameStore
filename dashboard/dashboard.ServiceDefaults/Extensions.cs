@@ -92,7 +92,15 @@ public static class Extensions
 
         if (useOtlpExporter)
         {
-            builder.Services.AddOpenTelemetry();
+            builder.Services.ConfigureOpenTelemetryMeterProvider(meterProviderBuilder =>
+            {
+                meterProviderBuilder.AddOtlpExporter();
+            });
+
+            builder.Services.ConfigureOpenTelemetryTracerProvider(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder.AddOtlpExporter();
+            });
         }
 
         return builder;
