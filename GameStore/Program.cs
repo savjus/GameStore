@@ -1,10 +1,15 @@
 using GameStore.Data;
+using GameStore.Logging;
 using GameStore.Middleware;
 using GameStore.Repositories;
 using GameStore.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var fileLoggerOptions = builder.Configuration.GetSection("FileLogging").Get<FileLoggerOptions>()
+    ?? new FileLoggerOptions();
+builder.Logging.AddProvider(new FileLoggerProvider(fileLoggerOptions, builder.Environment.ContentRootPath));
 
 builder.AddServiceDefaults();
 
@@ -46,6 +51,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseMiddleware<RequestResponseLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
