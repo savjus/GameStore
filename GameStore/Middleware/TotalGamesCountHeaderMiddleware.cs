@@ -14,11 +14,8 @@ public class TotalGamesCountHeaderMiddleware(RequestDelegate next)
 
     public async Task Invoke(HttpContext context, IGameRepository gameRepository, IMemoryCache cache)
     {
-        context.Response.OnStarting(async () =>
-        {
-            var count = await GetTotalCountAsync(gameRepository, cache);
-            context.Response.Headers[HeaderName] = count.ToString(CultureInfo.InvariantCulture);
-        });
+        var count = await GetTotalCountAsync(gameRepository, cache);
+        context.Response.Headers[HeaderName] = count.ToString(CultureInfo.InvariantCulture);
 
         await _next(context);
     }

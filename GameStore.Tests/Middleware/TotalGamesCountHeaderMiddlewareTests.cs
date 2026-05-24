@@ -18,6 +18,7 @@ public class TotalGamesCountHeaderMiddlewareTests
         using var cache = new MemoryCache(new MemoryCacheOptions());
         var middleware = new TotalGamesCountHeaderMiddleware(async context =>
         {
+            await context.Response.StartAsync();
             await context.Response.WriteAsync("ok");
         });
 
@@ -37,6 +38,7 @@ public class TotalGamesCountHeaderMiddlewareTests
         using var cache = new MemoryCache(new MemoryCacheOptions());
         var middleware = new TotalGamesCountHeaderMiddleware(async context =>
         {
+            await context.Response.StartAsync();
             await context.Response.WriteAsync("ok");
         });
 
@@ -57,6 +59,7 @@ public class TotalGamesCountHeaderMiddlewareTests
         context.Response.Body = new MemoryStream();
 
         await middleware.Invoke(context, repository, cache);
+        await context.Response.CompleteAsync();
 
         context.Response.Headers.TryGetValue("x-total-numbers-of-games", out var headerValue);
         return headerValue.ToString();
