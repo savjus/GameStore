@@ -14,12 +14,6 @@ public class TotalGamesCountHeaderMiddleware(RequestDelegate next)
 
     public async Task Invoke(HttpContext context, IGameRepository gameRepository, IMemoryCache cache)
     {
-        if (!ShouldApplyHeader(context.Request.Path))
-        {
-            await _next(context);
-            return;
-        }
-
         context.Response.OnStarting(async () =>
         {
             var count = await GetTotalCountAsync(gameRepository, cache);
@@ -27,13 +21,6 @@ public class TotalGamesCountHeaderMiddleware(RequestDelegate next)
         });
 
         await _next(context);
-    }
-
-    private static bool ShouldApplyHeader(PathString path)
-    {
-        return path.StartsWithSegments("/games", StringComparison.OrdinalIgnoreCase)
-            || path.StartsWithSegments("/genres", StringComparison.OrdinalIgnoreCase)
-            || path.StartsWithSegments("/platforms", StringComparison.OrdinalIgnoreCase);
     }
 
     private static async Task<int> GetTotalCountAsync(IGameRepository gameRepository, IMemoryCache cache)
