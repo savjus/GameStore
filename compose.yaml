@@ -21,7 +21,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=GameStoreDb;User Id=sa;Password=Str0ng!Passw0rd;Encrypt=False;TrustServerCertificate=True;"
     ports:
-      - "8080:8080"
+      - "5031:8080"
     depends_on:
       sqlserver:
         condition: service_healthy
