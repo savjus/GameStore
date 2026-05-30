@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    [Migration("20260530091715_InitialCreate")]
+    [Migration("20260530131714_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,8 +32,7 @@ namespace GameStore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Discount")
                         .HasColumnType("int");
@@ -254,12 +253,10 @@ namespace GameStore.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HomePage")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -274,7 +271,7 @@ namespace GameStore.Migrations
                     b.HasOne("GameStore.Models.Publisher", "Publisher")
                         .WithMany("Games")
                         .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Publisher");

@@ -45,21 +45,11 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             entity.HasKey(game => game.Id);
             entity.Property(game => game.Name).IsRequired();
             entity.Property(game => game.Key).IsRequired();
+            entity.Property(game => game.Price).IsRequired();
+            entity.Property(game => game.UnitInStock).IsRequired();
+            entity.Property(game => game.Discount).IsRequired();
+            entity.Property(game => game.PublisherId).IsRequired();
             entity.HasIndex(game => game.Key).IsUnique();
-            entity.Property(game => game.Description).HasMaxLength(2000);
-            entity.HasOne(game => game.Publisher)
-                .WithMany(publisher => publisher.Games)
-                .HasForeignKey(game => game.PublisherId)
-                .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<Publisher>(entity =>
-        {
-            entity.HasKey(publisher => publisher.Id);
-            entity.Property(publisher => publisher.CompanyName).IsRequired();
-            entity.HasIndex(publisher => publisher.CompanyName).IsUnique();
-            entity.Property(publisher => publisher.HomePage).HasMaxLength(500);
-            entity.Property(publisher => publisher.Description).HasMaxLength(2000);
         });
 
         modelBuilder.Entity<Genre>(entity =>
@@ -78,6 +68,13 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             entity.HasKey(platform => platform.Id);
             entity.Property(platform => platform.Type).IsRequired();
             entity.HasIndex(platform => platform.Type).IsUnique();
+        });
+
+        modelBuilder.Entity<Publisher>(entity =>
+        {
+            entity.HasKey(publisher => publisher.Id);
+            entity.Property(publisher => publisher.CompanyName).IsRequired();
+            entity.HasIndex(publisher => publisher.CompanyName).IsUnique();
         });
 
         modelBuilder.Entity<GameGenre>(entity =>

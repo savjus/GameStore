@@ -13,4 +13,13 @@ public class GameCreateDto
 
     [MaxLength(2000)]
     public string? Description { get; set; }
+
+    [Required]
+    public double Price { get; set; }
+
+    [Required]
+    public int UnitInStock { get; set; }
+
+    [Required]
+    public int Discount { get; set; }
 }
