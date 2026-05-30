@@ -4622,7 +4622,7 @@ __webpack_require__.r(__webpack_exports__);
 const environment = {
     routeIdIdentifier: '{id}',
     routeKeyIdentifier: '{key}',
-    routeCompanyNameIdentifier: '{companyname}',
+    routeCompanyNameIdentifier: '{companyName}',
 };
 
 

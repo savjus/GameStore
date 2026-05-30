@@ -6,6 +6,8 @@ public interface IUnitOfWork : IDisposable
 {
     IGameRepository Games { get; }
 
+    IPublisherRepository Publishers { get; }
+
     IGenreRepository Genres { get; }
 
     IPlatformRepository Platforms { get; }

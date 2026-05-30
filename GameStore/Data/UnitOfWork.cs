@@ -6,6 +6,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly GameStoreDbContext _context;
     private IGameRepository? _gameRepository;
+    private IPublisherRepository? _publisherRepository;
     private IGenreRepository? _genreRepository;
     private IPlatformRepository? _platformRepository;
     private bool _disposed;
@@ -21,6 +22,8 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IGameRepository Games => _gameRepository ??= new GameRepository(_context);
+
+    public IPublisherRepository Publishers => _publisherRepository ??= new PublisherRepository(_context);
 
     public IGenreRepository Genres => _genreRepository ??= new GenreRepository(_context);
 

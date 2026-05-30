@@ -14,6 +14,8 @@ public interface IGameRepository
 
     Task<List<Game>> GetByGenreIdAsync(Guid genreId);
 
+    Task<List<Game>> GetByPublisherIdAsync(Guid publisherId);
+
     Task AddAsync(Game game);
 
     Task DeleteAsync(Game game);

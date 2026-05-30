@@ -12,7 +12,6 @@ public class PlatformsController(IGameService gameService, IPlatformService plat
     private readonly IPlatformService _platformService = platformService;
 
     [HttpGet("{id:guid}/games")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GameResponseDto>>> GetGamesByPlatform(Guid id)
     {
         var result = await _gameService.GetGamesByPlatformAsync(id);
@@ -22,7 +21,6 @@ public class PlatformsController(IGameService gameService, IPlatformService plat
     }
 
     [HttpGet("{id:guid}")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<PlatformResponseDto>> GetPlatformById(Guid id)
     {
         var result = await _platformService.GetPlatformByIdAsync(id);
@@ -32,7 +30,6 @@ public class PlatformsController(IGameService gameService, IPlatformService plat
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<PlatformResponseDto>>> GetAllPlatforms()
     {
         var result = await _platformService.GetAllPlatformsAsync();

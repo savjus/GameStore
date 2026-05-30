@@ -32,6 +32,9 @@ namespace GameStore.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Key")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -40,10 +43,21 @@ namespace GameStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("PublisherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UnitInStock")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Key")
                         .IsUnique();
+
+                    b.HasIndex("PublisherId");
 
                     b.ToTable("Games");
                 });
@@ -226,6 +240,43 @@ namespace GameStore.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GameStore.Models.Publisher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("HomePage")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyName")
+                        .IsUnique();
+
+                    b.ToTable("Publishers");
+                });
+
+            modelBuilder.Entity("GameStore.Models.Game", b =>
+                {
+                    b.HasOne("GameStore.Models.Publisher", "Publisher")
+                        .WithMany("Games")
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Publisher");
+                });
+
             modelBuilder.Entity("GameStore.Models.GameGenre", b =>
                 {
                     b.HasOne("GameStore.Models.Game", "Game")
@@ -291,6 +342,11 @@ namespace GameStore.Migrations
             modelBuilder.Entity("GameStore.Models.Platform", b =>
                 {
                     b.Navigation("GamePlatforms");
+                });
+
+            modelBuilder.Entity("GameStore.Models.Publisher", b =>
+                {
+                    b.Navigation("Games");
                 });
 #pragma warning restore 612, 618
         }

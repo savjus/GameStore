@@ -28,6 +28,8 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
 
     public DbSet<Game> Games => Set<Game>();
 
+    public DbSet<Publisher> Publishers => Set<Publisher>();
+
     public DbSet<Genre> Genres => Set<Genre>();
 
     public DbSet<Platform> Platforms => Set<Platform>();
@@ -45,6 +47,19 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             entity.Property(game => game.Key).IsRequired();
             entity.HasIndex(game => game.Key).IsUnique();
             entity.Property(game => game.Description).HasMaxLength(2000);
+            entity.HasOne(game => game.Publisher)
+                .WithMany(publisher => publisher.Games)
+                .HasForeignKey(game => game.PublisherId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Publisher>(entity =>
+        {
+            entity.HasKey(publisher => publisher.Id);
+            entity.Property(publisher => publisher.CompanyName).IsRequired();
+            entity.HasIndex(publisher => publisher.CompanyName).IsUnique();
+            entity.Property(publisher => publisher.HomePage).HasMaxLength(500);
+            entity.Property(publisher => publisher.Description).HasMaxLength(2000);
         });
 
         modelBuilder.Entity<Genre>(entity =>

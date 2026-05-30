@@ -18,6 +18,8 @@ public class Game
 
     public Guid PublisherId { get; set; }
 
+    public Publisher? Publisher { get; set; }
+
     public ICollection<GameGenre> GameGenres { get; set; } = [];
 
     public ICollection<GamePlatform> GamePlatforms { get; set; } = [];

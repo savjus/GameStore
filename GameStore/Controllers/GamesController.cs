@@ -11,7 +11,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     private readonly IGameService _gameService = gameService;
 
     [HttpGet("{key}")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<GameResponseDto>> GetGameByKey(string key)
     {
         var result = await _gameService.GetGameByKeyAsync(key);
@@ -21,7 +20,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     }
 
     [HttpGet("find/{id:guid}")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<GameResponseDto>> GetGameById(Guid id)
     {
         var result = await _gameService.GetGameByIdAsync(id);
@@ -31,7 +29,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GameResponseDto>>> GetAllGames()
     {
         var result = await _gameService.GetAllGamesAsync();
@@ -68,7 +65,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     }
 
     [HttpGet("{key}/file")]
-    [ResponseCache(Duration = 60)]
     public async Task<IActionResult> DownloadGame(string key)
     {
         var result = await _gameService.GetGameFileAsync(key);
@@ -82,7 +78,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     }
 
     [HttpGet("{key}/genres")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GenreResponseDto>>> GetGenresByGameKey(string key)
     {
         var result = await _gameService.GetGenresByGameKeyAsync(key);
@@ -92,7 +87,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     }
 
     [HttpGet("{key}/platforms")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<PlatformResponseDto>>> GetPlatformsByGameKey(string key)
     {
         var result = await _gameService.GetPlatformsByGameKeyAsync(key);

@@ -5,7 +5,7 @@
   "gameByIdApiUrl": "/games/find/{id}",
   "gamesApiUrl": "/games",
   "gamesByGenreApiUrl": "/genres/{id}/games",
-  "gamesByPublisherApiUrl": "",
+  "gamesByPublisherApiUrl": "/publishers/{companyName}/games",
   "gamesByPlatformApiUrl": "/platforms/{id}/games",
   "getGameFile": "/games/{key}/file",
   "updateGameApiUrl": "/games",
@@ -27,10 +27,10 @@
   "addPlatformApiUrl": "/platforms",
   "deletePlatformApiUrl": "/platforms/{id}",
 
-  "publisherApiUrl": "",
-  "publishersApiUrl": "",
-  "publisherByGameApiUrl": "",
-  "addPublisherApiUrl": "",
-  "deletePublisherApiUrl": "",
-  "updatePublisherApiUrl": ""
+  "publisherApiUrl": "/publishers/{companyName}",
+  "publishersApiUrl": "/publishers",
+  "publisherByGameApiUrl": "/games/{key}/publisher",
+  "addPublisherApiUrl": "/publishers",
+  "deletePublisherApiUrl": "/publishers/{id}",
+  "updatePublisherApiUrl": "/publishers"
 }
