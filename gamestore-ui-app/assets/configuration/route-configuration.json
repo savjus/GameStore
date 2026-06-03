@@ -1,0 +1,25 @@
+{
+  "Game": "/games/{key}",
+  "UpdateGame": "/games/{key}/update",
+  "DeleteGame": "/games/{key}/delete",
+  "AddGame": "/games/add",
+  "Games": "/games",
+
+  "Genres": "/genres",
+  "Genre": "/genres/{id}",
+  "AddGenre": "/genres/add",
+  "DeleteGenre": "/genres/{id}/delete",
+  "UpdateGenre": "/genres/{id}/update",
+
+  "UpdatePlatform": "/platforms/{id}/update",
+  "DeletePlatform": "/platforms/{id}/delete",
+  "Platform": "/platforms/{id}",
+  "AddPlatform": "/platforms/add",
+  "Platforms": "/platforms",
+
+  "Publishers": "/publishers",
+  "Publisher": "/publishers",
+  "UpdatePublisher": "/publishers/update",
+  "DeletePublisher": "/publishers/delete",
+  "AddPublisher": "/publishers/add"
+}

@@ -1,0 +1,718 @@
+﻿2026-05-30 12:05:22.979 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (25ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:05:23.091 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+END;
+2026-05-30 12:05:23.141 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (48ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+DROP DATABASE [GameStore];
+2026-05-30 12:10:48.304 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (229ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [GameStore];
+2026-05-30 12:10:48.420 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (97ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+2026-05-30 12:10:48.447 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:10:48.544 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+2026-05-30 12:10:48.547 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:10:48.571 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (20ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 12:10:48.579 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-05-30 12:10:48.602 [Information] Microsoft.EntityFrameworkCore.Migrations: Applying migration '20260530090542_InitialCreate'.
+2026-05-30 12:10:48.718 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Genres] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
+    [ParentGenreId] uniqueidentifier NULL,
+    CONSTRAINT [PK_Genres] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Genres_Genres_ParentGenreId] FOREIGN KEY ([ParentGenreId]) REFERENCES [Genres] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 12:10:48.722 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Platforms] (
+    [Id] uniqueidentifier NOT NULL,
+    [Type] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_Platforms] PRIMARY KEY ([Id])
+);
+2026-05-30 12:10:48.725 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Publishers] (
+    [Id] uniqueidentifier NOT NULL,
+    [CompanyName] nvarchar(450) NOT NULL,
+    [HomePage] nvarchar(500) NULL,
+    [Description] nvarchar(2000) NULL,
+    CONSTRAINT [PK_Publishers] PRIMARY KEY ([Id])
+);
+2026-05-30 12:10:48.729 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Games] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Key] nvarchar(450) NOT NULL,
+    [Description] nvarchar(2000) NULL,
+    [Price] float NOT NULL,
+    [UnitInStock] int NOT NULL,
+    [Discount] int NOT NULL,
+    [PublisherId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_Games] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Games_Publishers_PublisherId] FOREIGN KEY ([PublisherId]) REFERENCES [Publishers] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 12:10:48.732 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GameGenres] (
+    [GameId] uniqueidentifier NOT NULL,
+    [GenreId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GameGenres] PRIMARY KEY ([GameId], [GenreId]),
+    CONSTRAINT [FK_GameGenres_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GameGenres_Genres_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [Genres] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 12:10:48.736 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GamePlatforms] (
+    [GameId] uniqueidentifier NOT NULL,
+    [PlatformId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GamePlatforms] PRIMARY KEY ([GameId], [PlatformId]),
+    CONSTRAINT [FK_GamePlatforms_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GamePlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [Platforms] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 12:10:48.791 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (54ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('0b5c97c5-1f41-4cb1-b968-7e7f1a12f702', N'Adventure', NULL),
+('1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c', N'Races', NULL),
+('2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701', N'Strategy', NULL),
+('c1bde7c2-1b0a-46ef-9a54-0c882c5c9c11', N'Sports', NULL),
+('e7c2e5a0-6b06-4785-9b65-2f57a3c0f1d2', N'RPG', NULL),
+('e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c', N'Action', NULL),
+('ea1a5e5a-8f3f-4a88-9806-7ff0a9e9f2cc', N'Puzzle & Skill', NULL);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 12:10:48.805 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] ON;
+INSERT INTO [Platforms] ([Id], [Type])
+VALUES ('0e6c8b5f-0e69-4c1c-8d2b-5d1a4a7b2d4f', N'Console'),
+('4cc03e69-7a7b-4a08-bc79-7db7a4b7b08c', N'Mobile'),
+('a51b02b3-2d1f-4b9b-8f38-8a1f7f0abde3', N'Desktop'),
+('c0864f05-19d8-4d02-9c9b-2f25b2e1cb28', N'Browser');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] OFF;
+2026-05-30 12:10:48.825 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (19ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('4c1b90ac-5c2c-4a56-a357-236f8380b40b', N'Formula', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('87c7e2d0-8f9c-4e52-946a-0d0b8f8af879', N'Arcade', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('9c3d67b9-5cc8-48cc-b4bb-9c2f30bf24aa', N'RTS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('9d47a4b2-6f1e-4f5a-8d8b-ef8228f52f11', N'TPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('9e9b6f40-7b4d-4cf9-93a9-bc0e2f594c85', N'Rally', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('a0d0fe2a-b588-4c36-941b-3e14970b5237', N'TBS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('b2f95f0b-bb3a-4d82-9f5a-4a31f2c2a8a4', N'FPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('b7412f02-90c1-4fbb-95b8-bc90d1b4f3d0', N'Off-road', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 12:10:48.828 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GameGenres_GenreId] ON [GameGenres] ([GenreId]);
+2026-05-30 12:10:48.831 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GamePlatforms_PlatformId] ON [GamePlatforms] ([PlatformId]);
+2026-05-30 12:10:48.833 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Games_Key] ON [Games] ([Key]);
+2026-05-30 12:10:48.836 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Games_PublisherId] ON [Games] ([PublisherId]);
+2026-05-30 12:10:48.842 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Genres_Name] ON [Genres] ([Name]);
+2026-05-30 12:10:48.847 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Genres_ParentGenreId] ON [Genres] ([ParentGenreId]);
+2026-05-30 12:10:48.852 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Platforms_Type] ON [Platforms] ([Type]);
+2026-05-30 12:10:48.854 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Publishers_CompanyName] ON [Publishers] ([CompanyName]);
+2026-05-30 12:10:48.858 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260530090542_InitialCreate', N'8.0.5');
+2026-05-30 12:17:01.540 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (39ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:17:01.910 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (198ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+END;
+2026-05-30 12:17:01.954 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (42ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+DROP DATABASE [GameStore];
+2026-05-30 12:37:35.751 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (209ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [GameStore];
+2026-05-30 12:37:35.898 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (121ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+2026-05-30 12:37:35.928 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:37:36.036 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (11ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+2026-05-30 12:37:36.039 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:37:36.072 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (25ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 12:37:36.081 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-05-30 12:37:36.107 [Information] Microsoft.EntityFrameworkCore.Migrations: Applying migration '20260530091715_InitialCreate'.
+2026-05-30 12:37:36.226 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Genres] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
+    [ParentGenreId] uniqueidentifier NULL,
+    CONSTRAINT [PK_Genres] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Genres_Genres_ParentGenreId] FOREIGN KEY ([ParentGenreId]) REFERENCES [Genres] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 12:37:36.230 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Platforms] (
+    [Id] uniqueidentifier NOT NULL,
+    [Type] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_Platforms] PRIMARY KEY ([Id])
+);
+2026-05-30 12:37:36.235 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Publishers] (
+    [Id] uniqueidentifier NOT NULL,
+    [CompanyName] nvarchar(450) NOT NULL,
+    [HomePage] nvarchar(500) NULL,
+    [Description] nvarchar(2000) NULL,
+    CONSTRAINT [PK_Publishers] PRIMARY KEY ([Id])
+);
+2026-05-30 12:37:36.240 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Games] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Key] nvarchar(450) NOT NULL,
+    [Description] nvarchar(2000) NULL,
+    [Price] float NOT NULL,
+    [UnitInStock] int NOT NULL,
+    [Discount] int NOT NULL,
+    [PublisherId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_Games] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Games_Publishers_PublisherId] FOREIGN KEY ([PublisherId]) REFERENCES [Publishers] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 12:37:36.244 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GameGenres] (
+    [GameId] uniqueidentifier NOT NULL,
+    [GenreId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GameGenres] PRIMARY KEY ([GameId], [GenreId]),
+    CONSTRAINT [FK_GameGenres_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GameGenres_Genres_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [Genres] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 12:37:36.249 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GamePlatforms] (
+    [GameId] uniqueidentifier NOT NULL,
+    [PlatformId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GamePlatforms] PRIMARY KEY ([GameId], [PlatformId]),
+    CONSTRAINT [FK_GamePlatforms_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GamePlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [Platforms] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 12:37:36.330 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (78ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('0b5c97c5-1f41-4cb1-b968-7e7f1a12f702', N'Adventure', NULL),
+('1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c', N'Races', NULL),
+('2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701', N'Strategy', NULL),
+('c1bde7c2-1b0a-46ef-9a54-0c882c5c9c11', N'Sports', NULL),
+('e7c2e5a0-6b06-4785-9b65-2f57a3c0f1d2', N'RPG', NULL),
+('e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c', N'Action', NULL),
+('ea1a5e5a-8f3f-4a88-9806-7ff0a9e9f2cc', N'Puzzle & Skill', NULL);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 12:37:36.349 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (17ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] ON;
+INSERT INTO [Platforms] ([Id], [Type])
+VALUES ('0e6c8b5f-0e69-4c1c-8d2b-5d1a4a7b2d4f', N'Console'),
+('4cc03e69-7a7b-4a08-bc79-7db7a4b7b08c', N'Mobile'),
+('a51b02b3-2d1f-4b9b-8f38-8a1f7f0abde3', N'Desktop'),
+('c0864f05-19d8-4d02-9c9b-2f25b2e1cb28', N'Browser');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] OFF;
+2026-05-30 12:37:36.371 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (20ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('4c1b90ac-5c2c-4a56-a357-236f8380b40b', N'Formula', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('87c7e2d0-8f9c-4e52-946a-0d0b8f8af879', N'Arcade', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('9c3d67b9-5cc8-48cc-b4bb-9c2f30bf24aa', N'RTS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('9d47a4b2-6f1e-4f5a-8d8b-ef8228f52f11', N'TPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('9e9b6f40-7b4d-4cf9-93a9-bc0e2f594c85', N'Rally', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('a0d0fe2a-b588-4c36-941b-3e14970b5237', N'TBS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('b2f95f0b-bb3a-4d82-9f5a-4a31f2c2a8a4', N'FPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('b7412f02-90c1-4fbb-95b8-bc90d1b4f3d0', N'Off-road', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 12:37:36.375 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GameGenres_GenreId] ON [GameGenres] ([GenreId]);
+2026-05-30 12:37:36.379 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GamePlatforms_PlatformId] ON [GamePlatforms] ([PlatformId]);
+2026-05-30 12:37:36.383 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Games_Key] ON [Games] ([Key]);
+2026-05-30 12:37:36.387 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Games_PublisherId] ON [Games] ([PublisherId]);
+2026-05-30 12:37:36.396 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Genres_Name] ON [Genres] ([Name]);
+2026-05-30 12:37:36.402 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Genres_ParentGenreId] ON [Genres] ([ParentGenreId]);
+2026-05-30 12:37:36.410 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Platforms_Type] ON [Platforms] ([Type]);
+2026-05-30 12:37:36.413 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Publishers_CompanyName] ON [Publishers] ([CompanyName]);
+2026-05-30 12:37:36.417 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260530091715_InitialCreate', N'8.0.5');
+2026-05-30 12:39:24.606 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (24ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:39:24.672 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (20ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 12:39:24.677 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 12:39:24.679 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 12:39:24.703 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-05-30 12:39:24.731 [Information] Microsoft.EntityFrameworkCore.Migrations: No migrations were applied. The database is already up to date.
+2026-05-30 12:39:25.226 [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5031
+2026-05-30 12:39:25.232 [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2026-05-30 12:39:25.235 [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2026-05-30 12:39:25.236 [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore
+2026-05-30 12:39:27.502 [Information] Microsoft.Hosting.Lifetime: Application is shutting down...
+2026-05-30 15:45:33.808 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (24ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 15:45:33.889 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+END;
+2026-05-30 15:45:33.926 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (35ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+DROP DATABASE [GameStore];
+2026-05-30 15:46:08.493 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (257ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [GameStore];
+2026-05-30 15:46:08.594 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (79ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+2026-05-30 15:46:08.620 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 15:46:08.710 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+2026-05-30 15:46:08.712 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 15:46:08.739 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (22ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 15:46:08.747 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-05-30 15:46:08.769 [Information] Microsoft.EntityFrameworkCore.Migrations: Applying migration '20260530124550_InitialCreate'.
+2026-05-30 15:46:08.874 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Genres] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
+    [ParentGenreId] uniqueidentifier NULL,
+    CONSTRAINT [PK_Genres] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Genres_Genres_ParentGenreId] FOREIGN KEY ([ParentGenreId]) REFERENCES [Genres] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 15:46:08.878 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Platforms] (
+    [Id] uniqueidentifier NOT NULL,
+    [Type] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_Platforms] PRIMARY KEY ([Id])
+);
+2026-05-30 15:46:08.882 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Publishers] (
+    [Id] uniqueidentifier NOT NULL,
+    [CompanyName] nvarchar(450) NOT NULL,
+    [HomePage] nvarchar(500) NULL,
+    [Description] nvarchar(2000) NULL,
+    CONSTRAINT [PK_Publishers] PRIMARY KEY ([Id])
+);
+2026-05-30 15:46:08.886 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Games] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Key] nvarchar(450) NOT NULL,
+    [Description] nvarchar(2000) NULL,
+    [Price] float NOT NULL,
+    [UnitInStock] int NOT NULL,
+    [Discount] int NOT NULL,
+    [PublisherId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_Games] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Games_Publishers_PublisherId] FOREIGN KEY ([PublisherId]) REFERENCES [Publishers] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 15:46:08.890 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GameGenres] (
+    [GameId] uniqueidentifier NOT NULL,
+    [GenreId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GameGenres] PRIMARY KEY ([GameId], [GenreId]),
+    CONSTRAINT [FK_GameGenres_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GameGenres_Genres_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [Genres] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 15:46:08.894 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GamePlatforms] (
+    [GameId] uniqueidentifier NOT NULL,
+    [PlatformId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GamePlatforms] PRIMARY KEY ([GameId], [PlatformId]),
+    CONSTRAINT [FK_GamePlatforms_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GamePlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [Platforms] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 15:46:08.964 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (67ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('0b5c97c5-1f41-4cb1-b968-7e7f1a12f702', N'Adventure', NULL),
+('1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c', N'Races', NULL),
+('2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701', N'Strategy', NULL),
+('c1bde7c2-1b0a-46ef-9a54-0c882c5c9c11', N'Sports', NULL),
+('e7c2e5a0-6b06-4785-9b65-2f57a3c0f1d2', N'RPG', NULL),
+('e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c', N'Action', NULL),
+('ea1a5e5a-8f3f-4a88-9806-7ff0a9e9f2cc', N'Puzzle & Skill', NULL);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 15:46:08.978 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] ON;
+INSERT INTO [Platforms] ([Id], [Type])
+VALUES ('0e6c8b5f-0e69-4c1c-8d2b-5d1a4a7b2d4f', N'Console'),
+('4cc03e69-7a7b-4a08-bc79-7db7a4b7b08c', N'Mobile'),
+('a51b02b3-2d1f-4b9b-8f38-8a1f7f0abde3', N'Desktop'),
+('c0864f05-19d8-4d02-9c9b-2f25b2e1cb28', N'Browser');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] OFF;
+2026-05-30 15:46:08.999 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (20ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('4c1b90ac-5c2c-4a56-a357-236f8380b40b', N'Formula', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('87c7e2d0-8f9c-4e52-946a-0d0b8f8af879', N'Arcade', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('9c3d67b9-5cc8-48cc-b4bb-9c2f30bf24aa', N'RTS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('9d47a4b2-6f1e-4f5a-8d8b-ef8228f52f11', N'TPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('9e9b6f40-7b4d-4cf9-93a9-bc0e2f594c85', N'Rally', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('a0d0fe2a-b588-4c36-941b-3e14970b5237', N'TBS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('b2f95f0b-bb3a-4d82-9f5a-4a31f2c2a8a4', N'FPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('b7412f02-90c1-4fbb-95b8-bc90d1b4f3d0', N'Off-road', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 15:46:09.002 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GameGenres_GenreId] ON [GameGenres] ([GenreId]);
+2026-05-30 15:46:09.005 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GamePlatforms_PlatformId] ON [GamePlatforms] ([PlatformId]);
+2026-05-30 15:46:09.008 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Games_Key] ON [Games] ([Key]);
+2026-05-30 15:46:09.010 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Games_PublisherId] ON [Games] ([PublisherId]);
+2026-05-30 15:46:09.018 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Genres_Name] ON [Genres] ([Name]);
+2026-05-30 15:46:09.024 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Genres_ParentGenreId] ON [Genres] ([ParentGenreId]);
+2026-05-30 15:46:09.030 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Platforms_Type] ON [Platforms] ([Type]);
+2026-05-30 15:46:09.033 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Publishers_CompanyName] ON [Publishers] ([CompanyName]);
+2026-05-30 15:46:09.037 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260530124550_InitialCreate', N'8.0.5');
+2026-05-30 15:57:22.655 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (22ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 15:57:22.726 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+END;
+2026-05-30 15:57:22.757 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (30ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+DROP DATABASE [GameStore];
+2026-05-30 15:57:53.118 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (171ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [GameStore];
+2026-05-30 15:57:53.194 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (58ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+2026-05-30 15:57:53.302 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 15:57:53.400 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+2026-05-30 15:57:53.403 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 15:57:53.429 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (21ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 15:57:53.437 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-05-30 15:57:53.459 [Information] Microsoft.EntityFrameworkCore.Migrations: Applying migration '20260530125735_InitialCreate'.
+2026-05-30 15:57:53.576 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Genres] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
+    [ParentGenreId] uniqueidentifier NULL,
+    CONSTRAINT [PK_Genres] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Genres_Genres_ParentGenreId] FOREIGN KEY ([ParentGenreId]) REFERENCES [Genres] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 15:57:53.581 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Platforms] (
+    [Id] uniqueidentifier NOT NULL,
+    [Type] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_Platforms] PRIMARY KEY ([Id])
+);
+2026-05-30 15:57:53.586 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Publishers] (
+    [Id] uniqueidentifier NOT NULL,
+    [CompanyName] nvarchar(450) NOT NULL,
+    [HomePage] nvarchar(max) NULL,
+    [Description] nvarchar(max) NULL,
+    CONSTRAINT [PK_Publishers] PRIMARY KEY ([Id])
+);
+2026-05-30 15:57:53.590 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Games] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Key] nvarchar(450) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [Price] float NOT NULL,
+    [UnitInStock] int NOT NULL,
+    [Discount] int NOT NULL,
+    [PublisherId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_Games] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Games_Publishers_PublisherId] FOREIGN KEY ([PublisherId]) REFERENCES [Publishers] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 15:57:53.594 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GameGenres] (
+    [GameId] uniqueidentifier NOT NULL,
+    [GenreId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GameGenres] PRIMARY KEY ([GameId], [GenreId]),
+    CONSTRAINT [FK_GameGenres_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GameGenres_Genres_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [Genres] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 15:57:53.598 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GamePlatforms] (
+    [GameId] uniqueidentifier NOT NULL,
+    [PlatformId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GamePlatforms] PRIMARY KEY ([GameId], [PlatformId]),
+    CONSTRAINT [FK_GamePlatforms_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GamePlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [Platforms] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 15:57:53.651 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (51ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('0b5c97c5-1f41-4cb1-b968-7e7f1a12f702', N'Adventure', NULL),
+('1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c', N'Races', NULL),
+('2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701', N'Strategy', NULL),
+('c1bde7c2-1b0a-46ef-9a54-0c882c5c9c11', N'Sports', NULL),
+('e7c2e5a0-6b06-4785-9b65-2f57a3c0f1d2', N'RPG', NULL),
+('e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c', N'Action', NULL),
+('ea1a5e5a-8f3f-4a88-9806-7ff0a9e9f2cc', N'Puzzle & Skill', NULL);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 15:57:53.666 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (14ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] ON;
+INSERT INTO [Platforms] ([Id], [Type])
+VALUES ('0e6c8b5f-0e69-4c1c-8d2b-5d1a4a7b2d4f', N'Console'),
+('4cc03e69-7a7b-4a08-bc79-7db7a4b7b08c', N'Mobile'),
+('a51b02b3-2d1f-4b9b-8f38-8a1f7f0abde3', N'Desktop'),
+('c0864f05-19d8-4d02-9c9b-2f25b2e1cb28', N'Browser');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] OFF;
+2026-05-30 15:57:53.683 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (16ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('4c1b90ac-5c2c-4a56-a357-236f8380b40b', N'Formula', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('87c7e2d0-8f9c-4e52-946a-0d0b8f8af879', N'Arcade', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('9c3d67b9-5cc8-48cc-b4bb-9c2f30bf24aa', N'RTS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('9d47a4b2-6f1e-4f5a-8d8b-ef8228f52f11', N'TPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('9e9b6f40-7b4d-4cf9-93a9-bc0e2f594c85', N'Rally', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('a0d0fe2a-b588-4c36-941b-3e14970b5237', N'TBS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('b2f95f0b-bb3a-4d82-9f5a-4a31f2c2a8a4', N'FPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('b7412f02-90c1-4fbb-95b8-bc90d1b4f3d0', N'Off-road', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 15:57:53.685 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GameGenres_GenreId] ON [GameGenres] ([GenreId]);
+2026-05-30 15:57:53.688 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GamePlatforms_PlatformId] ON [GamePlatforms] ([PlatformId]);
+2026-05-30 15:57:53.690 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Games_Key] ON [Games] ([Key]);
+2026-05-30 15:57:53.692 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Games_PublisherId] ON [Games] ([PublisherId]);
+2026-05-30 15:57:53.698 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Genres_Name] ON [Genres] ([Name]);
+2026-05-30 15:57:53.703 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Genres_ParentGenreId] ON [Genres] ([ParentGenreId]);
+2026-05-30 15:57:53.708 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Platforms_Type] ON [Platforms] ([Type]);
+2026-05-30 15:57:53.710 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Publishers_CompanyName] ON [Publishers] ([CompanyName]);
+2026-05-30 15:57:53.714 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260530125735_InitialCreate', N'8.0.5');
+2026-05-30 16:16:48.042 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (18ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 16:16:48.104 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+END;
+2026-05-30 16:16:48.131 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (26ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+DROP DATABASE [GameStore];
+2026-05-30 16:17:31.939 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (226ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [GameStore];
+2026-05-30 16:17:32.031 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (75ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [GameStore] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+2026-05-30 16:17:32.123 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 16:17:32.190 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+2026-05-30 16:17:32.192 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1
+2026-05-30 16:17:32.210 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (14ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-05-30 16:17:32.218 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-05-30 16:17:32.238 [Information] Microsoft.EntityFrameworkCore.Migrations: Applying migration '20260530131714_InitialCreate'.
+2026-05-30 16:17:32.326 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Genres] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
+    [ParentGenreId] uniqueidentifier NULL,
+    CONSTRAINT [PK_Genres] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Genres_Genres_ParentGenreId] FOREIGN KEY ([ParentGenreId]) REFERENCES [Genres] ([Id]) ON DELETE NO ACTION
+);
+2026-05-30 16:17:32.330 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Platforms] (
+    [Id] uniqueidentifier NOT NULL,
+    [Type] nvarchar(450) NOT NULL,
+    CONSTRAINT [PK_Platforms] PRIMARY KEY ([Id])
+);
+2026-05-30 16:17:32.332 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Publishers] (
+    [Id] uniqueidentifier NOT NULL,
+    [CompanyName] nvarchar(450) NOT NULL,
+    [HomePage] nvarchar(max) NULL,
+    [Description] nvarchar(max) NULL,
+    CONSTRAINT [PK_Publishers] PRIMARY KEY ([Id])
+);
+2026-05-30 16:17:32.335 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [Games] (
+    [Id] uniqueidentifier NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Key] nvarchar(450) NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [Price] float NOT NULL,
+    [UnitInStock] int NOT NULL,
+    [Discount] int NOT NULL,
+    [PublisherId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_Games] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Games_Publishers_PublisherId] FOREIGN KEY ([PublisherId]) REFERENCES [Publishers] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 16:17:32.338 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GameGenres] (
+    [GameId] uniqueidentifier NOT NULL,
+    [GenreId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GameGenres] PRIMARY KEY ([GameId], [GenreId]),
+    CONSTRAINT [FK_GameGenres_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GameGenres_Genres_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [Genres] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 16:17:32.341 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE [GamePlatforms] (
+    [GameId] uniqueidentifier NOT NULL,
+    [PlatformId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_GamePlatforms] PRIMARY KEY ([GameId], [PlatformId]),
+    CONSTRAINT [FK_GamePlatforms_Games_GameId] FOREIGN KEY ([GameId]) REFERENCES [Games] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GamePlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [Platforms] ([Id]) ON DELETE CASCADE
+);
+2026-05-30 16:17:32.387 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (44ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('0b5c97c5-1f41-4cb1-b968-7e7f1a12f702', N'Adventure', NULL),
+('1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c', N'Races', NULL),
+('2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701', N'Strategy', NULL),
+('c1bde7c2-1b0a-46ef-9a54-0c882c5c9c11', N'Sports', NULL),
+('e7c2e5a0-6b06-4785-9b65-2f57a3c0f1d2', N'RPG', NULL),
+('e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c', N'Action', NULL),
+('ea1a5e5a-8f3f-4a88-9806-7ff0a9e9f2cc', N'Puzzle & Skill', NULL);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 16:17:32.399 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] ON;
+INSERT INTO [Platforms] ([Id], [Type])
+VALUES ('0e6c8b5f-0e69-4c1c-8d2b-5d1a4a7b2d4f', N'Console'),
+('4cc03e69-7a7b-4a08-bc79-7db7a4b7b08c', N'Mobile'),
+('a51b02b3-2d1f-4b9b-8f38-8a1f7f0abde3', N'Desktop'),
+('c0864f05-19d8-4d02-9c9b-2f25b2e1cb28', N'Browser');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Type') AND [object_id] = OBJECT_ID(N'[Platforms]'))
+    SET IDENTITY_INSERT [Platforms] OFF;
+2026-05-30 16:17:32.414 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] ON;
+INSERT INTO [Genres] ([Id], [Name], [ParentGenreId])
+VALUES ('4c1b90ac-5c2c-4a56-a357-236f8380b40b', N'Formula', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('87c7e2d0-8f9c-4e52-946a-0d0b8f8af879', N'Arcade', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('9c3d67b9-5cc8-48cc-b4bb-9c2f30bf24aa', N'RTS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('9d47a4b2-6f1e-4f5a-8d8b-ef8228f52f11', N'TPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('9e9b6f40-7b4d-4cf9-93a9-bc0e2f594c85', N'Rally', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c'),
+('a0d0fe2a-b588-4c36-941b-3e14970b5237', N'TBS', '2b1d7a14-6f01-4f2d-b4b2-2a3461f9f701'),
+('b2f95f0b-bb3a-4d82-9f5a-4a31f2c2a8a4', N'FPS', 'e9f7c2a4-fb9e-4f1f-9d3f-6a4f3b14bd6c'),
+('b7412f02-90c1-4fbb-95b8-bc90d1b4f3d0', N'Off-road', '1e0e2f11-2b2b-4f5f-8b0e-50ed3d70ed1c');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Name', N'ParentGenreId') AND [object_id] = OBJECT_ID(N'[Genres]'))
+    SET IDENTITY_INSERT [Genres] OFF;
+2026-05-30 16:17:32.417 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GameGenres_GenreId] ON [GameGenres] ([GenreId]);
+2026-05-30 16:17:32.419 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_GamePlatforms_PlatformId] ON [GamePlatforms] ([PlatformId]);
+2026-05-30 16:17:32.421 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Games_Key] ON [Games] ([Key]);
+2026-05-30 16:17:32.424 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Games_PublisherId] ON [Games] ([PublisherId]);
+2026-05-30 16:17:32.429 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Genres_Name] ON [Genres] ([Name]);
+2026-05-30 16:17:32.433 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE INDEX [IX_Genres_ParentGenreId] ON [Genres] ([ParentGenreId]);
+2026-05-30 16:17:32.437 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Platforms_Type] ON [Platforms] ([Type]);
+2026-05-30 16:17:32.439 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_Publishers_CompanyName] ON [Publishers] ([CompanyName]);
+2026-05-30 16:17:32.442 [Information] Microsoft.EntityFrameworkCore.Database.Command: Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260530131714_InitialCreate', N'8.0.5');

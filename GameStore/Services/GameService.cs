@@ -125,6 +125,21 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
 
     public async Task<ServiceResult<GameResponseDto>> AddGameAsync(AddGameRequest request)
     {
+        if (request.Publisher == Guid.Empty)
+        {
+            return ServiceResult.Fail<GameResponseDto>(
+                StatusCodes.Status400BadRequest,
+                "Publisher id is required.");
+        }
+
+        var publisher = await _unitOfWork.Publishers.GetByIdAsync(request.Publisher);
+        if (publisher == null)
+        {
+            return ServiceResult.Fail<GameResponseDto>(
+                StatusCodes.Status400BadRequest,
+                "Publisher does not exist.");
+        }
+
         var gameName = request.Game.Name.Trim();
         var gameKey = string.IsNullOrWhiteSpace(request.Game.Key)
             ? GenerateKey(gameName)
@@ -144,6 +159,10 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
             Name = gameName,
             Key = gameKey,
             Description = request.Game.Description?.Trim(),
+            Price = request.Game.Price,
+            UnitInStock = request.Game.UnitInStock,
+            Discount = request.Game.Discount,
+            PublisherId = publisher.Id,
         };
 
         if (request.Genres.Count > 0)
@@ -165,7 +184,6 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
                     GameId = game.Id,
                     GenreId = genre.Id,
                     Game = game,
-                    Genre = genre,
                 });
             }
         }
@@ -189,7 +207,6 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
                     GameId = game.Id,
                     PlatformId = platform.Id,
                     Game = game,
-                    Platform = platform,
                 });
             }
         }
@@ -203,6 +220,9 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
             Name = game.Name,
             Key = game.Key,
             Description = game.Description,
+            Price = game.Price,
+            UnitInStock = game.UnitInStock,
+            Discount = game.Discount,
         };
 
         return ServiceResult.Success(response, StatusCodes.Status201Created);
@@ -210,6 +230,13 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
 
     public async Task<ServiceResult<GameResponseDto>> UpdateGameAsync(UpdateGameRequest request)
     {
+        if (request.Publisher == Guid.Empty)
+        {
+            return ServiceResult.Fail<GameResponseDto>(
+                StatusCodes.Status400BadRequest,
+                "Publisher id is required.");
+        }
+
         if (request.Game.Id == Guid.Empty)
         {
             return ServiceResult.Fail<GameResponseDto>(
@@ -238,9 +265,21 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
                 $"Game key '{gameKey}' already exists.");
         }
 
+        var publisher = await _unitOfWork.Publishers.GetByIdAsync(request.Publisher);
+        if (publisher == null)
+        {
+            return ServiceResult.Fail<GameResponseDto>(
+                StatusCodes.Status400BadRequest,
+                "Publisher does not exist.");
+        }
+
         game.Name = gameName;
         game.Key = gameKey;
         game.Description = request.Game.Description?.Trim();
+        game.Price = request.Game.Price;
+        game.UnitInStock = request.Game.UnitInStock;
+        game.Discount = request.Game.Discount;
+        game.PublisherId = publisher.Id;
 
         var distinctGenreIds = request.Genres.Distinct().ToList();
         var existingGenres = distinctGenreIds.Count == 0
@@ -274,7 +313,6 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
                 GameId = game.Id,
                 GenreId = genre.Id,
                 Game = game,
-                Genre = genre,
             });
         }
 
@@ -286,7 +324,6 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
                 GameId = game.Id,
                 PlatformId = platform.Id,
                 Game = game,
-                Platform = platform,
             });
         }
 
@@ -358,6 +395,9 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
             Name = game.Name,
             Key = game.Key,
             Description = game.Description,
+            Price = game.Price,
+            UnitInStock = game.UnitInStock,
+            Discount = game.Discount,
         };
     }
 

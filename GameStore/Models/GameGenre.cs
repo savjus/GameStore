@@ -6,7 +6,7 @@ public class GameGenre
 
     public Guid GenreId { get; set; }
 
-    public required Game Game { get; set; }
+    public Game Game { get; set; }
 
-    public required Genre Genre { get; set; }
+    public Genre Genre { get; set; }
 }

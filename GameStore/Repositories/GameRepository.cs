@@ -47,6 +47,12 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
             .ToListAsync();
     }
 
+    public Task<List<Game>> GetByPublisherIdAsync(Guid publisherId)
+    {
+        return _dbContext.Games.AsNoTracking().Where(game => game.PublisherId == publisherId)
+            .ToListAsync();
+    }
+
     public Task SaveChangesAsync()
     {
         return _dbContext.SaveChangesAsync();

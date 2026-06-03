@@ -12,7 +12,6 @@ public class GenresController(IGameService gameService, IGenreService genreServi
     private readonly IGenreService _genreService = genreService;
 
     [HttpGet("{id:guid}/games")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GameResponseDto>>> GetGamesByGenre(Guid id)
     {
         var result = await _gameService.GetGamesByGenreAsync(id);
@@ -22,7 +21,6 @@ public class GenresController(IGameService gameService, IGenreService genreServi
     }
 
     [HttpGet("{id:guid}")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<GenreResponseDto>> GetGenreById(Guid id)
     {
         var result = await _genreService.GetGenreByIdAsync(id);
@@ -32,7 +30,6 @@ public class GenresController(IGameService gameService, IGenreService genreServi
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GenreResponseDto>>> GetAllGenres()
     {
         var result = await _genreService.GetAllGenresAsync();
@@ -42,7 +39,6 @@ public class GenresController(IGameService gameService, IGenreService genreServi
     }
 
     [HttpGet("{id:guid}/genres")]
-    [ResponseCache(Duration = 60)]
     public async Task<ActionResult<List<GenreResponseDto>>> GetGenresByParentId(Guid id)
     {
         var result = await _genreService.GetGenresByParentIdAsync(id);

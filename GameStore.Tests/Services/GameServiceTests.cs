@@ -50,6 +50,9 @@ public class GameServiceTests
             Name = "Super Game",
             Key = "super-game",
             Description = "desc",
+            Price = 12.5,
+            UnitInStock = 5,
+            Discount = 1,
         };
 
         var gameRepository = new Mock<IGameRepository>();
@@ -67,6 +70,9 @@ public class GameServiceTests
         Assert.Equal(game.Name, result.Value.Name);
         Assert.Equal(game.Key, result.Value.Key);
         Assert.Equal(game.Description, result.Value.Description);
+        Assert.Equal(game.Price, result.Value.Price);
+        Assert.Equal(game.UnitInStock, result.Value.UnitInStock);
+        Assert.Equal(game.Discount, result.Value.Discount);
     }
 
     [Fact]
@@ -74,6 +80,7 @@ public class GameServiceTests
     {
         var genreId = Guid.NewGuid();
         var platformId = Guid.NewGuid();
+        var publisherId = Guid.NewGuid();
 
         var request = new AddGameRequest
         {
@@ -82,9 +89,13 @@ public class GameServiceTests
                 Name = "Super Game!",
                 Key = null,
                 Description = "desc",
+                Price = 10.5,
+                UnitInStock = 11,
+                Discount = 2,
             },
             Genres = [genreId],
             Platforms = [platformId],
+            Publisher = publisherId,
         };
 
         var gameRepository = new Mock<IGameRepository>();
@@ -104,7 +115,17 @@ public class GameServiceTests
         platformRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
             .ReturnsAsync([new Platform { Id = platformId, Type = "Desktop" }]);
 
-        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository);
+        var publisherRepository = new Mock<IPublisherRepository>();
+        publisherRepository.Setup(repo => repo.GetByIdAsync(publisherId))
+            .ReturnsAsync(new Publisher
+            {
+                Id = publisherId,
+                CompanyName = "Publisher",
+                HomePage = "https://example.test",
+                Description = "desc",
+            });
+
+        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository, publisherRepository);
         unitOfWork.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(0);
         var service = new GameService(unitOfWork.Object);
@@ -117,6 +138,9 @@ public class GameServiceTests
         Assert.Equal("Super Game!", result.Value!.Name);
         Assert.Equal("super-game", result.Value.Key);
         Assert.Equal("desc", result.Value.Description);
+        Assert.Equal(10.5, result.Value.Price);
+        Assert.Equal(11, result.Value.UnitInStock);
+        Assert.Equal(2, result.Value.Discount);
         Assert.NotNull(createdGame);
         Assert.Equal("super-game", createdGame!.Key);
     }
@@ -124,20 +148,29 @@ public class GameServiceTests
     [Fact]
     public async Task AddGameAsync_ReturnsConflict_WhenKeyExists()
     {
+        var publisherId = Guid.NewGuid();
         var request = new AddGameRequest
         {
             Game = new GameCreateDto
             {
                 Name = "Super Game",
                 Key = "super-game",
+                Price = 10,
+                UnitInStock = 3,
+                Discount = 1,
             },
+            Publisher = publisherId,
         };
 
         var gameRepository = new Mock<IGameRepository>();
         gameRepository.Setup(repo => repo.KeyExistsAsync("super-game"))
             .ReturnsAsync(true);
 
-        var service = CreateService(gameRepository: gameRepository);
+        var publisherRepository = new Mock<IPublisherRepository>();
+        publisherRepository.Setup(repo => repo.GetByIdAsync(publisherId))
+            .ReturnsAsync(new Publisher { Id = publisherId, CompanyName = "Publisher" });
+
+        var service = CreateService(gameRepository: gameRepository, publisherRepository: publisherRepository);
 
         var result = await service.AddGameAsync(request);
 
@@ -150,14 +183,19 @@ public class GameServiceTests
     public async Task AddGameAsync_ReturnsBadRequest_WhenGenreMissing()
     {
         var genreId = Guid.NewGuid();
+        var publisherId = Guid.NewGuid();
         var request = new AddGameRequest
         {
             Game = new GameCreateDto
             {
                 Name = "Super Game",
                 Key = "super-game",
+                Price = 10,
+                UnitInStock = 3,
+                Discount = 1,
             },
             Genres = [genreId],
+            Publisher = publisherId,
         };
 
         var gameRepository = new Mock<IGameRepository>();
@@ -168,7 +206,11 @@ public class GameServiceTests
         genreRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
             .ReturnsAsync([]);
 
-        var service = CreateService(gameRepository, genreRepository);
+        var publisherRepository = new Mock<IPublisherRepository>();
+        publisherRepository.Setup(repo => repo.GetByIdAsync(publisherId))
+            .ReturnsAsync(new Publisher { Id = publisherId, CompanyName = "Publisher" });
+
+        var service = CreateService(gameRepository, genreRepository, publisherRepository: publisherRepository);
 
         var result = await service.AddGameAsync(request);
 
@@ -187,7 +229,11 @@ public class GameServiceTests
                 Id = Guid.NewGuid(),
                 Name = "Super Game",
                 Key = "super-game",
+                Price = 10,
+                UnitInStock = 3,
+                Discount = 1,
             },
+            Publisher = Guid.NewGuid(),
         };
 
         var gameRepository = new Mock<IGameRepository>();
@@ -209,12 +255,16 @@ public class GameServiceTests
         var gameId = Guid.NewGuid();
         var genreId = Guid.NewGuid();
         var platformId = Guid.NewGuid();
+        var publisherId = Guid.NewGuid();
         var game = new Game
         {
             Id = gameId,
             Name = "Old",
             Key = "old",
             Description = "old",
+            Price = 1,
+            UnitInStock = 1,
+            Discount = 0,
             GameGenres = [],
             GamePlatforms = [],
         };
@@ -227,9 +277,13 @@ public class GameServiceTests
                 Name = "New Name",
                 Key = "new-key",
                 Description = "new",
+                Price = 20,
+                UnitInStock = 4,
+                Discount = 2,
             },
             Genres = [genreId],
             Platforms = [platformId],
+            Publisher = publisherId,
         };
 
         var gameRepository = new Mock<IGameRepository>();
@@ -246,7 +300,11 @@ public class GameServiceTests
         platformRepository.Setup(repo => repo.GetByIdsAsync(It.IsAny<IReadOnlyCollection<Guid>>()))
             .ReturnsAsync([new Platform { Id = platformId, Type = "Desktop" }]);
 
-        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository);
+        var publisherRepository = new Mock<IPublisherRepository>();
+        publisherRepository.Setup(repo => repo.GetByIdAsync(publisherId))
+            .ReturnsAsync(new Publisher { Id = publisherId, CompanyName = "Publisher" });
+
+        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository, publisherRepository);
         unitOfWork.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(0);
         var service = new GameService(unitOfWork.Object);
@@ -259,6 +317,9 @@ public class GameServiceTests
         Assert.Equal("New Name", result.Value!.Name);
         Assert.Equal("new-key", result.Value.Key);
         Assert.Equal("new", result.Value.Description);
+        Assert.Equal(20, result.Value.Price);
+        Assert.Equal(4, result.Value.UnitInStock);
+        Assert.Equal(2, result.Value.Discount);
     }
 
     [Fact]
@@ -310,25 +371,29 @@ public class GameServiceTests
     private static Mock<IUnitOfWork> CreateUnitOfWork(
         Mock<IGameRepository>? gameRepository = null,
         Mock<IGenreRepository>? genreRepository = null,
-        Mock<IPlatformRepository>? platformRepository = null)
+        Mock<IPlatformRepository>? platformRepository = null,
+        Mock<IPublisherRepository>? publisherRepository = null)
     {
         var gameRepo = gameRepository ?? new Mock<IGameRepository>();
         var genreRepo = genreRepository ?? new Mock<IGenreRepository>();
         var platformRepo = platformRepository ?? new Mock<IPlatformRepository>();
+        var publisherRepo = publisherRepository ?? new Mock<IPublisherRepository>();
 
         var unitOfWork = new Mock<IUnitOfWork>();
         unitOfWork.SetupGet(u => u.Games).Returns(gameRepo.Object);
         unitOfWork.SetupGet(u => u.Genres).Returns(genreRepo.Object);
         unitOfWork.SetupGet(u => u.Platforms).Returns(platformRepo.Object);
+        unitOfWork.SetupGet(u => u.Publishers).Returns(publisherRepo.Object);
         return unitOfWork;
     }
 
     private static GameService CreateService(
         Mock<IGameRepository>? gameRepository = null,
         Mock<IGenreRepository>? genreRepository = null,
-        Mock<IPlatformRepository>? platformRepository = null)
+        Mock<IPlatformRepository>? platformRepository = null,
+        Mock<IPublisherRepository>? publisherRepository = null)
     {
-        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository);
+        var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository, publisherRepository);
         return new GameService(unitOfWork.Object);
     }
 }
