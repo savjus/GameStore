@@ -1,38 +1,67 @@
-<!-- <section class="page">
+<section class="page">
   <div class="page-header">
     <div>
       <h1>{{ isEdit ? 'Update Genre' : 'Add Genre' }}</h1>
-      <p>Create or update genre definitions.</p>
+      <p>Create or update genre information.</p>
     </div>
-    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/genres']"></a>
+
+    <button
+      mat-stroked-button
+      color="primary"
+      [routerLink]="['/genres']">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
   </div>
 
-  <p-card>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
-      <div class="field">
-        <label for="name">Name</label>
-        <input id="name" pInputText formControlName="name" />
-        <small class="error" *ngIf="form.controls['name'].touched && form.controls['name'].invalid">Name is required.</small>
-      </div>
+  <mat-card>
+    <mat-card-content>
 
-      <div class="field">
-        <label for="parentGenreId">Parent Genre</label>
-        <p-select
-          inputId="parentGenreId"
-          [options]="genres"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="None"
-          formControlName="parentGenreId"
-        ></p-select>
-      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
 
-      <div class="form-actions">
-        <button pButton label="{{ isEdit ? 'Update' : 'Create' }}" icon="pi pi-save" type="submit" [loading]="saving">Update</button>
-      </div>
-    </form>
-  </p-card>
+      <!-- Name (full width) -->
+      <mat-form-field appearance="outline" class="field full">
+        <mat-label>Name</mat-label>
+        <textarea matInput rows="4" formControlName="name" placeholder="Some Name"></textarea>
+      </mat-form-field>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p *ngIf="loading">Loading...</p>
-</section> -->
+      <!-- Parent Genre (right side) -->
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Parent Genre</mat-label>
+        <mat-select formControlName="parentGenreId">
+          <mat-option [value]="null">None</mat-option>
+          <mat-option
+            *ngFor="let genre of genres"
+            [value]="genre.id">
+            {{ genre.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || saving">
+
+            <mat-icon>save</mat-icon>
+            {{ isEdit ? 'Update' : 'Create' }}
+          </button>
+        </div>
+
+      </form>
+
+      <mat-progress-bar
+        *ngIf="loading"
+        mode="indeterminate">
+      </mat-progress-bar>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,9 +1,3 @@
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem 1.5rem;
-}
-
 .field {
   display: flex;
   flex-direction: column;
@@ -14,4 +8,15 @@
   grid-column: 1 / -1;
   display: flex;
   justify-content: flex-end;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.full {
+  grid-column: 1 / -1;
 }

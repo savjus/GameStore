@@ -4,11 +4,22 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GenreService } from '../../core/services/genre.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatError } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-genre-delete',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, CommonModule, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    CommonModule,
+    RouterLink,
+    MatIconModule,
+    MatProgressBarModule,
+    MatError
+  ],
   templateUrl: './genre-delete.page.html',
   styleUrl: './genre-delete.page.scss'
 })

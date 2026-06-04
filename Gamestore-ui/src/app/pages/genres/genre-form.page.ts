@@ -7,6 +7,11 @@ import { GenreService } from '../../core/services/genre.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
@@ -17,8 +22,13 @@ import { MatSelectModule } from '@angular/material/select';
     MatCardModule,
     CommonModule,
     MatInputModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatProgressBarModule,
     ReactiveFormsModule,
     RouterLink,
+    MatProgressSpinner,
+    MatOptionModule,
     MatSelectModule
   ],
   templateUrl: './genre-form.page.html',
@@ -41,9 +51,9 @@ export class GenreFormPage implements OnInit {
     private readonly router: Router,
     private readonly genreService: GenreService
   ) {
-    this.form = this.fb.nonNullable.group({
+    this.form = this.fb.group({
       name: ['', Validators.required],
-      parentGenreId: ['']
+      parentGenreId: [null]
     });
   }
 
@@ -55,9 +65,11 @@ export class GenreFormPage implements OnInit {
 
   loadGenres(): void {
     this.loading = true;
+
     this.genreService.getAll().subscribe({
       next: (genres) => {
         this.genres = genres;
+
         if (this.isEdit && this.genreId) {
           this.loadGenre(this.genreId);
         } else {
@@ -78,6 +90,7 @@ export class GenreFormPage implements OnInit {
           name: genre.name,
           parentGenreId: genre.parentGenreId ?? ''
         });
+
         this.loading = false;
       },
       error: () => {
@@ -86,6 +99,7 @@ export class GenreFormPage implements OnInit {
       }
     });
   }
+
 
   submit(): void {
     if (this.form.invalid) {

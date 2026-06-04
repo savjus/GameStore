@@ -5,8 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { Publisher } from '../../core/models/publisher';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { ViewChild, AfterViewInit } from '@angular/core';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { ViewChild } from '@angular/core';
 import { MatError } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +22,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     CommonModule,
     RouterLink,
     MatError,
-    MatPaginator,
+    MatPaginatorModule,
     MatIcon,
     MatCardModule,
     MatProgressSpinner
@@ -31,7 +31,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   styleUrl: './publisher-list.page.scss'
 })
 
-export class PublisherListPage implements AfterViewInit, OnInit {
+export class PublisherListPage implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   publishers: Publisher[] = [];
@@ -47,10 +47,7 @@ export class PublisherListPage implements AfterViewInit, OnInit {
 
   dataSource = new MatTableDataSource<Publisher>();
 
-
-  constructor(
-    private publisherService: PublisherService
-  ) {}
+  constructor(private publisherService: PublisherService) {}
   
   loadPublishers(): void {
     this.loading = true;
@@ -59,6 +56,7 @@ export class PublisherListPage implements AfterViewInit, OnInit {
       next: publishers => {
         this.publishers = publishers;
         this.dataSource.data = publishers
+        this.dataSource.paginator = this.paginator;
         this.loading = false;
       },
       error: err => {
@@ -70,9 +68,5 @@ export class PublisherListPage implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.loadPublishers();
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
   }
 }

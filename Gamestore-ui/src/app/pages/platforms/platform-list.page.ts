@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Platform } from '../../core/models/platform';
 import { PlatformService } from '../../core/services/platform.service';
@@ -28,12 +28,12 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   templateUrl: './platform-list.page.html',
   styleUrl: './platform-list.page.scss'
 })
-export class PlatformListPage implements AfterViewInit, OnInit {
+export class PlatformListPage implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   platforms: Platform[] = [];
   loading = false;
   errorMessage = '';
-    displayedColumns: string[] = [
+  displayedColumns: string[] = [
     'type',
     'actions'
   ];
@@ -41,9 +41,6 @@ export class PlatformListPage implements AfterViewInit, OnInit {
   dataSource = new MatTableDataSource<Platform>();
 
   constructor(private readonly platformService: PlatformService) {}
-
-  ngAfterViewInit(): void {
-  }
 
   ngOnInit(): void {
     this.loadPlatforms();
