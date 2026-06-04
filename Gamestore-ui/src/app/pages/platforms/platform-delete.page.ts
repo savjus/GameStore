@@ -4,11 +4,22 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PlatformService } from '../../core/services/platform.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatError } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-platform-delete',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, CommonModule, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    CommonModule,
+    RouterLink,
+    MatIconModule,
+    MatProgressBarModule,
+    MatError
+  ],  
   templateUrl: './platform-delete.page.html',
   styleUrl: './platform-delete.page.scss'
 })

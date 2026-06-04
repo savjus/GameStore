@@ -6,12 +6,24 @@ import { PlatformService } from '../../core/services/platform.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-platform-form',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, CommonModule, MatInputModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './platform-form.page.html',
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    CommonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatProgressBarModule,
+    ReactiveFormsModule,
+    RouterLink,
+  ],  templateUrl: './platform-form.page.html',
   styleUrl: './platform-form.page.scss'
 })
 export class PlatformFormPage implements OnInit {
