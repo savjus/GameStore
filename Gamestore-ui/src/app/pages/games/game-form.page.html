@@ -1,0 +1,91 @@
+<!-- <section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ isEdit ? 'Update Game' : 'Add Game' }}</h1>
+      <p>Provide all required game information to save changes.</p>
+    </div>
+    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/games']"></a>
+  </div>
+
+  <p-card>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" pInputText formControlName="name" />
+        <small class="error" *ngIf="form.controls['name'].touched && form.controls['name'].invalid">Name is required.</small>
+      </div>
+
+      <div class="field">
+        <label for="key">Key</label>
+        <input id="key" pInputText formControlName="key" />
+        <small class="error" *ngIf="form.controls['key'].touched && form.controls['key'].invalid">Key is required.</small>
+      </div>
+
+      <div class="field full">
+        <label for="description">Description</label>
+        <textarea id="description" pInputTextarea rows="4" formControlName="description"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="price">Price</label>
+        <p-inputNumber inputId="price" formControlName="price" [min]="0" [step]="1"></p-inputNumber>
+      </div>
+
+      <div class="field">
+        <label for="discount">Discount</label>
+        <p-inputNumber inputId="discount" formControlName="discount" [min]="0" [step]="1"></p-inputNumber>
+      </div>
+
+      <div class="field">
+        <label for="unitInStock">Unit In Stock</label>
+        <p-inputNumber inputId="unitInStock" formControlName="unitInStock" [min]="0" [step]="1"></p-inputNumber>
+      </div>
+
+      <div class="field">
+        <label for="genres">Genres</label>
+        <p-multiSelect
+          inputId="genres"
+          [options]="genres"
+          optionLabel="name"
+          optionValue="id"
+          formControlName="genres"
+          display="chip"
+        ></p-multiSelect>
+        <small class="error" *ngIf="form.controls['genres'].touched && form.controls['genres'].invalid">Select at least one genre.</small>
+      </div>
+
+      <div class="field">
+        <label for="platforms">Platforms</label>
+        <p-multiSelect
+          inputId="platforms"
+          [options]="platforms"
+          optionLabel="type"
+          optionValue="id"
+          formControlName="platforms"
+          display="chip"
+        ></p-multiSelect>
+        <small class="error" *ngIf="form.controls['platforms'].touched && form.controls['platforms'].invalid">Select at least one platform.</small>
+      </div>
+
+      <div class="field">
+        <label for="publisher">Publisher</label>
+        <p-select
+          inputId="publisher"
+          [options]="publishers"
+          optionLabel="companyName"
+          optionValue="id"
+          placeholder="Select publisher"
+          formControlName="publisher"
+        ></p-select>
+        <small class="error" *ngIf="form.controls['publisher'].touched && form.controls['publisher'].invalid">Select a publisher.</small>
+      </div>
+
+      <div class="form-actions">
+        <button pButton label="{{ isEdit ? 'Update' : 'Create' }}" icon="pi pi-save" type="submit" [loading]="saving">Update</button>
+      </div>
+    </form>
+  </p-card>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p *ngIf="loading">Loading...</p>
+</section> -->

@@ -1,0 +1,97 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Publishers</h1>
+      <p>Manage publisher profiles.</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      [routerLink]="['/publishers/add']">
+      <mat-icon>add</mat-icon>
+      Add Publisher
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+
+      <div *ngIf="loading" class="loading-container">
+          <!-- TODO: -->
+      </div>
+
+      <table
+        mat-table
+        [dataSource]="publishers"
+        class="mat-elevation-z1"
+        *ngIf="!loading">
+
+        <!-- Company -->
+        <ng-container matColumnDef="companyName">
+          <th mat-header-cell *matHeaderCellDef>Company</th>
+          <td mat-cell *matCellDef="let publisher">
+            {{ publisher.companyName }}
+          </td>
+        </ng-container>
+
+        <!-- Home Page -->
+        <ng-container matColumnDef="homePage">
+          <th mat-header-cell *matHeaderCellDef>Home Page</th>
+          <td mat-cell *matCellDef="let publisher">
+            {{ publisher.homePage || 'N/A' }}
+          </td>
+        </ng-container>
+
+        <!-- Description -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let publisher">
+            {{ publisher.description || 'N/A' }}
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let publisher">
+            <div class="actions">
+              <a
+                mat-stroked-button
+                color="primary"
+                [routerLink]="['/publishers/update']"
+                [queryParams]="{ id: publisher.id }">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </a>
+
+              <a
+                mat-stroked-button
+                color="warn"
+                [routerLink]="['/publishers/delete']"
+                [queryParams]="{ id: publisher.id }">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </a>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      </table>
+
+      <mat-paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+    </mat-card-content>
+  </mat-card>
+</section>

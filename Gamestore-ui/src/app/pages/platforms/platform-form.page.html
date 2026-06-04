@@ -1,0 +1,26 @@
+<!-- <section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ isEdit ? 'Update Platform' : 'Add Platform' }}</h1>
+      <p>Create or update platform information.</p>
+    </div>
+    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/platforms']"></a>
+  </div>
+
+  <p-card>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+      <div class="field">
+        <label for="type">Type</label>
+        <input id="type" pInputText formControlName="type" />
+        <small class="error" *ngIf="form.controls['type'].touched && form.controls['type'].invalid">Type is required.</small>
+      </div>
+
+      <div class="form-actions">
+        <button pButton label="{{ isEdit ? 'Update' : 'Create' }}" icon="pi pi-save" type="submit" [loading]="saving">Update</button>
+      </div>
+    </form>
+  </p-card>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p *ngIf="loading">Loading...</p>
+</section> -->

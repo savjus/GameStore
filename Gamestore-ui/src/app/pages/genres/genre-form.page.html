@@ -1,0 +1,38 @@
+<!-- <section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ isEdit ? 'Update Genre' : 'Add Genre' }}</h1>
+      <p>Create or update genre definitions.</p>
+    </div>
+    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/genres']"></a>
+  </div>
+
+  <p-card>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" pInputText formControlName="name" />
+        <small class="error" *ngIf="form.controls['name'].touched && form.controls['name'].invalid">Name is required.</small>
+      </div>
+
+      <div class="field">
+        <label for="parentGenreId">Parent Genre</label>
+        <p-select
+          inputId="parentGenreId"
+          [options]="genres"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="None"
+          formControlName="parentGenreId"
+        ></p-select>
+      </div>
+
+      <div class="form-actions">
+        <button pButton label="{{ isEdit ? 'Update' : 'Create' }}" icon="pi pi-save" type="submit" [loading]="saving">Update</button>
+      </div>
+    </form>
+  </p-card>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p *ngIf="loading">Loading...</p>
+</section> -->

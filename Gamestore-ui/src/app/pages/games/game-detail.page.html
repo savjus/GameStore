@@ -1,0 +1,42 @@
+<!-- <section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Game Details</h1>
+      <p>Review game data and download the game file.</p>
+    </div>
+    <div class="actions">
+      <a pButton label="Edit" icon="pi pi-pencil" [routerLink]="['/games', key, 'update']" *ngIf="game"></a>
+      <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/games']"></a>
+    </div>
+  </div>
+
+  <p-card *ngIf="game as selected" header="{{ selected.name }}">
+    <div class="detail-grid">
+      <div>
+        <label>Key</label>
+        <span>{{ selected.key }}</span>
+      </div>
+      <div>
+        <label>Description</label>
+        <span>{{ selected.description || 'N/A' }}</span>
+      </div>
+      <div>
+        <label>Price</label>
+        <span>{{ selected.price }}</span>
+      </div>
+      <div>
+        <label>Discount</label>
+        <span>{{ selected.discount }}</span>
+      </div>
+      <div>
+        <label>Unit In Stock</label>
+        <span>{{ selected.unitInStock }}</span>
+      </div>
+    </div>
+
+    <button pButton label="Download Game File" icon="pi pi-download" (click)="downloadFile()" [loading]="downloading">Download</button>
+  </p-card>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p *ngIf="loading">Loading...</p>
+</section> -->
