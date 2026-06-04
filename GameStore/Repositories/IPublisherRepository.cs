@@ -6,6 +6,8 @@ public interface IPublisherRepository
 {
     Task<Publisher?> GetByIdAsync(Guid id);
 
+    Task<Publisher?> GetByIdTrackedAsync(Guid id);
+
     Task<Publisher?> GetByCompanyNameAsync(string companyName);
 
     Task<List<Publisher>> GetAllAsync();

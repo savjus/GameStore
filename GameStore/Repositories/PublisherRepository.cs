@@ -13,6 +13,11 @@ public class PublisherRepository(GameStoreDbContext dbContext) : IPublisherRepos
         return _dbContext.Publishers.AsNoTracking().FirstOrDefaultAsync(publisher => publisher.Id == id);
     }
 
+    public Task<Publisher?> GetByIdTrackedAsync(Guid id)
+    {
+        return _dbContext.Publishers.FirstOrDefaultAsync(g => g.Id == id);
+    }
+
     public Task<Publisher?> GetByCompanyNameAsync(string companyName)
     {
         return _dbContext.Publishers.AsNoTracking().FirstOrDefaultAsync(publisher => publisher.CompanyName == companyName);

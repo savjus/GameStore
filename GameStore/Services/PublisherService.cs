@@ -67,7 +67,7 @@ public class PublisherService(IUnitOfWork unitOfWork) : IPublisherService
                 "Publisher id is required.");
         }
 
-        var publisher = await _unitOfWork.Publishers.GetByIdAsync(request.Publisher.Id);
+        var publisher = await _unitOfWork.Publishers.GetByIdTrackedAsync(request.Publisher.Id);
         if (publisher == null)
         {
             return ServiceResult.Fail<PublisherResponseDto>(

@@ -29,6 +29,11 @@ public class PlatformRepository(GameStoreDbContext dbContext) : IPlatformReposit
         return _dbContext.Platforms.AsNoTracking().FirstOrDefaultAsync(platform => platform.Id == id);
     }
 
+    public Task<Platform?> GetByIdTrackedAsync(Guid id)
+    {
+        return _dbContext.Platforms.FirstOrDefaultAsync(g => g.Id == id);
+    }
+
     public Task<List<Platform>> GetAllAsync()
     {
         return _dbContext.Platforms.AsNoTracking().ToListAsync();
