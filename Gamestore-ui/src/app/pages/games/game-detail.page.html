@@ -1,73 +1,21 @@
 <section class="page">
 
   <div class="page-header">
-    <div>
-      <h1>Game Details</h1>
-      <p>Review game data and download the game file.</p>
-    </div>
-
-    <div class="actions">
-
-      <button
-        mat-stroked-button
-        color="primary"
-        *ngIf="game"
-        [routerLink]="['/games', key, 'update']">
-
-        <mat-icon>edit</mat-icon>
-        Edit
-      </button>
-
-      <button
-        mat-stroked-button
-        color="primary"
-        [routerLink]="['/games']">
-
-        <mat-icon>arrow_back</mat-icon>
-        Back
-      </button>
-
-    </div>
+    <h1>Game Details</h1>
   </div>
 
-  <mat-card *ngIf="game as selected" class="detail-card">
+  <mat-card *ngIf="game">
 
-    <mat-card-header>
-      <mat-card-title>{{ selected.name }}</mat-card-title>
-    </mat-card-header>
+    <mat-card-title>{{ game.name }}</mat-card-title>
 
     <mat-card-content>
 
-      <div class="detail-grid">
-
-        <div class="detail-item">
-          <span class="label">Key</span>
-          <span class="value">{{ selected.key }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="label">Description</span>
-          <span class="value">{{ selected.description || 'N/A' }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="label">Price</span>
-          <span class="value">{{ selected.price }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="label">Discount</span>
-          <span class="value">{{ selected.discount }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="label">Unit In Stock</span>
-          <span class="value">{{ selected.unitInStock }}</span>
-        </div>
-
-      </div>
-
-      <div class="actions-bottom">
+      <p><strong>Key:</strong> {{ game.key }}</p>
+      <p><strong>Description:</strong> {{ game.description || 'N/A' }}</p>
+      <p><strong>Price:</strong> {{ game.price }}</p>
+      <p><strong>Discount:</strong> {{ game.discount }}</p>
+      <p><strong>Stock:</strong> {{ game.unitInStock }}</p>
+        <div class="actions-bottom">
 
         <button
           mat-raised-button
@@ -80,17 +28,10 @@
         </button>
 
       </div>
-
     </mat-card-content>
+
   </mat-card>
 
-  <mat-progress-spinner
-    *ngIf="loading"
-    diameter="40">
-  </mat-progress-spinner>
-
-  <mat-error *ngIf="errorMessage">
-    {{ errorMessage }}
-  </mat-error>
+  <mat-progress-spinner *ngIf="loading"></mat-progress-spinner>
 
 </section>
