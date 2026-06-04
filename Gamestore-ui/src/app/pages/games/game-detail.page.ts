@@ -5,11 +5,21 @@ import { Game } from '../../core/models/game';
 import { GameService } from '../../core/services/game.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatError } from '@angular/material/form-field';
 @Component({
   selector: 'app-game-detail',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, CommonModule, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    CommonModule,
+    RouterLink,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatError
+  ],
   templateUrl: './game-detail.page.html',
   styleUrl: './game-detail.page.scss'
 })

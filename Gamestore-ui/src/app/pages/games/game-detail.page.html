@@ -1,42 +1,96 @@
-<!-- <section class="page">
+<section class="page">
+
   <div class="page-header">
     <div>
       <h1>Game Details</h1>
       <p>Review game data and download the game file.</p>
     </div>
+
     <div class="actions">
-      <a pButton label="Edit" icon="pi pi-pencil" [routerLink]="['/games', key, 'update']" *ngIf="game"></a>
-      <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/games']"></a>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        *ngIf="game"
+        [routerLink]="['/games', key, 'update']">
+
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        [routerLink]="['/games']">
+
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+
     </div>
   </div>
 
-  <p-card *ngIf="game as selected" header="{{ selected.name }}">
-    <div class="detail-grid">
-      <div>
-        <label>Key</label>
-        <span>{{ selected.key }}</span>
-      </div>
-      <div>
-        <label>Description</label>
-        <span>{{ selected.description || 'N/A' }}</span>
-      </div>
-      <div>
-        <label>Price</label>
-        <span>{{ selected.price }}</span>
-      </div>
-      <div>
-        <label>Discount</label>
-        <span>{{ selected.discount }}</span>
-      </div>
-      <div>
-        <label>Unit In Stock</label>
-        <span>{{ selected.unitInStock }}</span>
-      </div>
-    </div>
+  <mat-card *ngIf="game as selected" class="detail-card">
 
-    <button pButton label="Download Game File" icon="pi pi-download" (click)="downloadFile()" [loading]="downloading">Download</button>
-  </p-card>
+    <mat-card-header>
+      <mat-card-title>{{ selected.name }}</mat-card-title>
+    </mat-card-header>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p *ngIf="loading">Loading...</p>
-</section> -->
+    <mat-card-content>
+
+      <div class="detail-grid">
+
+        <div class="detail-item">
+          <span class="label">Key</span>
+          <span class="value">{{ selected.key }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Description</span>
+          <span class="value">{{ selected.description || 'N/A' }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Price</span>
+          <span class="value">{{ selected.price }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Discount</span>
+          <span class="value">{{ selected.discount }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Unit In Stock</span>
+          <span class="value">{{ selected.unitInStock }}</span>
+        </div>
+
+      </div>
+
+      <div class="actions-bottom">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="downloadFile()"
+          [disabled]="downloading">
+
+          <mat-icon>download</mat-icon>
+          Download Game File
+        </button>
+
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+  <mat-progress-spinner
+    *ngIf="loading"
+    diameter="40">
+  </mat-progress-spinner>
+
+  <mat-error *ngIf="errorMessage">
+    {{ errorMessage }}
+  </mat-error>
+
+</section>

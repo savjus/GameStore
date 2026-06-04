@@ -3,8 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
-// import { InputNumberModule } from 'primeng/inputnumber';
-// import { InputTextModule } from 'primeng/inputtext';
 import { Game } from '../../core/models/game';
 import { Genre } from '../../core/models/genre';
 import { Platform } from '../../core/models/platform';
@@ -13,11 +11,13 @@ import { GameService } from '../../core/services/game.service';
 import { GenreService } from '../../core/services/genre.service';
 import { PlatformService } from '../../core/services/platform.service';
 import { PublisherService } from '../../core/services/publisher.service';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 @Component({
   selector: 'app-game-form',
   standalone: true,
@@ -29,6 +29,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule,
     ReactiveFormsModule,
     RouterLink,
+    MatIconModule,
+    MatProgressBarModule,
+    MatFormFieldModule,
   ],
   templateUrl: './game-form.page.html',
   styleUrl: './game-form.page.scss'

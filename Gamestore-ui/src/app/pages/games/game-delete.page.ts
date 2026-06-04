@@ -4,11 +4,22 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GameService } from '../../core/services/game.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatError } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-game-delete',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, CommonModule, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    CommonModule,
+    RouterLink,
+    MatIconModule,
+    MatProgressBarModule,
+    MatError
+  ],
   templateUrl: './game-delete.page.html',
   styleUrl: './game-delete.page.scss'
 })

@@ -1,91 +1,138 @@
-<!-- <section class="page">
+<section class="page">
+
   <div class="page-header">
     <div>
       <h1>{{ isEdit ? 'Update Game' : 'Add Game' }}</h1>
       <p>Provide all required game information to save changes.</p>
     </div>
-    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/games']"></a>
+
+    <button
+      mat-stroked-button
+      color="primary"
+      [routerLink]="['/games']">
+
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
   </div>
 
-  <p-card>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
-      <div class="field">
-        <label for="name">Name</label>
-        <input id="name" pInputText formControlName="name" />
-        <small class="error" *ngIf="form.controls['name'].touched && form.controls['name'].invalid">Name is required.</small>
-      </div>
+  <mat-card>
+    <mat-card-content>
 
-      <div class="field">
-        <label for="key">Key</label>
-        <input id="key" pInputText formControlName="key" />
-        <small class="error" *ngIf="form.controls['key'].touched && form.controls['key'].invalid">Key is required.</small>
-      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
 
-      <div class="field full">
-        <label for="description">Description</label>
-        <textarea id="description" pInputTextarea rows="4" formControlName="description"></textarea>
-      </div>
+        <!-- Name -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="Game Name"/>
+          <mat-error *ngIf="form.controls['name'].touched && form.controls['name'].invalid">
+            Name is required.
+          </mat-error>
+        </mat-form-field>
 
-      <div class="field">
-        <label for="price">Price</label>
-        <p-inputNumber inputId="price" formControlName="price" [min]="0" [step]="1"></p-inputNumber>
-      </div>
+        <!-- Key -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Key</mat-label>
+          <input matInput formControlName="key" placeholder="Key"/>
+          <mat-error *ngIf="form.controls['key'].touched && form.controls['key'].invalid">
+            Key is required.
+          </mat-error>
+        </mat-form-field>
 
-      <div class="field">
-        <label for="discount">Discount</label>
-        <p-inputNumber inputId="discount" formControlName="discount" [min]="0" [step]="1"></p-inputNumber>
-      </div>
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="field full">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="4" formControlName="description" placeholder="Description"></textarea>
+        </mat-form-field>
 
-      <div class="field">
-        <label for="unitInStock">Unit In Stock</label>
-        <p-inputNumber inputId="unitInStock" formControlName="unitInStock" [min]="0" [step]="1"></p-inputNumber>
-      </div>
+        <!-- Price -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Price</mat-label>
+          <input matInput type="number" formControlName="price" placeholder="0.00$"/>
+        </mat-form-field>
 
-      <div class="field">
-        <label for="genres">Genres</label>
-        <p-multiSelect
-          inputId="genres"
-          [options]="genres"
-          optionLabel="name"
-          optionValue="id"
-          formControlName="genres"
-          display="chip"
-        ></p-multiSelect>
-        <small class="error" *ngIf="form.controls['genres'].touched && form.controls['genres'].invalid">Select at least one genre.</small>
-      </div>
+        <!-- Discount -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Discount</mat-label>
+          <input matInput type="number" formControlName="discount" placeholder="0%"/>
+        </mat-form-field>
 
-      <div class="field">
-        <label for="platforms">Platforms</label>
-        <p-multiSelect
-          inputId="platforms"
-          [options]="platforms"
-          optionLabel="type"
-          optionValue="id"
-          formControlName="platforms"
-          display="chip"
-        ></p-multiSelect>
-        <small class="error" *ngIf="form.controls['platforms'].touched && form.controls['platforms'].invalid">Select at least one platform.</small>
-      </div>
+        <!-- Stock -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Unit In Stock</mat-label>
+          <input matInput type="number" formControlName="unitInStock" placeholder="0"/>
+        </mat-form-field>
 
-      <div class="field">
-        <label for="publisher">Publisher</label>
-        <p-select
-          inputId="publisher"
-          [options]="publishers"
-          optionLabel="companyName"
-          optionValue="id"
-          placeholder="Select publisher"
-          formControlName="publisher"
-        ></p-select>
-        <small class="error" *ngIf="form.controls['publisher'].touched && form.controls['publisher'].invalid">Select a publisher.</small>
-      </div>
+        <!-- Genres -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Genres</mat-label>
 
-      <div class="form-actions">
-        <button pButton label="{{ isEdit ? 'Update' : 'Create' }}" icon="pi pi-save" type="submit" [loading]="saving">Update</button>
-      </div>
-    </form>
-  </p-card>
+          <mat-select formControlName="genres" multiple>
+            <mat-option *ngFor="let genre of genres" [value]="genre.id">
+              {{ genre.name }}
+            </mat-option>
+          </mat-select>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p *ngIf="loading">Loading...</p>
-</section> -->
+          <mat-error *ngIf="form.controls['genres'].touched && form.controls['genres'].invalid">
+            Select at least one genre.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Platforms -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Platforms</mat-label>
+
+          <mat-select formControlName="platforms" multiple>
+            <mat-option *ngFor="let platform of platforms" [value]="platform.id">
+              {{ platform.type }}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="form.controls['platforms'].touched && form.controls['platforms'].invalid">
+            Select at least one platform.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Publisher -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Publisher</mat-label>
+
+          <mat-select formControlName="publisher">
+            <mat-option *ngFor="let publisher of publishers" [value]="publisher.id">
+              {{ publisher.companyName }}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="form.controls['publisher'].touched && form.controls['publisher'].invalid">
+            Select a publisher.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Submit -->
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || saving">
+
+            <mat-icon>save</mat-icon>
+            {{ isEdit ? 'Update' : 'Create' }}
+          </button>
+        </div>
+
+      </form>
+
+      <mat-progress-bar
+        *ngIf="loading"
+        mode="indeterminate">
+      </mat-progress-bar>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+    </mat-card-content>
+  </mat-card>
+
+</section>

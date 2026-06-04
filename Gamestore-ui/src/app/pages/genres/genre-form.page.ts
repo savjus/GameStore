@@ -27,7 +27,6 @@ import { MatSelectModule } from '@angular/material/select';
     MatProgressBarModule,
     ReactiveFormsModule,
     RouterLink,
-    MatProgressSpinner,
     MatOptionModule,
     MatSelectModule
   ],
@@ -81,6 +80,7 @@ export class GenreFormPage implements OnInit {
         this.loading = false;
       }
     });
+    this.loading=false;
   }
 
   loadGenre(id: string): void {
@@ -88,7 +88,7 @@ export class GenreFormPage implements OnInit {
       next: (genre) => {
         this.form.patchValue({
           name: genre.name,
-          parentGenreId: genre.parentGenreId ?? ''
+          parentGenreId: genre.parentGenreId ?? null
         });
 
         this.loading = false;
