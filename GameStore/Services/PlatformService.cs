@@ -74,7 +74,7 @@ public class PlatformService(IUnitOfWork unitOfWork) : IPlatformService
                 "Platform id is required.");
         }
 
-        var platform = await _unitOfWork.Platforms.GetByIdAsync(request.Platform.Id);
+        var platform = await _unitOfWork.Platforms.GetByIdTrackedAsync(request.Platform.Id);
         if (platform == null)
         {
             return ServiceResult.Fail<PlatformResponseDto>(

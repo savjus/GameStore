@@ -1,0 +1,36 @@
+import { Routes } from '@angular/router';
+import { GameDeletePage } from './pages/games/game-delete.page';
+import { GameDetailPage } from './pages/games/game-detail.page';
+import { GameFormPage } from './pages/games/game-form.page';
+import { GameListPage } from './pages/games/game-list.page';
+import { GenreDeletePage } from './pages/genres/genre-delete.page';
+import { GenreFormPage } from './pages/genres/genre-form.page';
+import { GenreListPage } from './pages/genres/genre-list.page';
+import { PlatformDeletePage } from './pages/platforms/platform-delete.page';
+import { PlatformFormPage } from './pages/platforms/platform-form.page';
+import { PlatformListPage } from './pages/platforms/platform-list.page';
+import { PublisherDeletePage } from './pages/publishers/publisher-delete.page';
+import { PublisherFormPage } from './pages/publishers/publisher-form.page';
+import { PublisherListPage } from './pages/publishers/publisher-list.page';
+
+export const routes: Routes = [
+	{ path: '', pathMatch: 'full', redirectTo: 'games' },
+	{ path: 'games', component: GameListPage },
+	{ path: 'games/add', component: GameFormPage },
+	{ path: 'games/:key', component: GameDetailPage },
+	{ path: 'games/:key/update', component: GameFormPage },
+	{ path: 'games/:key/delete', component: GameDeletePage },
+	{ path: 'genres', component: GenreListPage },
+	{ path: 'genres/add', component: GenreFormPage },
+	{ path: 'genres/:id/update', component: GenreFormPage },
+	{ path: 'genres/:id/delete', component: GenreDeletePage },
+	{ path: 'platforms', component: PlatformListPage },
+	{ path: 'platforms/add', component: PlatformFormPage },
+	{ path: 'platforms/:id/update', component: PlatformFormPage },
+	{ path: 'platforms/:id/delete', component: PlatformDeletePage },
+	{ path: 'publishers', component: PublisherListPage },
+	{ path: 'publishers/add', component: PublisherFormPage },
+	{ path: 'publishers/update', component: PublisherFormPage },
+	{ path: 'publishers/delete', component: PublisherDeletePage },
+	{ path: '**', redirectTo: 'games' }
+];

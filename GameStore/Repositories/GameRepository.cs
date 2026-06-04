@@ -61,7 +61,6 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
     public Task<Game?> GetByIdWithLinksAsync(Guid id)
     {
         return _dbContext.Games
-            .AsNoTracking()
             .Include(game => game.GameGenres)
             .Include(game => game.GamePlatforms)
             .FirstOrDefaultAsync(game => game.Id == id);

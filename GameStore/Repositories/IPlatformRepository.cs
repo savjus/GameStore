@@ -10,6 +10,8 @@ public interface IPlatformRepository
 
     Task<Platform?> GetByIdAsync(Guid id);
 
+    Task<Platform?> GetByIdTrackedAsync(Guid id);
+
     Task<List<Platform>> GetAllAsync();
 
     Task<List<Platform>> GetByGameKeyAsync(string key);

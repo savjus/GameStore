@@ -60,7 +60,7 @@ public class GenreService(IUnitOfWork unitOfWork) : IGenreService
                 "Genre id is required.");
         }
 
-        var genre = await _unitOfWork.Genres.GetByIdAsync(request.Genre.Id);
+        var genre = await _unitOfWork.Genres.GetByIdTrackedAsync(request.Genre.Id);
         if (genre == null)
         {
             return ServiceResult.Fail<GenreResponseDto>(

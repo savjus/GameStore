@@ -12,6 +12,8 @@ public interface IGenreRepository
 
     Task<Genre?> GetByIdAsync(Guid id);
 
+    Task<Genre?> GetByIdTrackedAsync(Guid id);
+
     Task<List<Genre>> GetAllAsync();
 
     Task<List<Genre>> GetByGameKeyAsync(string key);

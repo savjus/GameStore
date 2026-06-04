@@ -56,6 +56,11 @@ public class GenreRepository(GameStoreDbContext dbContext) : IGenreRepository
         return _dbContext.Genres.AsNoTracking().FirstOrDefaultAsync(genre => genre.Id == id);
     }
 
+    public Task<Genre?> GetByIdTrackedAsync(Guid id)
+    {
+        return _dbContext.Genres.FirstOrDefaultAsync(genre => genre.Id == id);
+    }
+
     public Task<List<Genre>> GetByIdsAsync(IReadOnlyCollection<Guid> ids)
     {
         return _dbContext.Genres
