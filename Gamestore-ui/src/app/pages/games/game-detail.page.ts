@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Game } from '../../core/models/game';
 import { GameService } from '../../core/services/game.service';
@@ -29,7 +29,8 @@ export class GameDetailPage implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly gameService: GameService
+    private readonly gameService: GameService,
+    private readonly changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +51,7 @@ export class GameDetailPage implements OnInit {
       next: (game: Game) => {
         this.game = game;
         this.loading = false;
+        this.changeDetector.markForCheck();
       },
       error: () => {
         this.errorMessage = 'Failed to load game.';
