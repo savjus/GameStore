@@ -45,7 +45,7 @@ export class AppConfigService {
 
   load(): Promise<void> {
     return firstValueFrom(
-      this.http.get<AppConfig>('assets/configuration/configuration.json')
+      this.http.get<AppConfig>('configuration/configuration.json')
     ).then((config) => {
       this.config = config;
     });

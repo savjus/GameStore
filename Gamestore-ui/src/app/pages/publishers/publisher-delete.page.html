@@ -1,18 +1,47 @@
-<!-- <section class="page">
+<section class="page">
   <div class="page-header">
     <div>
       <h1>Delete Publisher</h1>
       <p>Confirm deletion for publisher {{ id }}.</p>
     </div>
-    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/publishers']"></a>
+
+    <button
+      mat-stroked-button
+      color="primary"
+      [routerLink]="['/publishers']">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
   </div>
 
-  <p-card>
-    <p>This action cannot be undone.</p>
-    <div class="form-actions">
-      <button pButton label="Delete" severity="danger" icon="pi pi-trash" (click)="confirmDelete()" [loading]="deleting">Delete</button>
-    </div>
-  </p-card>
+  <mat-card>
+    <mat-card-content>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-</section> -->
+      <p class="warning-text">
+        This action cannot be undone.
+      </p>
+
+      <div class="form-actions">
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="confirmDelete()"
+          [disabled]="deleting">
+
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+
+      <mat-progress-bar
+        *ngIf="deleting"
+        mode="indeterminate">
+      </mat-progress-bar>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+    </mat-card-content>
+  </mat-card>
+</section>

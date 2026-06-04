@@ -1,40 +1,75 @@
-<!-- <section class="page">
+<section class="page">
   <div class="page-header">
     <div>
       <h1>{{ isEdit ? 'Update Publisher' : 'Add Publisher' }}</h1>
       <p>Create or update publisher information.</p>
     </div>
-    <a pButton label="Back" severity="secondary" icon="pi pi-arrow-left" [routerLink]="['/publishers']"></a>
+
+    <button
+      mat-stroked-button
+      color="primary"
+      [routerLink]="['/publishers']">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
   </div>
 
-  <p-card>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
-      <div class="field">
-        <label for="companyName">Company Name</label>
-        <input id="companyName" pInputText formControlName="companyName" />
-        <small class="error" *ngIf="form.controls['companyName'].touched && form.controls['companyName'].invalid">Company name is required.</small>
-      </div>
+  <mat-card>
+    <mat-card-content>
 
-      <div class="field">
-        <label for="homePage">Home Page</label>
-        <input id="homePage" pInputText formControlName="homePage" />
-        <small class="error" *ngIf="form.controls['homePage'].touched && form.controls['homePage'].invalid">Home page is required.</small>
-      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
 
-      <div class="field full">
-        <label for="description">Description</label>
-        <textarea id="description" pInputTextarea rows="4" formControlName="description"></textarea>
-        <small class="error" *ngIf="form.controls['description'].touched && form.controls['description'].invalid">Description is required.</small>
-      </div>
+        <!-- Company Name -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Company Name</mat-label>
+          <input matInput formControlName="companyName" placeholder="Company"/>
+          <mat-error *ngIf="form.controls['companyName'].touched && form.controls['companyName'].invalid">
+            Company name is required.
+          </mat-error>
+        </mat-form-field>
 
-      <div class="form-actions">
-        <button pButton label="{{ isEdit ? 'Update' : 'Create' }}" icon="pi pi-save" type="submit" [loading]="saving">Update</button>
-      </div>
-    </form>
-  </p-card>
+        <!-- Home Page -->
+        <mat-form-field appearance="outline" class="field">
+          <mat-label>Home Page</mat-label>
+          <input matInput formControlName="homePage" placeholder="https://someWebsite.com"/>
+          <mat-error *ngIf="form.controls['homePage'].touched && form.controls['homePage'].invalid">
+            Home page is required.
+          </mat-error>
+        </mat-form-field>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p *ngIf="loading">Loading...</p>
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="field full">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="4" formControlName="description" placeholder="Description"></textarea>
+          <mat-error *ngIf="form.controls['description'].touched && form.controls['description'].invalid">
+            Description is required.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || saving">
+
+            <mat-icon>save</mat-icon>
+            {{ isEdit ? 'Update' : 'Create' }}
+          </button>
+        </div>
+
+      </form>
+
+      <mat-progress-bar
+        *ngIf="loading"
+        mode="indeterminate">
+      </mat-progress-bar>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+    </mat-card-content>
+  </mat-card>
 </section>
-
- -->

@@ -4,11 +4,21 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PublisherService } from '../../core/services/publisher.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatError } from '@angular/material/input';
 @Component({
   selector: 'app-publisher-delete',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, CommonModule, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    CommonModule,
+    RouterLink,
+    MatIconModule,
+    MatProgressBarModule,
+    MatError
+  ],
   templateUrl: './publisher-delete.page.html',
   styleUrl: './publisher-delete.page.scss'
 })

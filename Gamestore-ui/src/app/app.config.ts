@@ -9,5 +9,15 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
-  ]
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeConfig,
+      deps: [AppConfigService],
+      multi: true
+    }  
+  ] 
 };
+
+export function initializeConfig(config: AppConfigService) {
+  return () => config.load();
+}
