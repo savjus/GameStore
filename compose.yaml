@@ -27,11 +27,14 @@ services:
         condition: service_healthy
 
   ui:
-    image: nginx:alpine
-    volumes:
-      - ./gamestore-ui-app:/usr/share/nginx/html:ro
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: uiserver
     ports:
       - "8081:80"
+    depends_on:
+      - api
 
   tests:
     build:
