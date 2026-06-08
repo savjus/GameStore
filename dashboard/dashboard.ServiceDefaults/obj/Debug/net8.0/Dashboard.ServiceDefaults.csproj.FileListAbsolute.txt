@@ -1,0 +1,14 @@
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.csproj.AssemblyReference.cache
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.AssemblyInfoInputs.cache
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.AssemblyInfo.cs
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.csproj.CoreCompileInputs.cache
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\bin\Debug\net8.0\Dashboard.ServiceDefaults.deps.json
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\bin\Debug\net8.0\Dashboard.ServiceDefaults.dll
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\bin\Debug\net8.0\Dashboard.ServiceDefaults.pdb
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\bin\Debug\net8.0\Dashboard.ServiceDefaults.xml
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.dll
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\refint\Dashboard.ServiceDefaults.dll
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.xml
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\Dashboard.ServiceDefaults.pdb
+C:\Users\salvp\Desktop\game-store-v2-with-branches\Dashboard\Dashboard.ServiceDefaults\obj\Debug\net8.0\ref\Dashboard.ServiceDefaults.dll
