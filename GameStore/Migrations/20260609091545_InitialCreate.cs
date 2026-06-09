@@ -33,6 +33,20 @@ namespace GameStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Platforms",
                 columns: table => new
                 {
@@ -107,6 +121,33 @@ namespace GameStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GameOrders",
+                columns: table => new
+                {
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Discount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameOrders", x => new { x.OrderId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_GameOrders_Games_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GameOrders_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GamePlatforms",
                 columns: table => new
                 {
@@ -156,6 +197,26 @@ namespace GameStore.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Publishers",
+                columns: new[] { "Id", "CompanyName", "Description", "HomePage" },
+                values: new object[,]
+                {
+                    { new Guid("9c8b7a6f-5e4d-3c2b-1a09-f8e7d6c5b4a3"), "Ubisoft", null, null },
+                    { new Guid("a1b2c3d4-e5f6-4a8b-9c0d-1e2f3a4b5c6d"), "Electronic Arts", null, null },
+                    { new Guid("f5b8c1a0-9f3c-4e2d-b5a6-3c7d8e9f0a1b"), "Activision", null, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Games",
+                columns: new[] { "Id", "Description", "Discount", "Key", "Name", "Price", "PublisherId", "UnitInStock" },
+                values: new object[,]
+                {
+                    { new Guid("2f4e6a8c-9b1d-4c3f-7e9a-1b5d8c2f4a6e"), "Become a legendary Viking warrior.", 10, "ac-valhalla", "Assassin's Creed Valhalla", 49.990000000000002, new Guid("9c8b7a6f-5e4d-3c2b-1a09-f8e7d6c5b4a3"), 75 },
+                    { new Guid("5a9f2b8d-3c7e-4a1f-6d9c-2e5b7a1f4c8d"), "Play with life! Control the Sims' destiny and explore the world.", 0, "sims-4", "The Sims 4", 39.990000000000002, new Guid("a1b2c3d4-e5f6-4a8b-9c0d-1e2f3a4b5c6d"), 150 },
+                    { new Guid("7d3c8e2f-4b6a-4d9f-8e2c-5a7b9c1d3e4f"), "Experience an intimate, grounded, cooperative, and playable Campaign.", 0, "cod-mw", "Call of Duty: Modern Warfare", 59.990000000000002, new Guid("f5b8c1a0-9f3c-4e2d-b5a6-3c7d8e9f0a1b"), 100 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Genres",
                 columns: new[] { "Id", "Name", "ParentGenreId" },
                 values: new object[,]
@@ -174,6 +235,11 @@ namespace GameStore.Migrations
                 name: "IX_GameGenres_GenreId",
                 table: "GameGenres",
                 column: "GenreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameOrders_ProductId",
+                table: "GameOrders",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GamePlatforms_PlatformId",
@@ -222,10 +288,16 @@ namespace GameStore.Migrations
                 name: "GameGenres");
 
             migrationBuilder.DropTable(
+                name: "GameOrders");
+
+            migrationBuilder.DropTable(
                 name: "GamePlatforms");
 
             migrationBuilder.DropTable(
                 name: "Genres");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Games");

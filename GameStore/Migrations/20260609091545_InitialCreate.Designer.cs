@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    [Migration("20260530131714_InitialCreate")]
+    [Migration("20260609091545_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -62,6 +62,41 @@ namespace GameStore.Migrations
                     b.HasIndex("PublisherId");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7d3c8e2f-4b6a-4d9f-8e2c-5a7b9c1d3e4f"),
+                            Description = "Experience an intimate, grounded, cooperative, and playable Campaign.",
+                            Discount = 0,
+                            Key = "cod-mw",
+                            Name = "Call of Duty: Modern Warfare",
+                            Price = 59.990000000000002,
+                            PublisherId = new Guid("f5b8c1a0-9f3c-4e2d-b5a6-3c7d8e9f0a1b"),
+                            UnitInStock = 100
+                        },
+                        new
+                        {
+                            Id = new Guid("2f4e6a8c-9b1d-4c3f-7e9a-1b5d8c2f4a6e"),
+                            Description = "Become a legendary Viking warrior.",
+                            Discount = 10,
+                            Key = "ac-valhalla",
+                            Name = "Assassin's Creed Valhalla",
+                            Price = 49.990000000000002,
+                            PublisherId = new Guid("9c8b7a6f-5e4d-3c2b-1a09-f8e7d6c5b4a3"),
+                            UnitInStock = 75
+                        },
+                        new
+                        {
+                            Id = new Guid("5a9f2b8d-3c7e-4a1f-6d9c-2e5b7a1f4c8d"),
+                            Description = "Play with life! Control the Sims' destiny and explore the world.",
+                            Discount = 0,
+                            Key = "sims-4",
+                            Name = "The Sims 4",
+                            Price = 39.990000000000002,
+                            PublisherId = new Guid("a1b2c3d4-e5f6-4a8b-9c0d-1e2f3a4b5c6d"),
+                            UnitInStock = 150
+                        });
                 });
 
             modelBuilder.Entity("GameStore.Models.GameGenre", b =>
@@ -202,6 +237,50 @@ namespace GameStore.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GameStore.Models.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("GameStore.Models.OrderGame", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("GameOrders");
+                });
+
             modelBuilder.Entity("GameStore.Models.Platform", b =>
                 {
                     b.Property<Guid>("Id")
@@ -264,6 +343,23 @@ namespace GameStore.Migrations
                         .IsUnique();
 
                     b.ToTable("Publishers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f5b8c1a0-9f3c-4e2d-b5a6-3c7d8e9f0a1b"),
+                            CompanyName = "Activision"
+                        },
+                        new
+                        {
+                            Id = new Guid("a1b2c3d4-e5f6-4a8b-9c0d-1e2f3a4b5c6d"),
+                            CompanyName = "Electronic Arts"
+                        },
+                        new
+                        {
+                            Id = new Guid("9c8b7a6f-5e4d-3c2b-1a09-f8e7d6c5b4a3"),
+                            CompanyName = "Ubisoft"
+                        });
                 });
 
             modelBuilder.Entity("GameStore.Models.Game", b =>
@@ -325,11 +421,32 @@ namespace GameStore.Migrations
                     b.Navigation("ParentGenre");
                 });
 
+            modelBuilder.Entity("GameStore.Models.OrderGame", b =>
+                {
+                    b.HasOne("GameStore.Models.Order", "Order")
+                        .WithMany("OrderGames")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Models.Game", "Product")
+                        .WithMany("OrderGames")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("GameStore.Models.Game", b =>
                 {
                     b.Navigation("GameGenres");
 
                     b.Navigation("GamePlatforms");
+
+                    b.Navigation("OrderGames");
                 });
 
             modelBuilder.Entity("GameStore.Models.Genre", b =>
@@ -337,6 +454,11 @@ namespace GameStore.Migrations
                     b.Navigation("GameGenres");
 
                     b.Navigation("SubGenres");
+                });
+
+            modelBuilder.Entity("GameStore.Models.Order", b =>
+                {
+                    b.Navigation("OrderGames");
                 });
 
             modelBuilder.Entity("GameStore.Models.Platform", b =>
