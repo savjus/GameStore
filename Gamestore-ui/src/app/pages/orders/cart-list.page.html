@@ -54,6 +54,24 @@
         <tr mat-header-row *matHeaderRowDef="cartColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: cartColumns"></tr>
 
+        <!-- actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let orderGame">
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="removeFromCart(orderGame.productId)">
+
+              <mat-icon>delete</mat-icon>
+
+            </button>
+
+          </td>
+        </ng-container>
+
+
       </table>
 
       <mat-paginator

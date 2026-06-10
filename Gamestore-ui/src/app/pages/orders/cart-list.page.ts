@@ -11,6 +11,7 @@ import { MatError } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderGame } from '../../core/models/orderGame';
 import { Method, PaymentMethod } from '../../core/models/paymentMethod';
+import { GameService } from '../../core/services/game.service';
 
 @Component({
   selector: 'app-cart-payment-page',
@@ -38,7 +39,8 @@ export class CartListPage implements OnInit {
     'productId',
     'price',
     'quantity',
-    'discount'
+    'discount',
+    'actions'
   ];
 
   @ViewChild('paymentPaginator') paymentPaginator!: MatPaginator;
@@ -56,6 +58,7 @@ export class CartListPage implements OnInit {
 
   constructor(
     private readonly orderService: OrderService,
+    private readonly gameService: GameService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
 
@@ -110,6 +113,7 @@ export class CartListPage implements OnInit {
     });
   }
 
+
   getPaymentRoute(method: string): string {
     switch (method) {
       case 'Bank':
@@ -125,4 +129,34 @@ export class CartListPage implements OnInit {
         return '/orders/cart';
     }
   }
+  removeFromCart(productId: string): void {
+  this.loading = true;
+
+  this.gameService.getById(productId).subscribe({
+    next: (game) => {
+
+      const gameKey = game.key;
+
+      this.orderService.removeFromCart(gameKey).subscribe({
+        next: () => {
+          this.orderGames = this.orderGames.filter(
+            x => x.productId !== productId
+          );
+
+          this.cartDataSource.data = this.orderGames;
+          this.loading = false;
+        },
+        error: () => {
+          this.errorMessage = 'Failed to remove item from cart.';
+          this.loading = false;
+        }
+      });
+
+    },
+    error: () => {
+      this.errorMessage = 'Failed to fetch game details.';
+      this.loading = false;
+    }
+  });
+}
 }
