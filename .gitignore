@@ -11,7 +11,14 @@
 /GameStore/Logs
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-
+./dashboard/dashboard.AppHost/bin
+./dashboard/dashboard.AppHost/obj
+./dashboard/dashboard.ServiceDefaults/obj
+./dashboard/dashboard.ServiceDefaults/bin
+./GameStore/obj
+./GameStore/bin
+./GameStore.Tests/bin
+./GameStore.Tests/obj
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
