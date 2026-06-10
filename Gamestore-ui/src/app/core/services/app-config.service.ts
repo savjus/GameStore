@@ -33,6 +33,14 @@ export interface AppConfig {
   addPublisherApiUrl: string;
   deletePublisherApiUrl: string;
   updatePublisherApiUrl: string;
+  orderApiUrl: string;
+  ordersApiUrl: string;
+  orderDetailsApiUrl: string;
+  buyGameApiUrl: string;
+  cancelGameBuyApiUrl: string;
+  basketApiUrl: string;
+  makeOrderInfoApiUrl: string;
+  PayApiUrl: string;
 }
 
 @Injectable({

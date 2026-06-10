@@ -27,6 +27,7 @@ import { MatError } from '@angular/material/input';
   ],  templateUrl: './game-list.page.html',
   styleUrl: './game-list.page.scss'
 })
+
 export class GameListPage implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   games: Game[] = [];

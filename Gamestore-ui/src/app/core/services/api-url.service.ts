@@ -123,6 +123,38 @@ export class ApiUrlService {
     return this.buildUrl(this.config.settings.deletePublisherApiUrl, { id });
   }
 
+  orders(): string {
+    return this.buildUrl(this.config.settings.ordersApiUrl);
+  }
+
+  order(id: string): string {
+    return this.buildUrl(this.config.settings.orderApiUrl, { id });
+  }
+  
+  orderDetails(id: string): string {
+    return this.buildUrl(this.config.settings.orderDetailsApiUrl, { id });
+  }
+
+  buyGame(key: string): string {
+    return this.buildUrl(this.config.settings.buyGameApiUrl, { key });
+  }
+
+  cancelGameBuy(key: string): string {
+    return this.buildUrl(this.config.settings.cancelGameBuyApiUrl, { key });
+  }
+
+  basket(): string {
+    return this.buildUrl(this.config.settings.baseApiUrl);
+  }
+
+  makeOrderInfo(): string {
+    return this.buildUrl(this.config.settings.makeOrderInfoApiUrl);
+  }
+
+  pay(): string {
+    return this.buildUrl(this.config.settings.PayApiUrl);
+  }
+
   private buildUrl(template: string, params?: Record<string, string>): string {
     const baseUrl = this.config.settings.baseApiUrl.replace(/\/+$/, '');
     const path = params ? this.replaceParams(template, params) : template;
