@@ -13,7 +13,8 @@ import { PublisherDeletePage } from './pages/publishers/publisher-delete.page';
 import { PublisherFormPage } from './pages/publishers/publisher-form.page';
 import { PublisherListPage } from './pages/publishers/publisher-list.page';
 import { OrderListPage } from './pages/orders/orders-list.page';
-import { CartListPage } from './pages/cart/cart-list.page';
+import { CartListPage } from './pages/orders/cart-list.page';
+import { PaymentMethodList } from './pages/orders/payment-methods.page';
 
 export const routes: Routes = [
 	{ path: '', pathMatch: 'full', redirectTo: 'games' },
@@ -36,5 +37,6 @@ export const routes: Routes = [
 	{ path: 'publishers/delete', component: PublisherDeletePage },
 	{ path: 'orders', component: OrderListPage },
 	{ path: 'orders/cart', component: CartListPage },
+	{ path: 'orders/payment-methods', component: PaymentMethodList },
 	{ path: '**', redirectTo: 'games' }
 ];

@@ -144,7 +144,7 @@ export class ApiUrlService {
   }
 
   basket(): string {
-    return this.buildUrl(this.config.settings.baseApiUrl);
+    return this.buildUrl(this.config.settings.basketApiUrl);
   }
 
   makeOrderInfo(): string {
@@ -152,7 +152,7 @@ export class ApiUrlService {
   }
 
   pay(): string {
-    return this.buildUrl(this.config.settings.PayApiUrl);
+    return this.buildUrl(this.config.settings.payApiUrl);
   }
 
   private buildUrl(template: string, params?: Record<string, string>): string {

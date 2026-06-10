@@ -7,7 +7,9 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatError } from '@angular/material/input';
-import { Order } from '../../core/models/order';
+import { OrderGame } from '../../core/models/orderGame';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-cart-list',
@@ -19,7 +21,9 @@ import { Order } from '../../core/models/order';
     MatError,
     MatPaginatorModule,
     MatCardModule,
-    MatProgressSpinner
+    MatProgressSpinner,
+    MatIconModule,
+    RouterLink
   ],
   templateUrl: './cart-list.page.html',
   styleUrl: './cart-list.page.scss'
@@ -27,16 +31,17 @@ import { Order } from '../../core/models/order';
 
 export class CartListPage implements OnInit {
     @ViewChild(MatPaginator) paginator!: MatPaginator;
-  orders: Order[] = [];
+  orderGames: OrderGame[] = [];
   loading = false;
   errorMessage = '';
   displayedColumns: string[] = [
-    'date',
-    'customerId',
-    'status'
+    'productId',
+    'price',
+    'quantity',
+    'discount'
   ];
 
-  dataSource = new MatTableDataSource<Order>();
+  dataSource = new MatTableDataSource<OrderGame>();
 
   constructor(private readonly orderService: OrderService) {}
   
@@ -48,15 +53,15 @@ export class CartListPage implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.orderService.getAll().subscribe({
-      next: (orders) => {
-        this.orders = orders;
-        this.dataSource.data = orders;
+    this.orderService.getCart().subscribe({
+      next: (orderGames) => {
+        this.orderGames = orderGames;
+        this.dataSource.data = orderGames;
         this.dataSource.paginator = this.paginator;
         this.loading = false;
       },
       error: () => {
-        this.errorMessage = 'Failed to load orders.';
+        this.errorMessage = 'Failed to load cart.';
         this.loading = false;
       }
     });

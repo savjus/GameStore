@@ -40,7 +40,7 @@ export interface AppConfig {
   cancelGameBuyApiUrl: string;
   basketApiUrl: string;
   makeOrderInfoApiUrl: string;
-  PayApiUrl: string;
+  payApiUrl: string;
 }
 
 @Injectable({

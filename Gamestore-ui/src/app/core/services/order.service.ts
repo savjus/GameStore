@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Order, OrderUpsertRequest } from '../models/order';
 import { ApiUrlService } from './api-url.service';
+import { OrderGame } from '../models/orderGame';
+import { Method, PaymentMethod, PaymentMethodsResponse } from '../models/paymentMethod';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +27,8 @@ export class OrderService {
     return this.http.get<Order>(this.apiUrls.orderDetails(id));
   }
 
-  getCart(): Observable<Order> {
-    return this.http.get<Order>(this.apiUrls.basket());
+  getCart(): Observable<OrderGame[]> {
+    return this.http.get<OrderGame[]>(this.apiUrls.basket());
   }
 
   buyGame(key: string): Observable<void> {
@@ -37,11 +39,16 @@ export class OrderService {
     return this.http.delete<void>(this.apiUrls.cancelGameBuy(key));
   }
 
-  getPaymentMethods(): Observable<string[]> {
-    return this.http.get<string[]>(this.apiUrls.makeOrderInfo());
+  getPaymentMethods(): Observable<PaymentMethodsResponse> {
+    return this.http.get<PaymentMethodsResponse>(this.apiUrls.makeOrderInfo());
   }
 
-  pay(payload: OrderUpsertRequest): Observable<void> {
-    return this.http.post<void>(this.apiUrls.pay(), payload);
-  }
+pay(method: Method): Observable<void> {
+  const url = this.apiUrls.pay();
+
+  console.log('PAY URL:', url);
+  console.log('METHOD:', method);
+
+  return this.http.post<void>(url, method);
+}
 }
