@@ -363,7 +363,7 @@ public class OrderService(IUnitOfWork unitOfWork,
                         });
                     });
                 });
-            }).GeneratePdf(); // returns byte[] directly, no stream wrangling
+            }).GeneratePdf();
 
             var fileName = $"Invoice_{order.Id}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.pdf";
             return ServiceResult.Success((pdfBytes, fileName), StatusCodes.Status200OK);

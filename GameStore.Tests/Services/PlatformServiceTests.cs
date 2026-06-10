@@ -48,19 +48,36 @@ public class PlatformServiceTests
     public async Task UpdatePlatformAsync_ReturnsOk_WhenUpdated()
     {
         var platformId = Guid.NewGuid();
-        var platform = new Platform { Id = platformId, Type = "Old" };
+
+        var platform = new Platform
+        {
+            Id = platformId,
+            Type = "Old",
+        };
+
         var request = new UpdatePlatformRequest
         {
-            Platform = new PlatformUpdateDto { Id = platformId, Type = "New" },
+            Platform = new PlatformUpdateDto
+            {
+                Id = platformId,
+                Type = "New",
+            },
         };
 
         var platformRepository = new Mock<IPlatformRepository>();
-        platformRepository.Setup(repo => repo.GetByIdAsync(platformId))
+
+        platformRepository
+            .Setup(repo => repo.GetByIdTrackedAsync(platformId))
             .ReturnsAsync(platform);
 
+        platformRepository
+            .Setup(repo => repo.TypeExistsAsync("New", platformId))
+            .ReturnsAsync(false);
+
         var unitOfWork = CreateUnitOfWork(platformRepository);
+
         unitOfWork.Setup(u => u.SaveChangesAsync())
-            .ReturnsAsync(0);
+            .ReturnsAsync(1);
 
         var service = new PlatformService(unitOfWork.Object);
 
