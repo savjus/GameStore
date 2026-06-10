@@ -80,7 +80,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [HttpPost("payment")]
     public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequestDto? request)
     {
-        if (request == null)
+        if (request is null)
         {
             return BadRequest("Payment request is required.");
         }
@@ -90,27 +90,49 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             return BadRequest("Payment method is required.");
         }
 
-        if (request.Method.Equals("IBox terminal", StringComparison.OrdinalIgnoreCase))
+        return request.Method.ToLowerInvariant() switch
         {
-            var iboxResult = await _orderService.ProcessIBoxPaymentAsync(_customerId);
-            return iboxResult.IsSuccess
-                ? StatusCode(iboxResult.StatusCode, iboxResult.Value)
-                : StatusCode(iboxResult.StatusCode, iboxResult.Error);
+            "ibox terminal" => await ProcessIBoxPayment(),
+            "visa" => await ProcessVisaPayment(request),
+            "bank" => await ProcessBankPayment(request),
+            _ => await ProcessDefaultPayment(request),
+        };
+    }
+
+    private async Task<IActionResult> ProcessIBoxPayment()
+    {
+        var result = await _orderService.ProcessIBoxPaymentAsync(_customerId);
+
+        return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Value)
+            : StatusCode(result.StatusCode, result.Error);
+    }
+
+    private async Task<IActionResult> ProcessVisaPayment(PaymentRequestDto request)
+    {
+        if (request.Model == null)
+        {
+            return BadRequest("Card details are required.");
         }
 
-        if (request.Method.Equals("Visa", StringComparison.OrdinalIgnoreCase))
-        {
-            if (request.Model == null)
-            {
-                return BadRequest("Card details are required.");
-            }
+        var result = await _orderService.ProcessVisaPaymentAsync(_customerId, request.Model);
 
-            var visaResult = await _orderService.ProcessVisaPaymentAsync(_customerId, request.Model);
-            return visaResult.IsSuccess
-                ? StatusCode(visaResult.StatusCode)
-                : StatusCode(visaResult.StatusCode, visaResult.Error);
-        }
+        return result.IsSuccess
+            ? StatusCode(result.StatusCode)
+            : StatusCode(result.StatusCode, result.Error);
+    }
 
+    private async Task<IActionResult> ProcessDefaultPayment(PaymentRequestDto request)
+    {
+        var result = await _orderService.ProcessPaymentAsync(_customerId, request);
+
+        return result.IsSuccess
+            ? StatusCode(result.StatusCode)
+            : StatusCode(result.StatusCode, result.Error);
+    }
+
+    private async Task<IActionResult> ProcessBankPayment(PaymentRequestDto request)
+    {
         var result = await _orderService.ProcessPaymentAsync(_customerId, request);
 
         if (!result.IsSuccess)
@@ -118,38 +140,29 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             return StatusCode(result.StatusCode, result.Error);
         }
 
-        if (request.Method == "Bank")
+        var ordersResult = await _orderService.GetPaidAndCancelledOrdersAsync(_customerId);
+
+        var paidOrder = ordersResult.Value?.FirstOrDefault();
+        if (!ordersResult.IsSuccess || paidOrder is null)
         {
-            // Get the paid order
-            var ordersResult = await _orderService.GetPaidAndCancelledOrdersAsync(_customerId);
-            if (!ordersResult.IsSuccess || ordersResult.Value?.Count == 0)
-            {
-                return Ok();
-            }
-
-            var paidOrder = ordersResult.Value?[0];
-            if (paidOrder == null)
-            {
-                return Ok();
-            }
-
-            var order = new Order
-            {
-                Id = paidOrder.Id,
-                CustomerId = paidOrder.CustomerId,
-                Date = paidOrder.Date,
-                Status = OrderStatus.Paid,
-            };
-            var invoiceResult = await _orderService.GenerateBankPaymentInvoiceAsync(_customerId, order);
-
-            if (!invoiceResult.IsSuccess || invoiceResult.Value.Content.Length == 0)
-            {
-                return Ok();
-            }
-
-            return File(invoiceResult.Value.Content, "application/pdf", invoiceResult.Value.FileName);
+            return Ok();
         }
 
-        return StatusCode(result.StatusCode);
+        var order = new Order
+        {
+            Id = paidOrder.Id,
+            CustomerId = paidOrder.CustomerId,
+            Date = paidOrder.Date,
+            Status = OrderStatus.Paid,
+        };
+
+        var invoiceResult = await _orderService.GenerateBankPaymentInvoiceAsync(_customerId, order);
+
+        if (!invoiceResult.IsSuccess || invoiceResult.Value.Content.Length == 0)
+        {
+            return Ok();
+        }
+
+        return File(invoiceResult.Value.Content, "application/pdf", invoiceResult.Value.FileName);
     }
 }

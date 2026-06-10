@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using GameStore.Data;
 using GameStore.Models;
@@ -251,7 +252,7 @@ public class OrderService(IUnitOfWork unitOfWork,
 
         if (request.Method.Equals("Bank", StringComparison.OrdinalIgnoreCase))
         {
-            return await ProcessBankPaymentAsync(customerId, order);
+            return await ProcessBankPaymentAsync(order);
         }
         else if (request.Method.Equals("IBox terminal", StringComparison.OrdinalIgnoreCase))
         {
@@ -387,7 +388,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         return await _unitOfWork.Orders.GetCheckoutOrderAsync(customerId);
     }
 
-    private async Task<ServiceResult> ProcessBankPaymentAsync(Guid customerId, Order order)
+    private async Task<ServiceResult> ProcessBankPaymentAsync(Order order)
     {
         try
         {
@@ -434,7 +435,7 @@ public class OrderService(IUnitOfWork unitOfWork,
 
                 using var content = new StringContent(
                     JsonSerializer.Serialize(payload),
-                    System.Text.Encoding.UTF8,
+                    Encoding.UTF8,
                     "application/json");
 
                 _logger.LogInformation("IBox request to {Url} payload: {Payload}", microserviceUrl, JsonSerializer.Serialize(payload));
@@ -481,7 +482,7 @@ public class OrderService(IUnitOfWork unitOfWork,
     private async Task<ServiceResult> ProcessVisaPaymentInternalAsync(
         Guid customerId, Order order, VisaCardDetailsDto cardDetails)
     {
-        if (cardDetails == null || !IsValidVisaCardDetails(cardDetails))
+        if (!IsValidVisaInput(cardDetails))
         {
             return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Card details are invalid.");
         }
@@ -489,55 +490,59 @@ public class OrderService(IUnitOfWork unitOfWork,
         var microserviceUrl = _configuration["PaymentMicroservice:VisaUrl"];
         if (string.IsNullOrWhiteSpace(microserviceUrl))
         {
-            order.Status = OrderStatus.Open;
-            await _unitOfWork.SaveChangesAsync();
-            return ServiceResult.Fail(StatusCodes.Status500InternalServerError, "Visa payment URL is not configured.");
+            return await FailAndReopenOrder(
+                order,
+                StatusCodes.Status500InternalServerError,
+                "Visa payment URL is not configured.");
         }
 
         var sum = await CalculateOrderSumAsync(order);
         var retryCount = GetPaymentRetryCount();
+
         var httpClient = _httpClientFactory.CreateClient();
+
+        var lastError = await ExecuteVisaWithRetry(
+            httpClient, microserviceUrl, customerId, order, cardDetails, (decimal)sum, retryCount);
+
+        return await FinalizeVisaResult(order, lastError);
+    }
+
+    private bool IsValidVisaInput(VisaCardDetailsDto? cardDetails)
+    {
+        return cardDetails != null && IsValidVisaCardDetails(cardDetails);
+    }
+
+    private async Task<string?> ExecuteVisaWithRetry(
+        HttpClient httpClient,
+        string url,
+        Guid customerId,
+        Order order,
+        VisaCardDetailsDto cardDetails,
+        decimal sum,
+        int retryCount)
+    {
         string? lastError = null;
 
         for (var attempt = 1; attempt <= retryCount; attempt++)
         {
             try
             {
-                var payload = new
-                {
-                    userId = customerId,
-                    orderId = order.Id,
-                    sum,
-                    CardHolderName = cardDetails.Holder,
-                    CardNumber = cardDetails.CardNumber,
-                    ExpirationMonth = cardDetails.MonthExpire,
-                    ExpirationYear = cardDetails.YearExpire,
-                    Cvv = cardDetails.Cvv2,
-                };
+                var response = await SendVisaRequest(httpClient, url, customerId, order, cardDetails, sum);
+                var body = await response.Content.ReadAsStringAsync();
 
-                using var content = new StringContent(
-                    JsonSerializer.Serialize(payload),
-                    System.Text.Encoding.UTF8,
-                    "application/json");
+                _logger.LogInformation(
+                    "Visa response {Status} {Reason} body: {Body}",
+                    (int)response.StatusCode,
+                    response.ReasonPhrase,
+                    body);
 
-                _logger.LogInformation("Visa request to {Url} payload: {Payload}", microserviceUrl, JsonSerializer.Serialize(payload));
-                using var response = await httpClient.PostAsync(microserviceUrl, content);
-                var responseBodyVisa = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation("Visa response {Status} {Reason} body: {Body}", (int)response.StatusCode, response.ReasonPhrase, responseBodyVisa);
                 if (!response.IsSuccessStatusCode)
                 {
-                    var responseReason = string.IsNullOrWhiteSpace(response.ReasonPhrase)
-                        ? "Unknown"
-                        : response.ReasonPhrase;
-                    lastError =
-                        $"Visa payment request failed with status code {(int)response.StatusCode} ({responseReason})."
-                        + (string.IsNullOrWhiteSpace(responseBodyVisa)
-                            ? string.Empty
-                            : $" Body: {responseBodyVisa}");
+                    lastError = BuildHttpError(response, body);
                     continue;
                 }
 
-                if (!IsValidVisaResponse(responseBodyVisa))
+                if (!IsValidVisaResponse(body))
                 {
                     lastError = "Visa payment returned invalid response payload.";
                     continue;
@@ -545,7 +550,7 @@ public class OrderService(IUnitOfWork unitOfWork,
 
                 order.Status = OrderStatus.Paid;
                 await _unitOfWork.SaveChangesAsync();
-                return ServiceResult.Success(StatusCodes.Status200OK);
+                return null; // success
             }
             catch (Exception ex)
             {
@@ -553,9 +558,69 @@ public class OrderService(IUnitOfWork unitOfWork,
             }
         }
 
+        return lastError;
+    }
+
+    private async Task<HttpResponseMessage> SendVisaRequest(
+        HttpClient httpClient,
+        string url,
+        Guid customerId,
+        Order order,
+        VisaCardDetailsDto cardDetails,
+        decimal sum)
+    {
+        var payload = new
+        {
+            userId = customerId,
+            orderId = order.Id,
+            sum,
+            CardHolderName = cardDetails.Holder,
+            CardNumber = cardDetails.CardNumber,
+            ExpirationMonth = cardDetails.MonthExpire,
+            ExpirationYear = cardDetails.YearExpire,
+            Cvv = cardDetails.Cvv2,
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+
+        _logger.LogInformation("Visa request to {Url} payload: {Payload}", url, json);
+
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        return await httpClient.PostAsync(url, content);
+    }
+
+    private string BuildHttpError(HttpResponseMessage response, string body)
+    {
+        var reason = string.IsNullOrWhiteSpace(response.ReasonPhrase)
+            ? "Unknown"
+            : response.ReasonPhrase;
+
+        return $"Visa payment failed with status code {(int)response.StatusCode} ({reason})."
+            + (string.IsNullOrWhiteSpace(body) ? string.Empty : $" Body: {body}");
+    }
+
+    private async Task<ServiceResult> FinalizeVisaResult(Order order, string? lastError)
+    {
+        if (string.IsNullOrEmpty(lastError))
+        {
+            return ServiceResult.Success(StatusCodes.Status200OK);
+        }
+
         order.Status = OrderStatus.Open;
         await _unitOfWork.SaveChangesAsync();
-        return ServiceResult.Fail(StatusCodes.Status502BadGateway, lastError ?? "Visa payment failed after retries.");
+
+        return ServiceResult.Fail(
+            StatusCodes.Status502BadGateway,
+            lastError ?? "Visa payment failed after retries.");
+    }
+
+    private async Task<ServiceResult> FailAndReopenOrder(Order order, int statusCode, string message)
+    {
+        order.Status = OrderStatus.Open;
+        await _unitOfWork.SaveChangesAsync();
+
+        return ServiceResult.Fail(statusCode, message);
     }
 
     private int GetPaymentRetryCount()

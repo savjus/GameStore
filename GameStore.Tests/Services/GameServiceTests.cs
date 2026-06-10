@@ -11,7 +11,7 @@ using Moq;
 
 namespace GameStore.Tests.Services;
 
-public class GameServiceTests
+public partial class GameServiceTests
 {
     [Fact]
     public async Task GetGameByKeyAsync_ReturnsBadRequest_WhenKeyMissing()
@@ -360,8 +360,7 @@ public class GameServiceTests
         Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
         Assert.NotNull(result.Value);
         Assert.Equal("text/plain", result.Value!.ContentType);
-        Assert.Matches(new Regex("^Super Game_\\d{14}\\.txt$"), result.Value.FileName);
-
+        Assert.Matches(SuperGameFileNameRegex(), result.Value.FileName);
         var json = Encoding.UTF8.GetString(result.Value.Content);
         using var document = JsonDocument.Parse(json);
         Assert.Equal("Super Game", document.RootElement.GetProperty("Name").GetString());
@@ -396,4 +395,7 @@ public class GameServiceTests
         var unitOfWork = CreateUnitOfWork(gameRepository, genreRepository, platformRepository, publisherRepository);
         return new GameService(unitOfWork.Object);
     }
+
+    [GeneratedRegex("^Super Game_\\d{14}\\.txt$")]
+    private static partial Regex SuperGameFileNameRegex();
 }
