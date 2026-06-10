@@ -91,7 +91,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Game key is required.");
         }
 
-        var game = await _unitOfWork.Games.GetByKeyAsync(gameKey);
+        var game = await _unitOfWork.Games.GetByKeyTrackingAsync(gameKey);
         if (game == null)
         {
             return ServiceResult.Fail(StatusCodes.Status404NotFound, "Game not found.");
