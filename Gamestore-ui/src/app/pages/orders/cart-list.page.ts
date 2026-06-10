@@ -1,69 +1,133 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
 import { OrderService } from '../../core/services/order.service';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatError } from '@angular/material/input';
-import { OrderGame } from '../../core/models/orderGame';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+
+import { OrderGame } from '../../core/models/orderGame';
+import { Method, PaymentMethod } from '../../core/models/paymentMethod';
 
 @Component({
-  selector: 'app-cart-list',
+  selector: 'app-cart-payment-page',
   standalone: true,
   imports: [
+    CommonModule,
+    RouterLink,
     MatButtonModule,
     MatTableModule,
-    CommonModule,
-    MatError,
-    MatPaginatorModule,
-    MatCardModule,
     MatProgressSpinner,
-    MatIconModule,
-    RouterLink
+    MatCardModule,
+    MatPaginatorModule,
+    MatError,
+    MatIconModule
   ],
   templateUrl: './cart-list.page.html',
   styleUrl: './cart-list.page.scss'
 })
-
 export class CartListPage implements OnInit {
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  // ---------------- CART (ORDERS) ----------------
+  @ViewChild('cartPaginator') cartPaginator!: MatPaginator;
+
   orderGames: OrderGame[] = [];
-  loading = false;
-  errorMessage = '';
-  displayedColumns: string[] = [
+  cartDataSource = new MatTableDataSource<OrderGame>();
+
+  cartColumns: string[] = [
     'productId',
     'price',
     'quantity',
     'discount'
   ];
 
-  dataSource = new MatTableDataSource<OrderGame>();
+  // ---------------- PAYMENT METHODS ----------------
+  @ViewChild('paymentPaginator') paymentPaginator!: MatPaginator;
 
-  constructor(private readonly orderService: OrderService) {}
-  
+  paymentMethods: PaymentMethod[] = [];
+  paymentDataSource = new MatTableDataSource<PaymentMethod>();
+
+  paymentColumns: string[] = [
+    'imageUrl',
+    'title',
+    'description',
+    'actions'
+  ];
+
+  // ---------------- STATE ----------------
+  loading = false;
+  errorMessage = '';
+
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
+
   ngOnInit(): void {
-    this.loadOrders();
+    this.loadCart();
+    this.loadPaymentMethods();
   }
 
-  loadOrders(): void {
+  // ---------------- CART ----------------
+  loadCart(): void {
     this.loading = true;
     this.errorMessage = '';
 
     this.orderService.getCart().subscribe({
       next: (orderGames) => {
         this.orderGames = orderGames;
-        this.dataSource.data = orderGames;
-        this.dataSource.paginator = this.paginator;
+        this.cartDataSource.data = orderGames;
         this.loading = false;
+
+        this.cdRef.detectChanges();
+
+        if (this.cartPaginator) {
+          this.cartDataSource.paginator = this.cartPaginator;
+        }
       },
       error: () => {
         this.errorMessage = 'Failed to load cart.';
         this.loading = false;
       }
     });
+  }
+
+  // ---------------- PAYMENT METHODS ----------------
+  loadPaymentMethods(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.orderService.getPaymentMethods().subscribe({
+      next: (response) => {
+        this.paymentMethods = response.paymentMethods;
+        this.paymentDataSource.data = response.paymentMethods;
+        this.loading = false;
+
+        this.cdRef.detectChanges();
+
+        if (this.paymentPaginator) {
+          this.paymentDataSource.paginator = this.paymentPaginator;
+        }
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load payment methods.';
+        this.loading = false;
+      }
+    });
+  }
+
+  // ---------------- PAYMENT ACTION ----------------
+  pay(methodTitle: string): void {
+    const payload: Method = {
+      method: methodTitle
+    };
+
+    this.orderService.pay(payload).subscribe();
   }
 }
