@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
 import { OrderService } from '../../core/services/order.service';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -11,7 +9,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatError } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-
 import { OrderGame } from '../../core/models/orderGame';
 import { Method, PaymentMethod } from '../../core/models/paymentMethod';
 
@@ -32,14 +29,11 @@ import { Method, PaymentMethod } from '../../core/models/paymentMethod';
   templateUrl: './cart-list.page.html',
   styleUrl: './cart-list.page.scss'
 })
+
 export class CartListPage implements OnInit {
-
-  // ---------------- CART (ORDERS) ----------------
   @ViewChild('cartPaginator') cartPaginator!: MatPaginator;
-
   orderGames: OrderGame[] = [];
   cartDataSource = new MatTableDataSource<OrderGame>();
-
   cartColumns: string[] = [
     'productId',
     'price',
@@ -47,12 +41,9 @@ export class CartListPage implements OnInit {
     'discount'
   ];
 
-  // ---------------- PAYMENT METHODS ----------------
   @ViewChild('paymentPaginator') paymentPaginator!: MatPaginator;
-
   paymentMethods: PaymentMethod[] = [];
   paymentDataSource = new MatTableDataSource<PaymentMethod>();
-
   paymentColumns: string[] = [
     'imageUrl',
     'title',
@@ -60,7 +51,6 @@ export class CartListPage implements OnInit {
     'actions'
   ];
 
-  // ---------------- STATE ----------------
   loading = false;
   errorMessage = '';
 
@@ -74,7 +64,6 @@ export class CartListPage implements OnInit {
     this.loadPaymentMethods();
   }
 
-  // ---------------- CART ----------------
   loadCart(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -98,7 +87,6 @@ export class CartListPage implements OnInit {
     });
   }
 
-  // ---------------- PAYMENT METHODS ----------------
   loadPaymentMethods(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -122,12 +110,19 @@ export class CartListPage implements OnInit {
     });
   }
 
-  // ---------------- PAYMENT ACTION ----------------
-  pay(methodTitle: string): void {
-    const payload: Method = {
-      method: methodTitle
-    };
+  getPaymentRoute(method: string): string {
+    switch (method) {
+      case 'Bank':
+        return '/orders/payment/bank';
 
-    this.orderService.pay(payload).subscribe();
+      case 'IBox terminal':
+        return '/orders/payment/ibox';
+
+      case 'Visa':
+        return '/orders/payment/visa';
+
+      default:
+        return '/orders/cart';
+    }
   }
 }

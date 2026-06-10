@@ -6,6 +6,8 @@ public interface IGameRepository
 {
     Task<Game?> GetByKeyAsync(string key);
 
+    Task<Game?> GetByKeyTrackingAsync(string key);
+
     Task<Game?> GetByIdAsync(Guid id);
 
     Task<List<Game>> GetAllAsync();

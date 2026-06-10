@@ -26,7 +26,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Game key is required.");
         }
 
-        var game = await _unitOfWork.Games.GetByKeyAsync(gameKey);
+        var game = await _unitOfWork.Games.GetByKeyTrackingAsync(gameKey);
         if (game == null)
         {
             return ServiceResult.Fail(StatusCodes.Status404NotFound, "Game not found.");
@@ -569,7 +569,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         var hasValidHolder = !string.IsNullOrWhiteSpace(cardDetails.Holder);
         var hasValidCardNumber = !string.IsNullOrWhiteSpace(cardDetails.CardNumber)
             && cardDetails.CardNumber.All(char.IsDigit)
-            && cardDetails.CardNumber.Length is >= 12 and <= 19;
+            && cardDetails.CardNumber.Length == 16;
         var hasValidMonth = cardDetails.MonthExpire is >= 1 and <= 12;
         var hasValidYear = cardDetails.YearExpire >= DateTime.UtcNow.Year;
         var hasValidCvv = cardDetails.Cvv2 is >= 100 and <= 9999;

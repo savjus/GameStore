@@ -14,6 +14,9 @@ import { PublisherFormPage } from './pages/publishers/publisher-form.page';
 import { PublisherListPage } from './pages/publishers/publisher-list.page';
 import { OrderListPage } from './pages/orders/orders-list.page';
 import { CartListPage } from './pages/orders/cart-list.page';
+import { BankPaymentPage } from './pages/orders/payment/bank-payment.page';
+import { IBoxPaymentPage } from './pages/orders/payment/ibox-payment.page';
+import { VisaPaymentPage } from './pages/orders/payment/visa-payment.page';
 
 export const routes: Routes = [
 	{ path: '', pathMatch: 'full', redirectTo: 'games' },
@@ -36,5 +39,8 @@ export const routes: Routes = [
 	{ path: 'publishers/delete', component: PublisherDeletePage },
 	{ path: 'orders', component: OrderListPage },
 	{ path: 'orders/cart', component: CartListPage },
+	{ path: 'orders/payment/bank', component: BankPaymentPage },
+	{ path: 'orders/payment/ibox', component: IBoxPaymentPage },
+	{ path: 'orders/payment/visa', component: VisaPaymentPage },
 	{ path: '**', redirectTo: 'games' }
 ];
