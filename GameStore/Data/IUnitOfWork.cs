@@ -12,6 +12,8 @@ public interface IUnitOfWork : IDisposable
 
     IPlatformRepository Platforms { get; }
 
+    IOrderRepository Orders { get; }
+
     Task<int> SaveChangesAsync();
 
     Task<bool> HasChangesAsync();

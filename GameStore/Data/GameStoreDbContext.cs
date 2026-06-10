@@ -25,6 +25,13 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
     private static readonly Guid PlatformBrowserId = Guid.Parse("c0864f05-19d8-4d02-9c9b-2f25b2e1cb28");
     private static readonly Guid PlatformDesktopId = Guid.Parse("a51b02b3-2d1f-4b9b-8f38-8a1f7f0abde3");
     private static readonly Guid PlatformConsoleId = Guid.Parse("0e6c8b5f-0e69-4c1c-8d2b-5d1a4a7b2d4f");
+    private static readonly Guid PublisherActivisionId = Guid.Parse("f5b8c1a0-9f3c-4e2d-b5a6-3c7d8e9f0a1b");
+    private static readonly Guid PublisherElectronicArtsId = Guid.Parse("a1b2c3d4-e5f6-4a8b-9c0d-1e2f3a4b5c6d");
+    private static readonly Guid PublisherUbisoftId = Guid.Parse("9c8b7a6f-5e4d-3c2b-1a09-f8e7d6c5b4a3");
+
+    private static readonly Guid GameCallOfDutyId = Guid.Parse("7d3c8e2f-4b6a-4d9f-8e2c-5a7b9c1d3e4f");
+    private static readonly Guid GameAssassinsCreedId = Guid.Parse("2f4e6a8c-9b1d-4c3f-7e9a-1b5d8c2f4a6e");
+    private static readonly Guid GameTheSimsId = Guid.Parse("5a9f2b8d-3c7e-4a1f-6d9c-2e5b7a1f4c8d");
 
     public DbSet<Game> Games => Set<Game>();
 
@@ -37,6 +44,10 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
     public DbSet<GameGenre> GameGenres => Set<GameGenre>();
 
     public DbSet<GamePlatform> GamePlatforms => Set<GamePlatform>();
+
+    public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<OrderGame> GameOrders => Set<OrderGame>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,6 +110,28 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
                 .HasForeignKey(link => link.PlatformId);
         });
 
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(order => order.Id);
+            entity.Property(order => order.Date).IsRequired();
+            entity.Property(order => order.CustomerId).IsRequired();
+            entity.Property(order => order.Status).IsRequired();
+            entity.HasMany(order => order.OrderGames)
+                .WithOne(og => og.Order)
+                .HasForeignKey(og => og.OrderId);
+        });
+
+        modelBuilder.Entity<OrderGame>(entity =>
+        {
+            entity.HasKey(og => new { og.OrderId, og.ProductId });
+            entity.HasOne(og => og.Order)
+                .WithMany(order => order.OrderGames)
+                .HasForeignKey(og => og.OrderId);
+            entity.HasOne(og => og.Product)
+                .WithMany(game => game.OrderGames)
+                .HasForeignKey(og => og.ProductId);
+        });
+
         modelBuilder.Entity<Genre>().HasData(
             new Genre { Id = GenreStrategyId, Name = "Strategy", ParentGenreId = null },
             new Genre { Id = GenreRtsId, Name = "RTS", ParentGenreId = GenreStrategyId },
@@ -121,5 +154,45 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             new Platform { Id = PlatformBrowserId, Type = "Browser" },
             new Platform { Id = PlatformDesktopId, Type = "Desktop" },
             new Platform { Id = PlatformConsoleId, Type = "Console" });
+
+        modelBuilder.Entity<Publisher>().HasData(
+            new Publisher { Id = PublisherActivisionId, CompanyName = "Activision", },
+            new Publisher { Id = PublisherElectronicArtsId, CompanyName = "Electronic Arts", },
+            new Publisher { Id = PublisherUbisoftId, CompanyName = "Ubisoft", });
+
+        modelBuilder.Entity<Game>().HasData(
+            new Game
+            {
+                Id = GameCallOfDutyId,
+                Name = "Call of Duty: Modern Warfare",
+                Key = "cod-mw",
+                Description = "Experience an intimate, grounded, cooperative, and playable Campaign.",
+                Price = 59.99d,
+                Discount = 0,
+                UnitInStock = 100,
+                PublisherId = PublisherActivisionId,
+            },
+            new Game
+            {
+                Id = GameAssassinsCreedId,
+                Name = "Assassin's Creed Valhalla",
+                Key = "ac-valhalla",
+                Description = "Become a legendary Viking warrior.",
+                Price = 49.99d,
+                Discount = 10,
+                UnitInStock = 75,
+                PublisherId = PublisherUbisoftId,
+            },
+            new Game
+            {
+                Id = GameTheSimsId,
+                Name = "The Sims 4",
+                Key = "sims-4",
+                Description = "Play with life! Control the Sims' destiny and explore the world.",
+                Price = 39.99d,
+                Discount = 0,
+                UnitInStock = 150,
+                PublisherId = PublisherElectronicArtsId,
+            });
     }
 }

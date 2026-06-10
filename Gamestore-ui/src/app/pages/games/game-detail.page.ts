@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { OrderService } from '../../core/services/order.service';
 @Component({
   selector: 'app-game-detail',
   standalone: true,
@@ -30,6 +31,7 @@ export class GameDetailPage implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly gameService: GameService,
+    private readonly orderService: OrderService,
     private readonly changeDetector: ChangeDetectorRef
   ) {}
 
@@ -82,4 +84,8 @@ export class GameDetailPage implements OnInit {
       }
     });
   }
+
+  addToCart(): void {
+    this.orderService.buyGame(this.key).subscribe();
+  };
 }

@@ -35,6 +35,11 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
         return _dbContext.Games.AsNoTracking().FirstOrDefaultAsync(game => game.Key == key);
     }
 
+    public Task<Game?> GetByKeyTrackingAsync(string key)
+    {
+        return _dbContext.Games.FirstOrDefaultAsync(game => game.Key == key);
+    }
+
     public Task<List<Game>> GetByGenreIdAsync(Guid genreId)
     {
         return _dbContext.Games.AsNoTracking().Where(game => game.GameGenres.Any(genre => genre.GenreId == genreId))
@@ -51,11 +56,6 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
     {
         return _dbContext.Games.AsNoTracking().Where(game => game.PublisherId == publisherId)
             .ToListAsync();
-    }
-
-    public Task SaveChangesAsync()
-    {
-        return _dbContext.SaveChangesAsync();
     }
 
     public Task<Game?> GetByIdWithLinksAsync(Guid id)
