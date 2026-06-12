@@ -19,11 +19,11 @@ public interface IOrderService
 
     Task<ServiceResult<PaymentMethodsResponseDto>> GetPaymentMethodsAsync();
 
-    Task<ServiceResult> ProcessPaymentAsync(Guid customerId, PaymentRequestDto request);
+    Task<ServiceResult<Order>> ProcessPaymentAsync(Guid customerId, PaymentRequestDto request);
 
     Task<ServiceResult<(byte[] Content, string FileName)>> GenerateBankPaymentInvoiceAsync(Guid customerId, Order order);
 
     Task<ServiceResult<IBoxPaymentResponseDto?>> ProcessIBoxPaymentAsync(Guid customerId);
 
-    Task<ServiceResult> ProcessVisaPaymentAsync(Guid customerId, VisaCardDetailsDto cardDetails);
+    Task<ServiceResult<Order>> ProcessVisaPaymentAsync(Guid customerId, VisaCardDetailsDto cardDetails);
 }

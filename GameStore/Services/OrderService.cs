@@ -116,8 +116,8 @@ public class OrderService(IUnitOfWork unitOfWork,
 
         await _unitOfWork.Orders.DeleteOrderGame(orderGame);
 
-        var remainingItems = await _unitOfWork.Orders.GetOrderDetailsAsync(cart.Id);
-        if (remainingItems.Count == 0)
+        var remaining = cart.OrderGames.Count(og => og.ProductId != orderGame.ProductId);
+        if (remaining == 0)
         {
             await _unitOfWork.Orders.DeleteOrder(cart);
         }
@@ -231,17 +231,17 @@ public class OrderService(IUnitOfWork unitOfWork,
         return Task.FromResult(ServiceResult.Success(paymentMethods, StatusCodes.Status200OK));
     }
 
-    public async Task<ServiceResult> ProcessPaymentAsync(Guid customerId, PaymentRequestDto request)
+    public async Task<ServiceResult<Order>> ProcessPaymentAsync(Guid customerId, PaymentRequestDto request)
     {
         if (string.IsNullOrWhiteSpace(request.Method))
         {
-            return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Payment method is required.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status400BadRequest, "Payment method is required.");
         }
 
         var order = await GetOrderForPaymentAsync(customerId);
         if (order == null)
         {
-            return ServiceResult.Fail(StatusCodes.Status404NotFound, "No open order found.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status404NotFound, "No open order found.");
         }
 
         if (order.Status == OrderStatus.Open)
@@ -258,8 +258,8 @@ public class OrderService(IUnitOfWork unitOfWork,
         {
             var result = await ProcessIBoxPaymentInternalAsync(customerId, order);
             return result.IsSuccess
-                ? ServiceResult.Success(result.StatusCode)
-                : ServiceResult.Fail(result.StatusCode, result.Error ?? "IBox payment failed.");
+                ? ServiceResult.Success(order, result.StatusCode)
+                : ServiceResult.Fail<Order>(result.StatusCode, result.Error ?? "IBox payment failed.");
         }
         else if (request.Method.Equals("Visa", StringComparison.OrdinalIgnoreCase))
         {
@@ -267,7 +267,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         }
         else
         {
-            return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Invalid payment method.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status400BadRequest, "Invalid payment method.");
         }
     }
 
@@ -290,22 +290,22 @@ public class OrderService(IUnitOfWork unitOfWork,
         return await ProcessIBoxPaymentInternalAsync(customerId, order);
     }
 
-    public async Task<ServiceResult> ProcessVisaPaymentAsync(Guid customerId, VisaCardDetailsDto cardDetails)
+    public async Task<ServiceResult<Order>> ProcessVisaPaymentAsync(Guid customerId, VisaCardDetailsDto cardDetails)
     {
         if (cardDetails == null)
         {
-            return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Card details are required.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status400BadRequest, "Card details are required.");
         }
 
         if (!IsValidVisaCardDetails(cardDetails))
         {
-            return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Card details are invalid.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status400BadRequest, "Card details are invalid.");
         }
 
         var order = await GetOrderForPaymentAsync(customerId);
         if (order == null)
         {
-            return ServiceResult.Fail(StatusCodes.Status404NotFound, "No open order found.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status404NotFound, "No open order found.");
         }
 
         if (order.Status == OrderStatus.Open)
@@ -388,19 +388,19 @@ public class OrderService(IUnitOfWork unitOfWork,
         return await _unitOfWork.Orders.GetCheckoutOrderAsync(customerId);
     }
 
-    private async Task<ServiceResult> ProcessBankPaymentAsync(Order order)
+    private async Task<ServiceResult<Order>> ProcessBankPaymentAsync(Order order)
     {
         try
         {
             order.Status = OrderStatus.Paid;
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult.Success(StatusCodes.Status200OK);
+            return ServiceResult.Success(order, StatusCodes.Status200OK);
         }
         catch (Exception)
         {
             order.Status = OrderStatus.Open;
             await _unitOfWork.SaveChangesAsync();
-            return ServiceResult.Fail(StatusCodes.Status500InternalServerError, "Bank payment failed.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status500InternalServerError, "Bank payment failed.");
         }
     }
 
@@ -479,12 +479,12 @@ public class OrderService(IUnitOfWork unitOfWork,
             lastError ?? "IBox payment failed after retries.");
     }
 
-    private async Task<ServiceResult> ProcessVisaPaymentInternalAsync(
+    private async Task<ServiceResult<Order>> ProcessVisaPaymentInternalAsync(
         Guid customerId, Order order, VisaCardDetailsDto cardDetails)
     {
         if (!IsValidVisaInput(cardDetails))
         {
-            return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Card details are invalid.");
+            return ServiceResult.Fail<Order>(StatusCodes.Status400BadRequest, "Card details are invalid.");
         }
 
         var microserviceUrl = _configuration["PaymentMicroservice:VisaUrl"];
@@ -600,27 +600,27 @@ public class OrderService(IUnitOfWork unitOfWork,
             + (string.IsNullOrWhiteSpace(body) ? string.Empty : $" Body: {body}");
     }
 
-    private async Task<ServiceResult> FinalizeVisaResult(Order order, string? lastError)
+    private async Task<ServiceResult<Order>> FinalizeVisaResult(Order order, string? lastError)
     {
         if (string.IsNullOrEmpty(lastError))
         {
-            return ServiceResult.Success(StatusCodes.Status200OK);
+            return ServiceResult.Success(order, StatusCodes.Status200OK);
         }
 
         order.Status = OrderStatus.Open;
         await _unitOfWork.SaveChangesAsync();
 
-        return ServiceResult.Fail(
+        return ServiceResult.Fail<Order>(
             StatusCodes.Status502BadGateway,
             lastError ?? "Visa payment failed after retries.");
     }
 
-    private async Task<ServiceResult> FailAndReopenOrder(Order order, int statusCode, string message)
+    private async Task<ServiceResult<Order>> FailAndReopenOrder(Order order, int statusCode, string message)
     {
         order.Status = OrderStatus.Open;
         await _unitOfWork.SaveChangesAsync();
 
-        return ServiceResult.Fail(statusCode, message);
+        return ServiceResult.Fail<Order>(statusCode, message);
     }
 
     private int GetPaymentRetryCount()

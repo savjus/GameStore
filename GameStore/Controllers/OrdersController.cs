@@ -1,4 +1,3 @@
-using GameStore.Models;
 using GameStore.Models.Dtos;
 using GameStore.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -140,21 +139,11 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             return StatusCode(result.StatusCode, result.Error);
         }
 
-        var ordersResult = await _orderService.GetPaidAndCancelledOrdersAsync(_customerId);
-
-        var paidOrder = ordersResult.Value?.FirstOrDefault();
-        if (!ordersResult.IsSuccess || paidOrder is null)
+        var order = result.Value;
+        if (order is null)
         {
             return Ok();
         }
-
-        var order = new Order
-        {
-            Id = paidOrder.Id,
-            CustomerId = paidOrder.CustomerId,
-            Date = paidOrder.Date,
-            Status = OrderStatus.Paid,
-        };
 
         var invoiceResult = await _orderService.GenerateBankPaymentInvoiceAsync(_customerId, order);
 
