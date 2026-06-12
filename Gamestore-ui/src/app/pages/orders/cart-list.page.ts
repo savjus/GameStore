@@ -53,7 +53,8 @@ export class CartListPage implements OnInit {
     'actions'
   ];
 
-  loading = false;
+  loadingCart = false;
+  loadingMethods = false;
   errorMessage = '';
 
   constructor(
@@ -68,14 +69,14 @@ export class CartListPage implements OnInit {
   }
 
   loadCart(): void {
-    this.loading = true;
+    this.loadingCart = true;
     this.errorMessage = '';
 
     this.orderService.getCart().subscribe({
       next: (orderGames) => {
         this.orderGames = orderGames;
         this.cartDataSource.data = orderGames;
-        this.loading = false;
+        this.loadingCart = false;
 
         this.cdRef.detectChanges();
 
@@ -85,20 +86,20 @@ export class CartListPage implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Failed to load cart.';
-        this.loading = false;
+        this.loadingCart = false;
       }
     });
   }
 
   loadPaymentMethods(): void {
-    this.loading = true;
+    this.loadingMethods = true;
     this.errorMessage = '';
 
     this.orderService.getPaymentMethods().subscribe({
       next: (response) => {
         this.paymentMethods = response.paymentMethods;
         this.paymentDataSource.data = response.paymentMethods;
-        this.loading = false;
+        this.loadingMethods = false;
 
         this.cdRef.detectChanges();
 
@@ -108,7 +109,7 @@ export class CartListPage implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Failed to load payment methods.';
-        this.loading = false;
+        this.loadingMethods = false;
       }
     });
   }
@@ -129,18 +130,14 @@ export class CartListPage implements OnInit {
         return '/orders/cart';
     }
   }
-  removeFromCart(productId: string): void {
+
+  removeFromCart(orderGame: OrderGame): void {
   this.loading = true;
 
-  this.gameService.getById(productId).subscribe({
-    next: (game) => {
-
-      const gameKey = game.key;
-
-      this.orderService.removeFromCart(gameKey).subscribe({
-        next: () => {
+  this.orderService.removeFromCart(orderGame.key).subscribe({
+            next: () => {
           this.orderGames = this.orderGames.filter(
-            x => x.productId !== productId
+            x => x.productId !== orderGame.productId
           );
 
           this.cartDataSource.data = this.orderGames;
@@ -151,12 +148,5 @@ export class CartListPage implements OnInit {
           this.loading = false;
         }
       });
-
-    },
-    error: () => {
-      this.errorMessage = 'Failed to fetch game details.';
-      this.loading = false;
-    }
-  });
-}
+  }
 }

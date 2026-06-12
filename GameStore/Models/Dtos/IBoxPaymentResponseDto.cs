@@ -8,5 +8,5 @@ public class IBoxPaymentResponseDto
 
     public DateTime PaymentDate { get; set; }
 
-    public double Sum { get; set; }
+    public decimal Sum { get; set; }
 }

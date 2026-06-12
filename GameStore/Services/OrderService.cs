@@ -141,6 +141,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             Price = og.Price,
             Quantity = og.Quantity,
             Discount = og.Discount,
+            ProductKey = og.Product.Key,
         }).ToList();
 
         return ServiceResult.Success(dtos, StatusCodes.Status200OK);
@@ -176,6 +177,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             Id = o.Id,
             CustomerId = o.CustomerId,
             Date = o.Date,
+            Status = o.Status.ToString(),
         }).ToList();
 
         return ServiceResult.Success(dtos, StatusCodes.Status200OK);
@@ -196,6 +198,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             Id = order.Id,
             CustomerId = order.CustomerId,
             Date = order.Date,
+            Status = order.Status.ToString(),
         };
 
         return ServiceResult.Success(dto, StatusCodes.Status200OK);
@@ -321,8 +324,6 @@ public class OrderService(IUnitOfWork unitOfWork,
     {
         try
         {
-            QuestPDF.Settings.License = LicenseType.Community;
-
             var sum = await CalculateOrderSumAsync(order);
             var invoiceValidityDays = _configuration.GetValue<int?>("BankPayment:InvoiceValidityDays") ?? 30;
             var expiryDate = order.Date.AddDays(invoiceValidityDays);
@@ -424,6 +425,11 @@ public class OrderService(IUnitOfWork unitOfWork,
 
         for (var attempt = 1; attempt <= retryCount; attempt++)
         {
+            if (attempt > 1)
+            {
+                await Task.Delay(200 * attempt);
+            }
+
             try
             {
                 var payload = new
@@ -525,6 +531,11 @@ public class OrderService(IUnitOfWork unitOfWork,
 
         for (var attempt = 1; attempt <= retryCount; attempt++)
         {
+            if (attempt > 1)
+            {
+                await Task.Delay(200 * attempt);
+            }
+
             try
             {
                 var response = await SendVisaRequest(httpClient, url, customerId, order, cardDetails, sum);
@@ -646,13 +657,15 @@ public class OrderService(IUnitOfWork unitOfWork,
     {
         if (string.IsNullOrWhiteSpace(responseContent))
         {
-            return true;
+            return false;
         }
 
         try
         {
-            _ = JsonDocument.Parse(responseContent);
-            return true;
+            using var doc = JsonDocument.Parse(responseContent);
+            return doc.RootElement
+                .TryGetProperty("status", out var s)
+                && s.GetString() == "ok";
         }
         catch (JsonException)
         {
@@ -664,7 +677,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         string responseContent,
         Guid expectedCustomerId,
         Guid expectedOrderId,
-        double expectedSum)
+        decimal expectedSum)
     {
         if (string.IsNullOrWhiteSpace(responseContent))
         {
@@ -711,10 +724,10 @@ public class OrderService(IUnitOfWork unitOfWork,
         }
     }
 
-    private async Task<double> CalculateOrderSumAsync(Order order)
+    private async Task<decimal> CalculateOrderSumAsync(Order order)
     {
         var orderDetails = await _unitOfWork.Orders.GetOrderDetailsAsync(order.Id);
-        double sum = 0;
+        decimal sum = 0;
 
         foreach (var item in orderDetails)
         {

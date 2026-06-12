@@ -11,13 +11,3 @@ enum orderStatus{
     Paid,
     Cancelled
 }
-
-export interface OrderUpsertRequest {
-  genre: {
-    id?: string;
-    date: string;
-    customerId: string;
-    orderStatus: orderStatus;
-    games: string[];
-  };
-}

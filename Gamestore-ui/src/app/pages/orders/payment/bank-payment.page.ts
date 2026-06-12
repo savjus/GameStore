@@ -38,9 +38,7 @@ export class BankPaymentPage {
       next: (res) => {
         this.loading = false;
 
-        const blob = new Blob([res.body], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-
+        const url = window.URL.createObjectURL(res);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'invoice.pdf';

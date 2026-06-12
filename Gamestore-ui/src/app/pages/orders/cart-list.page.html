@@ -3,7 +3,7 @@
   <mat-card>
     <mat-card-content>
 
-      <div *ngIf="loading" class="loading-container">
+      <div *ngIf="loadingCart" class="loading-container">
         <mat-spinner></mat-spinner>
       </div>
 
@@ -17,7 +17,7 @@
         mat-table
         [dataSource]="cartDataSource"
         class="mat-elevation-z1"
-        *ngIf="!loading">
+        *ngIf="!loadingCart">
 
         <!-- productId -->
         <ng-container matColumnDef="productId">
@@ -62,7 +62,7 @@
             <button
               mat-icon-button
               color="warn"
-              (click)="removeFromCart(orderGame.productId)">
+              (click)="removeFromCart(orderGame)">
 
               <mat-icon>delete</mat-icon>
 
@@ -74,6 +74,12 @@
 
       </table>
 
+      
+      
+      <div *ngIf="loadingMethods" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
       <mat-paginator
         #cartPaginator
         [pageSize]="10"
@@ -81,14 +87,12 @@
         showFirstLastButtons>
       </mat-paginator>
 
-
-
       <h2 style="margin-top: 30px;">Payment Methods</h2>
       <table
         mat-table
         [dataSource]="paymentDataSource"
         class="mat-elevation-z1"
-        *ngIf="!loading">
+        *ngIf="!loadingMethods">
 
         <!-- imageUrl -->
         <ng-container matColumnDef="imageUrl">

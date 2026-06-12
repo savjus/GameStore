@@ -42,7 +42,7 @@ builder.Services.AddScoped<IPlatformService, PlatformService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 var app = builder.Build();
-
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<GameStoreDbContext>();
