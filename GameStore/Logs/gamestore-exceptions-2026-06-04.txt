@@ -1,0 +1,206 @@
+﻿2026-06-04 10:04:03.072 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponsePipeWriter.WriteAsync(ReadOnlyMemory`1 source, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponseStream.WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 10:04:03.106 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDD6", Request id "0HNM1VFO8KDD6:00000006": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponsePipeWriter.WriteAsync(ReadOnlyMemory`1 source, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponseStream.WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 10:24:10.251 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponsePipeWriter.WriteAsync(ReadOnlyMemory`1 source, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponseStream.WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 10:24:10.263 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDD9", Request id "0HNM1VFO8KDD9:00000002": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponsePipeWriter.WriteAsync(ReadOnlyMemory`1 source, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpResponseStream.WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 11:34:54.835 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 11:34:54.842 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDDF", Request id "0HNM1VFO8KDDF:00000006": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 12:37:17.794 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 12:37:17.800 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDDP", Request id "0HNM1VFO8KDDP:00000006": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 12:37:21.069 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 12:37:21.074 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDDQ", Request id "0HNM1VFO8KDDQ:00000003": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 12:37:23.012 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 12:37:23.015 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDDR", Request id "0HNM1VFO8KDDR:00000003": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 12:37:24.756 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 12:37:24.761 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDDS", Request id "0HNM1VFO8KDDS:00000003": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 12:41:26.639 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 12:41:26.645 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDDU", Request id "0HNM1VFO8KDDU:00000006": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-06-04 13:42:48.389 [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-06-04 13:42:48.397 [Error] Microsoft.AspNetCore.Server.Kestrel: Connection id "0HNM1VFO8KDE7", Request id "0HNM1VFO8KDE7:00000006": An unhandled exception was thrown by the application.
+Exception: System.InvalidOperationException: Writing to the response body is invalid for responses with status code 204.
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.FirstWriteAsyncInternal(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.WritePipeAsync(ReadOnlyMemory`1 data, CancellationToken cancellationToken)
+   at System.IO.MemoryStream.CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken)
+   at System.IO.Stream.CopyToAsync(Stream destination)
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 32
+   at GameStore.Middleware.RequestResponseLoggingMiddleware.InvokeAsync(HttpContext context) in C:\Users\salvp\Desktop\game-store-v2-with-branches\GameStore\Middleware\RequestResponseLoggingMiddleware.cs:line 43
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
