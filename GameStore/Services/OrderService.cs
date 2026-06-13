@@ -488,7 +488,7 @@ public class OrderService(IUnitOfWork unitOfWork,
     private async Task<ServiceResult<Order>> ProcessVisaPaymentInternalAsync(
         Guid customerId, Order order, VisaCardDetailsDto cardDetails)
     {
-        if (!IsValidVisaInput(cardDetails))
+        if (!IsValidVisaCardDetails(cardDetails))
         {
             return ServiceResult.Fail<Order>(StatusCodes.Status400BadRequest, "Card details are invalid.");
         }
@@ -507,15 +507,9 @@ public class OrderService(IUnitOfWork unitOfWork,
 
         var httpClient = _httpClientFactory.CreateClient();
 
-        var lastError = await ExecuteVisaWithRetry(
-            httpClient, microserviceUrl, customerId, order, cardDetails, (decimal)sum, retryCount);
+        var lastError = await ExecuteVisaWithRetry(httpClient, microserviceUrl, customerId, order, cardDetails, sum, retryCount);
 
         return await FinalizeVisaResult(order, lastError);
-    }
-
-    private bool IsValidVisaInput(VisaCardDetailsDto? cardDetails)
-    {
-        return cardDetails != null && IsValidVisaCardDetails(cardDetails);
     }
 
     private async Task<string?> ExecuteVisaWithRetry(
@@ -547,21 +541,16 @@ public class OrderService(IUnitOfWork unitOfWork,
                     response.ReasonPhrase,
                     body);
 
+                // The microservice responds with an empty body.
                 if (!response.IsSuccessStatusCode)
                 {
                     lastError = BuildHttpError(response, body);
                     continue;
                 }
 
-                if (!IsValidVisaResponse(body))
-                {
-                    lastError = "Visa payment returned invalid response payload.";
-                    continue;
-                }
-
                 order.Status = OrderStatus.Paid;
                 await _unitOfWork.SaveChangesAsync();
-                return null; // success
+                return null;
             }
             catch (Exception ex)
             {
@@ -582,9 +571,6 @@ public class OrderService(IUnitOfWork unitOfWork,
     {
         var payload = new
         {
-            userId = customerId,
-            orderId = order.Id,
-            sum,
             CardHolderName = cardDetails.Holder,
             CardNumber = cardDetails.CardNumber,
             ExpirationMonth = cardDetails.MonthExpire,
@@ -653,26 +639,6 @@ public class OrderService(IUnitOfWork unitOfWork,
         return hasValidHolder && hasValidCardNumber && hasValidMonth && hasValidYear && hasValidCvv;
     }
 
-    private static bool IsValidVisaResponse(string responseContent)
-    {
-        if (string.IsNullOrWhiteSpace(responseContent))
-        {
-            return false;
-        }
-
-        try
-        {
-            using var doc = JsonDocument.Parse(responseContent);
-            return doc.RootElement
-                .TryGetProperty("status", out var s)
-                && s.GetString() == "ok";
-        }
-        catch (JsonException)
-        {
-            return false;
-        }
-    }
-
     private static (bool IsValid, IBoxPaymentResponseDto? Response, string? Error) TryValidateAndParseIBoxResponse(
         string responseContent,
         Guid expectedCustomerId,
@@ -695,7 +661,6 @@ public class OrderService(IUnitOfWork unitOfWork,
                 return (false, null, "IBox payment response body is invalid.");
             }
 
-            // Accept microservice variants and normalize missing fields.
             if (response.UserId == Guid.Empty)
             {
                 response.UserId = expectedCustomerId;
