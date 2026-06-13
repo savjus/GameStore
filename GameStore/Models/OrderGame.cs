@@ -12,6 +12,8 @@ public class OrderGame
 
     public int Discount { get; set; }
 
+    public string ProductKey { get; set; } = string.Empty;
+
     public Order? Order { get; set; }
 
     public Game? Product { get; set; }

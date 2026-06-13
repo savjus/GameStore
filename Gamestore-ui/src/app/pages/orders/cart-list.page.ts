@@ -132,7 +132,7 @@ export class CartListPage implements OnInit {
   }
 
   removeFromCart(orderGame: OrderGame): void {
-  this.loading = true;
+  this.loadingCart = true;
 
   this.orderService.removeFromCart(orderGame.key).subscribe({
             next: () => {
@@ -141,11 +141,11 @@ export class CartListPage implements OnInit {
           );
 
           this.cartDataSource.data = this.orderGames;
-          this.loading = false;
+          this.loadingCart = false;
         },
         error: () => {
           this.errorMessage = 'Failed to remove item from cart.';
-          this.loading = false;
+          this.loadingCart = false;
         }
       });
   }

@@ -50,7 +50,7 @@ public partial class GameServiceTests
             Name = "Super Game",
             Key = "super-game",
             Description = "desc",
-            Price = 12.5,
+            Price = 12.5M,
             UnitInStock = 5,
             Discount = 1,
         };
@@ -89,7 +89,7 @@ public partial class GameServiceTests
                 Name = "Super Game!",
                 Key = null,
                 Description = "desc",
-                Price = 10.5,
+                Price = 10.5M,
                 UnitInStock = 11,
                 Discount = 2,
             },
@@ -138,7 +138,7 @@ public partial class GameServiceTests
         Assert.Equal("Super Game!", result.Value!.Name);
         Assert.Equal("super-game", result.Value.Key);
         Assert.Equal("desc", result.Value.Description);
-        Assert.Equal(10.5, result.Value.Price);
+        Assert.Equal(10.5M, result.Value.Price);
         Assert.Equal(11, result.Value.UnitInStock);
         Assert.Equal(2, result.Value.Discount);
         Assert.NotNull(createdGame);

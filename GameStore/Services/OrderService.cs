@@ -141,7 +141,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             Price = og.Price,
             Quantity = og.Quantity,
             Discount = og.Discount,
-            ProductKey = og.Product.Key,
+            ProductKey = og.ProductKey,
         }).ToList();
 
         return ServiceResult.Success(dtos, StatusCodes.Status200OK);
