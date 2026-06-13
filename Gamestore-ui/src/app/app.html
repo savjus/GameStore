@@ -1,0 +1,20 @@
+<mat-toolbar color="primary" class="app-toolbar">
+
+  <span class="logo">Game Store</span>
+
+  <a mat-button routerLink="/games" routerLinkActive="active">Games</a>
+  <a mat-button routerLink="/genres" routerLinkActive="active">Genres</a>
+  <a mat-button routerLink="/platforms" routerLinkActive="active">Platforms</a>
+  <a mat-button routerLink="/publishers" routerLinkActive="active">Publishers</a>
+  <a mat-button routerLink="/orders" routerLinkActive="active">Orders</a>
+
+  <span class="spacer"></span>
+
+  <button matMiniFab aria-label="Cart" routerLink="/orders/cart"><mat-icon>shopping_cart</mat-icon></button>
+</mat-toolbar>
+
+<div class="app-shell">
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

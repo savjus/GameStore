@@ -1,0 +1,73 @@
+<section class="page">
+
+  <mat-card>
+    <mat-card-content>
+
+      <h1>Visa Payment</h1>
+
+      <p>Please enter your card details below.</p>
+
+      <form [formGroup]="form" class="visa-form">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Card Holder Name</mat-label>
+          <input
+            matInput
+            formControlName="holder"
+            placeholder="John Smith">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Card Number</mat-label>
+          <input
+            matInput
+            formControlName="cardNumber"
+            placeholder="1234 5678 9012 3456">
+        </mat-form-field>
+
+        <div class="row">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Expiry Month</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="monthExpire"
+              placeholder="MM">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Expiry Year</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="yearExpire"
+              placeholder="YYYY">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>CVV</mat-label>
+            <input
+              matInput
+              type="password"
+              formControlName="cvv2"
+              placeholder="123">
+          </mat-form-field>
+
+        </div>
+
+      </form>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="pay()"
+        [disabled]="form.invalid">
+
+        Pay with Visa
+      </button>
+
+    </mat-card-content>
+  </mat-card>
+
+</section>

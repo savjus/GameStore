@@ -1,0 +1,152 @@
+<section class="page">
+
+  <mat-card>
+    <mat-card-content>
+
+      <div *ngIf="loadingCart" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+      <h2>Cart</h2>
+
+      <table
+        mat-table
+        [dataSource]="cartDataSource"
+        class="mat-elevation-z1"
+        *ngIf="!loadingCart">
+
+        <!-- productId -->
+        <ng-container matColumnDef="productId">
+          <th mat-header-cell *matHeaderCellDef>Product Id</th>
+          <td mat-cell *matCellDef="let orderGame">
+            {{ orderGame.productId }}
+          </td>
+        </ng-container>
+
+        <!-- price -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Price</th>
+          <td mat-cell *matCellDef="let orderGame">
+            {{ orderGame.price }}
+          </td>
+        </ng-container>
+
+        <!-- quantity -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let orderGame">
+            {{ orderGame.quantity }}
+          </td>
+        </ng-container>
+
+        <!-- discount -->
+        <ng-container matColumnDef="discount">
+          <th mat-header-cell *matHeaderCellDef>Discount</th>
+          <td mat-cell *matCellDef="let orderGame">
+            {{ orderGame.discount }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="cartColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: cartColumns"></tr>
+
+        <!-- actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let orderGame">
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="removeFromCart(orderGame)">
+
+              <mat-icon>delete</mat-icon>
+
+            </button>
+
+          </td>
+        </ng-container>
+
+
+      </table>
+
+      
+      
+      <div *ngIf="loadingMethods" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <mat-paginator
+        #cartPaginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+      <h2 style="margin-top: 30px;">Payment Methods</h2>
+      <table
+        mat-table
+        [dataSource]="paymentDataSource"
+        class="mat-elevation-z1"
+        *ngIf="!loadingMethods">
+
+        <!-- imageUrl -->
+        <ng-container matColumnDef="imageUrl">
+          <th mat-header-cell *matHeaderCellDef>Image</th>
+          <td mat-cell *matCellDef="let paymentMethod">
+            <img [src]="paymentMethod.imageUrl" width="40" height="40" alt="{{paymentMethod.title}} image"/>
+          </td>
+        </ng-container>
+
+        <!-- title -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Title</th>
+          <td mat-cell *matCellDef="let paymentMethod">
+            {{ paymentMethod.title }}
+          </td>
+        </ng-container>
+
+        <!-- description -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let paymentMethod">
+            {{ paymentMethod.description }}
+          </td>
+        </ng-container>
+
+        <!-- actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let paymentMethod">
+
+            <button
+              mat-raised-button
+              color="primary"
+              [routerLink]="getPaymentRoute(paymentMethod.title)">
+              
+              <mat-icon>credit_card</mat-icon>
+              Select
+            </button>
+
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: paymentColumns"></tr>
+
+      </table>
+
+      <mat-paginator
+        #paymentPaginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    </mat-card-content>
+  </mat-card>
+</section>

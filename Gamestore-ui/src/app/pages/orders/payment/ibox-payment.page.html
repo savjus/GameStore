@@ -1,0 +1,58 @@
+<section class="page">
+
+  <div class="page-header">
+    <h1>IBox Terminal Payment</h1>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="pay()"
+        [disabled]="loading">
+
+        Pay via IBox
+      </button>
+
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+      <mat-card *ngIf="result" style="margin-top: 16px;">
+        <mat-card-content>
+
+          <h3>Payment Successful</h3>
+
+          <p>
+            <strong>User ID:</strong>
+            {{ result.userId }}
+          </p>
+
+          <p>
+            <strong>Order ID:</strong>
+            {{ result.orderId }}
+          </p>
+
+          <p>
+            <strong>Payment Date:</strong>
+            {{ result.paymentDate | date:'medium' }}
+          </p>
+
+          <p>
+            <strong>Sum:</strong>
+            {{ result.sum }}
+          </p>
+
+        </mat-card-content>
+      </mat-card>
+
+    </mat-card-content>
+  </mat-card>
+
+</section>
