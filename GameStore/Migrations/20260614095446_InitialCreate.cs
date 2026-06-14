@@ -14,6 +14,20 @@ namespace GameStore.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Bans",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BannedUntil = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPermanent = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bans", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Genres",
                 columns: table => new
                 {
@@ -92,6 +106,33 @@ namespace GameStore.Migrations
                         name: "FK_Games_Publishers_PublisherId",
                         column: x => x.PublisherId,
                         principalTable: "Publishers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentCommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    GameId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Comments_ParentCommentId",
+                        column: x => x.ParentCommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comments_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -233,6 +274,16 @@ namespace GameStore.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_GameId",
+                table: "Comments",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_ParentCommentId",
+                table: "Comments",
+                column: "ParentCommentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GameGenres_GenreId",
                 table: "GameGenres",
                 column: "GenreId");
@@ -285,6 +336,12 @@ namespace GameStore.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Bans");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
+
             migrationBuilder.DropTable(
                 name: "GameGenres");
 

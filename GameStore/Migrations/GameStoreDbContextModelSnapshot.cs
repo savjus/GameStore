@@ -22,6 +22,58 @@ namespace GameStore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GameStore.Models.Ban", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("BannedUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPermanent")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bans");
+                });
+
+            modelBuilder.Entity("GameStore.Models.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ParentCommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("ParentCommentId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("GameStore.Models.Game", b =>
                 {
                     b.Property<Guid>("Id")
@@ -363,6 +415,24 @@ namespace GameStore.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GameStore.Models.Comment", b =>
+                {
+                    b.HasOne("GameStore.Models.Game", "Game")
+                        .WithMany("Comments")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Models.Comment", "ParentComment")
+                        .WithMany("ChildComments")
+                        .HasForeignKey("ParentCommentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Game");
+
+                    b.Navigation("ParentComment");
+                });
+
             modelBuilder.Entity("GameStore.Models.Game", b =>
                 {
                     b.HasOne("GameStore.Models.Publisher", "Publisher")
@@ -441,8 +511,15 @@ namespace GameStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("GameStore.Models.Comment", b =>
+                {
+                    b.Navigation("ChildComments");
+                });
+
             modelBuilder.Entity("GameStore.Models.Game", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("GameGenres");
 
                     b.Navigation("GamePlatforms");

@@ -14,6 +14,8 @@ public interface IUnitOfWork : IDisposable
 
     IOrderRepository Orders { get; }
 
+    ICommentRepository Comments { get; }
+
     Task<int> SaveChangesAsync();
 
     Task<bool> HasChangesAsync();

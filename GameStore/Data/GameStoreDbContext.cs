@@ -49,6 +49,10 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
 
     public DbSet<OrderGame> GameOrders => Set<OrderGame>();
 
+    public DbSet<Comment> Comments => Set<Comment>();
+
+    public DbSet<Ban> Bans => Set<Ban>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Game>(entity =>
@@ -130,6 +134,35 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
             entity.HasOne(og => og.Product)
                 .WithMany(game => game.OrderGames)
                 .HasForeignKey(og => og.ProductId);
+        });
+
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Name)
+                .IsRequired();
+            entity.Property(c => c.Body)
+                .IsRequired();
+            entity.HasOne(c => c.ParentComment)
+                .WithMany(c => c.ChildComments)
+                .HasForeignKey(c => c.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(c => c.Game)
+                .WithMany(g => g.Comments)
+                .HasForeignKey(c => c.GameId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Ban>(entity =>
+        {
+            entity.HasKey(b => b.Id);
+            entity.Property(b => b.UserName)
+                .IsRequired();
+            entity.Property(b => b.IsPermanent)
+                .HasDefaultValue(false);
+            entity.Property(b => b.BannedUntil)
+                .IsRequired();
         });
 
         modelBuilder.Entity<Genre>().HasData(
