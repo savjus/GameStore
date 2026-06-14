@@ -98,7 +98,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
         if (comment.GameId != game.Id)
         {
-            throw new InvalidOperationException("Comment does not belong to this game.");
+            return ServiceResult.Fail(StatusCodes.Status400BadRequest, "Comment does not belong to this game.");
         }
 
         comment.Body = DeletedMessage;
