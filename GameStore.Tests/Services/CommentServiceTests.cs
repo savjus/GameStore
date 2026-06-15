@@ -151,7 +151,7 @@ public class CommentServiceTests
         Assert.True(result.IsSuccess);
         commentsRepo.Verify(
             r => r.AddAsync(It.Is<Comment>(c =>
-            c.Body == "[original body], my quote reply")),
+            c.Body == "\"original body\", my quote reply")),
             Times.Once);
     }
 
