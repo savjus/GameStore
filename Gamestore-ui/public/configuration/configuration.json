@@ -41,5 +41,11 @@
   "cancelGameBuyApiUrl": "/orders/cart/{key}",
   "basketApiUrl": "/orders/cart",
   "makeOrderInfoApiUrl": "/orders/payment-methods",
-  "payApiUrl": "/orders/payment"
+  "payApiUrl": "/orders/payment",
+
+  "addComment": "/games/{key}/comments",
+  "getAllComments": "/games/{key}/comments",
+  "deleteComment": "/games/{key}/comments/{id}",
+  "getBanDurations": "/comments/ban/durations",
+  "banUser": "/comments/ban"
 }

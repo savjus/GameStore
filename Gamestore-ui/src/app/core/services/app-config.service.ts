@@ -41,6 +41,11 @@ export interface AppConfig {
   basketApiUrl: string;
   makeOrderInfoApiUrl: string;
   payApiUrl: string;
+  addComment: string;
+  getAllComments: string;
+  deleteComment: string;
+  getBanDurations: string;
+  banUser: string;
 }
 
 @Injectable({

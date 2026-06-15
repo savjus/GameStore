@@ -134,7 +134,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
     private static string BuildQuoteBody(Comment parent, string quoteText)
     {
-        return $"[{parent.Body}], {quoteText}";
+        return $"\"{parent.Body}\", {quoteText}";
     }
 
     private List<CommentResponseDto> BuildTree(List<Comment> all, Guid? parentId)
