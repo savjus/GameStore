@@ -155,6 +155,26 @@ export class ApiUrlService {
     return this.buildUrl(this.config.settings.payApiUrl);
   }
 
+  addComment(key : string): string {
+    return this.buildUrl(this.config.settings.addComment, { key: key })
+  }
+
+  getComments(key : string): string {
+    return this.buildUrl(this.config.settings.getAllComments, { key: key })
+  }
+
+  deleteComment(key : string, id: string): string {
+    return this.buildUrl(this.config.settings.deleteComment, { key: key, id: id })
+  }
+
+  getBanDurations(): string {
+    return this.buildUrl(this.config.settings.getBanDurations)
+  }
+
+  banUser(): string {
+    return this.buildUrl(this.config.settings.banUser)
+  }
+
   private buildUrl(template: string, params?: Record<string, string>): string {
     const baseUrl = this.config.settings.baseApiUrl.replace(/\/+$/, '');
     const path = params ? this.replaceParams(template, params) : template;

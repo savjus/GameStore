@@ -4,43 +4,127 @@
     <h1>Game Details</h1>
   </div>
 
-  <mat-card *ngIf="game">
+  <mat-progress-spinner *ngIf="loadingGames" mode="indeterminate" />
 
+  <mat-card *ngIf="game" class="game-card">
     <mat-card-title>{{ game.name }}</mat-card-title>
-
     <mat-card-content>
+      <div class="detail-grid">
+        <p><span class="label">Key</span>{{ game.key }}</p>
+        <p><span class="label">Price</span>{{ game.price }}</p>
+        <p><span class="label">Discount</span>{{ game.discount }}</p>
+        <p><span class="label">Stock</span>{{ game.unitInStock }}</p>
+      </div>
+      <p *ngIf="game.description" class="description">{{ game.description }}</p>
 
-      <p><strong>Key:</strong> {{ game.key }}</p>
-      <p><strong>Description:</strong> {{ game.description || 'N/A' }}</p>
-      <p><strong>Price:</strong> {{ game.price }}</p>
-      <p><strong>Discount:</strong> {{ game.discount }}</p>
-      <p><strong>Stock:</strong> {{ game.unitInStock }}</p>
-        <div class="actions-bottom">
-
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="downloadFile()"
-          [disabled]="downloading">
-
+      <div class="actions-bottom">
+        <button mat-raised-button color="primary" (click)="downloadFile()" [disabled]="downloading">
           <mat-icon>download</mat-icon>
-          Download Game File
+          Download
         </button>
-
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="addToCart()">
-
+        <button mat-raised-button color="primary" (click)="addToCart()">
           <mat-icon>add_shopping_cart</mat-icon>
-          Add To Cart
+          Add to Cart
         </button>
-
       </div>
     </mat-card-content>
-
   </mat-card>
 
-  <mat-progress-spinner *ngIf="loading"></mat-progress-spinner>
+  <!-- ── Comments ── -->
+  <mat-card class="comments-card">
+    <mat-card-title>Comments</mat-card-title>
+    <mat-card-content>
+
+      <mat-progress-spinner *ngIf="loadingComments" mode="indeterminate" />
+
+      <p *ngIf="!loadingComments && comments.length === 0" class="no-comments">
+        No comments yet. Be the first!
+      </p>
+
+      <!-- Recursive comment tree -->
+      <app-comment-thread
+        *ngIf="comments.length > 0"
+        [comments]="comments"
+        [depth]="0"
+        (reply)="setReply($event)"
+        (quote)="setQuote($event)"
+        (delete)="deleteComment($event)"
+        (ban)="openBan($event)"
+      />
+
+      <mat-divider />
+
+      <!-- ── Ban panel ── -->
+      <div *ngIf="banTargetName" class="ban-panel">
+        <div class="ban-header">
+          <mat-icon color="warn">block</mat-icon>
+          <strong>Ban <span class="ban-name">{{ banTargetName }}</span></strong>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Duration</mat-label>
+          <mat-select [(ngModel)]="selectedDuration">
+            <mat-option *ngFor="let d of banDurations" [value]="d">{{ d }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="ban-actions">
+          <button mat-raised-button color="warn" (click)="submitBan()" [disabled]="!selectedDuration || banning">
+            Confirm Ban
+          </button>
+          <button mat-button (click)="cancelBan()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- ── Add comment form ── -->
+      <div class="add-comment-form" id="add-comment-form">
+        <h3>{{ replyContext ? (replyContext.type === 'quote' ? 'Quote a comment' : 'Reply to a comment') : 'Add a Comment' }}</h3>
+
+        <!-- Reply context banner -->
+        <div *ngIf="replyContext && replyContext.type === 'reply'" class="context-banner reply-banner">
+          <mat-icon>reply</mat-icon>
+          <span>Replying to <strong>{{ replyContext.authorName }}</strong></span>
+          <button mat-icon-button (click)="clearParent()" class="clear-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Quote context banner — shows the quoted body as a blockquote -->
+        <div *ngIf="replyContext && replyContext.type === 'quote'" class="context-banner quote-banner">
+          <div class="quote-banner-header">
+            <mat-icon>format_quote</mat-icon>
+            <span>Quoting <strong>{{ replyContext.authorName }}</strong></span>
+            <button mat-icon-button (click)="clearParent()" class="clear-btn">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <blockquote class="quoted-body">{{ replyContext.body }}</blockquote>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="newName" placeholder="Your name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Comment</mat-label>
+          <textarea matInput [(ngModel)]="newBody" rows="3" placeholder="Write your comment…"></textarea>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="submitComment()"
+          [disabled]="!newName.trim() || !newBody.trim() || submitting">
+          <mat-icon>send</mat-icon>
+          {{ submitting ? 'Posting…' : 'Post Comment' }}
+        </button>
+
+        <div *ngIf="commentErrorMessage" class="comment-error">
+          <mat-icon>block</mat-icon>
+          <span>{{ commentErrorMessage }}</span>
+        </div>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
 
 </section>

@@ -10,6 +10,7 @@ public class UnitOfWork : IUnitOfWork
     private IGenreRepository? _genreRepository;
     private IPlatformRepository? _platformRepository;
     private IOrderRepository? _orderRepository;
+    private ICommentRepository? _commentRepository;
     private bool _disposed;
 
     public UnitOfWork(GameStoreDbContext context)
@@ -31,6 +32,8 @@ public class UnitOfWork : IUnitOfWork
     public IPlatformRepository Platforms => _platformRepository ??= new PlatformRepository(_context);
 
     public IOrderRepository Orders => _orderRepository ??= new OrderRepository(_context);
+
+    public ICommentRepository Comments => _commentRepository ??= new CommentRepository(_context);
 
     public Task<int> SaveChangesAsync()
     {

@@ -34,11 +34,13 @@ builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IPlatformService, PlatformService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 var app = builder.Build();
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
