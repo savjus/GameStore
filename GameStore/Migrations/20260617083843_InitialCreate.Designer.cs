@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    [Migration("20260614095446_InitialCreate")]
+    [Migration("20260617083843_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -57,6 +57,9 @@ namespace GameStore.Migrations
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("GameId")
                         .HasColumnType("uniqueidentifier");

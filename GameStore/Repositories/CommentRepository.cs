@@ -12,6 +12,7 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
     {
         return await _dbContext.Comments
             .Where(c => c.GameId == gameId)
+            .OrderBy(c => c.CreatedAt)
             .ToListAsync();
     }
 
