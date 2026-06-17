@@ -430,52 +430,15 @@ public class OrderService(IUnitOfWork unitOfWork,
                 await Task.Delay(200 * attempt);
             }
 
-            try
+            var (success, response, error) = await TrySingleIBoxAttemptAsync(httpClient, microserviceUrl, customerId, order, sum, attempt);
+            if (success)
             {
-                var payload = new
-                {
-                    userId = customerId,
-                    orderId = order.Id,
-                    sum,
-                };
-
-                using var content = new StringContent(
-                    JsonSerializer.Serialize(payload),
-                    Encoding.UTF8,
-                    "application/json");
-
-                _logger.LogInformation("IBox request to {Url} payload: {Payload}", microserviceUrl, JsonSerializer.Serialize(payload));
-                using var response = await httpClient.PostAsync(microserviceUrl, content);
-                var responseBody = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation("IBox response {Status} {Reason} body: {Body}", (int)response.StatusCode, response.ReasonPhrase, responseBody);
-                if (!response.IsSuccessStatusCode)
-                {
-                    var responseReason = string.IsNullOrWhiteSpace(response.ReasonPhrase)
-                        ? "Unknown"
-                        : response.ReasonPhrase;
-                    lastError =
-                        $"IBox payment request failed with status code {(int)response.StatusCode} ({responseReason})."
-                        + (string.IsNullOrWhiteSpace(responseBody)
-                            ? string.Empty
-                            : $" Body: {responseBody}");
-                    continue;
-                }
-
-                var parseResult = TryValidateAndParseIBoxResponse(responseBody, customerId, order.Id, sum);
-                if (!parseResult.IsValid)
-                {
-                    lastError = parseResult.Error;
-                    continue;
-                }
-
                 order.Status = OrderStatus.Paid;
                 await _unitOfWork.SaveChangesAsync();
-                return ServiceResult.Success(parseResult.Response, StatusCodes.Status200OK);
+                return ServiceResult.Success(response, StatusCodes.Status200OK);
             }
-            catch (Exception ex)
-            {
-                lastError = $"IBox payment attempt {attempt} failed: {ex.Message}";
-            }
+
+            lastError = error;
         }
 
         order.Status = OrderStatus.Open;
@@ -483,6 +446,40 @@ public class OrderService(IUnitOfWork unitOfWork,
         return ServiceResult.Fail<IBoxPaymentResponseDto?>(
             StatusCodes.Status502BadGateway,
             lastError ?? "IBox payment failed after retries.");
+    }
+
+    private async Task<(bool Success, IBoxPaymentResponseDto? Response, string? Error)> TrySingleIBoxAttemptAsync(
+        HttpClient httpClient, string microserviceUrl, Guid customerId, Order order, decimal sum, int attempt)
+    {
+        try
+        {
+            var payload = new { userId = customerId, orderId = order.Id, sum };
+            var serialized = JsonSerializer.Serialize(payload);
+
+            using var content = new StringContent(serialized, Encoding.UTF8, "application/json");
+            _logger.LogInformation("IBox request to {Url} payload: {Payload}", microserviceUrl, serialized);
+
+            using var response = await httpClient.PostAsync(microserviceUrl, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation("IBox response {Status} {Reason} body: {Body}", response.StatusCode, response.ReasonPhrase, responseBody);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var reason = string.IsNullOrWhiteSpace(response.ReasonPhrase) ? "Unknown" : response.ReasonPhrase;
+                var body = string.IsNullOrWhiteSpace(responseBody) ? string.Empty : $" Body: {responseBody}";
+                return (false, null,
+                    $"IBox payment request failed with status code {(int)response.StatusCode} ({reason}).{body}");
+            }
+
+            var parseResult = TryValidateAndParseIBoxResponse(responseBody, customerId, order.Id, sum);
+            return parseResult.IsValid
+                ? (true, parseResult.Response, null)
+                : (false, null, parseResult.Error);
+        }
+        catch (Exception ex)
+        {
+            return (false, null, $"IBox payment attempt {attempt} failed: {ex.Message}");
+        }
     }
 
     private async Task<ServiceResult<Order>> ProcessVisaPaymentInternalAsync(
@@ -532,7 +529,7 @@ public class OrderService(IUnitOfWork unitOfWork,
 
             try
             {
-                var response = await SendVisaRequest(httpClient, url, customerId, order, cardDetails, sum);
+                var response = await SendVisaRequest(httpClient, url, cardDetails);
                 var body = await response.Content.ReadAsStringAsync();
 
                 _logger.LogInformation(
@@ -541,7 +538,7 @@ public class OrderService(IUnitOfWork unitOfWork,
                     response.ReasonPhrase,
                     body);
 
-                // The microservice responds with an empty body.
+                // The microservice re`sponds with an empty body.
                 if (!response.IsSuccessStatusCode)
                 {
                     lastError = BuildHttpError(response, body);
@@ -564,10 +561,7 @@ public class OrderService(IUnitOfWork unitOfWork,
     private async Task<HttpResponseMessage> SendVisaRequest(
         HttpClient httpClient,
         string url,
-        Guid customerId,
-        Order order,
-        VisaCardDetailsDto cardDetails,
-        decimal sum)
+        VisaCardDetailsDto cardDetails)
     {
         var payload = new
         {
@@ -587,7 +581,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         return await httpClient.PostAsync(url, content);
     }
 
-    private string BuildHttpError(HttpResponseMessage response, string body)
+    private static string BuildHttpError(HttpResponseMessage response, string body)
     {
         var reason = string.IsNullOrWhiteSpace(response.ReasonPhrase)
             ? "Unknown"
