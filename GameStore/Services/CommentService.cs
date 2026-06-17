@@ -137,7 +137,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
             comment.Body = DeletedMessage;
         }
 
-        _unitOfWork.Comments.UpdateRange(descendants);
+        await _unitOfWork.Comments.UpdateRange(descendants);
         await _unitOfWork.SaveChangesAsync();
 
         return descendants;

@@ -51,8 +51,9 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
             .ToListAsync();
     }
 
-    public void UpdateRange(IEnumerable<Comment> comments)
+    public Task UpdateRange(IEnumerable<Comment> comments)
     {
         _dbContext.Comments.UpdateRange(comments);
+        return Task.CompletedTask;
     }
 }

@@ -18,5 +18,5 @@ public interface ICommentRepository
 
     Task<List<Comment>?> GetChildrenAsync(Guid parentId);
 
-    void UpdateRange(IEnumerable<Comment> comments);
+    Task UpdateRange(IEnumerable<Comment> comments);
 }
