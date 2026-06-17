@@ -10,11 +10,13 @@ public class Comment
 
     public Guid? ParentCommentId { get; set; }
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     public Comment? ParentComment { get; set; }
 
     public ICollection<Comment> ChildComments { get; set; } = new List<Comment>();
 
     public required Guid GameId { get; set; }
 
-    public Game Game { get; set; }
+    public Game? Game { get; set; }
 }

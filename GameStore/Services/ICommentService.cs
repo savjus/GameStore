@@ -13,4 +13,6 @@ public interface ICommentService
     IEnumerable<string> GetBanDurations();
 
     Task<ServiceResult> BanUserAsync(BanRequestDto dto);
+
+    Task<List<Comment>> GetAllDescendantsAsync(Guid gameId, Guid rootId);
 }

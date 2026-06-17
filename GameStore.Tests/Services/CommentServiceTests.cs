@@ -151,7 +151,7 @@ public class CommentServiceTests
         Assert.True(result.IsSuccess);
         commentsRepo.Verify(
             r => r.AddAsync(It.Is<Comment>(c =>
-            c.Body == "\"original body\", my quote reply")),
+            c.Body == "[original body], my quote reply")),
             Times.Once);
     }
 
@@ -299,15 +299,14 @@ public class CommentServiceTests
         var commentsRepo = new Mock<ICommentRepository>();
         commentsRepo.Setup(r => r.GetByIdAsync(parentId)).ReturnsAsync(parent);
         commentsRepo.Setup(r => r.GetChildrenAsync(parentId)).ReturnsAsync([child]);
-        commentsRepo.Setup(r => r.GetChildrenAsync(childId)).ReturnsAsync([]);
+        commentsRepo.Setup(r => r.GetAllByGameIdAsync(gameId)).ReturnsAsync(new List<Comment> { parent, child });
 
         var service = CreateService(gamesRepo, commentsRepo);
         await service.DeleteCommentAsync(gameKey, parentId);
 
         commentsRepo.Verify(
-            r => r.UpdateAsync(It.Is<Comment>(c =>
-            c.Id == childId &&
-            c.Body == "A comment/quote was deleted")),
+            r => r.UpdateRange(It.Is<IEnumerable<Comment>>(comments =>
+                comments.Any(c => c.Id == childId && c.Body == "A comment/quote was deleted"))),
             Times.Once);
     }
 

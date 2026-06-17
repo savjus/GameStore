@@ -66,6 +66,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
         };
 
         await _unitOfWork.Comments.AddAsync(comment);
+        await _unitOfWork.SaveChangesAsync();
         return ServiceResult.Success(StatusCodes.Status200OK);
     }
 
@@ -103,7 +104,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
         comment.Body = DeletedMessage;
         await _unitOfWork.Comments.UpdateAsync(comment);
-        await CascadeDeleteMessageAsync(comment.Id);
+        await CascadeDeleteMessageAsync(game.Id, comment.Id);
 
         return ServiceResult.Success(StatusCodes.Status200OK);
     }
@@ -123,18 +124,55 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
         };
 
         await _unitOfWork.Comments.AddBanAsync(ban);
+        await _unitOfWork.SaveChangesAsync();
         return ServiceResult.Success(StatusCodes.Status200OK);
+    }
+
+    public async Task<List<Comment>> CascadeDeleteMessageAsync(Guid gameId, Guid rootId)
+    {
+        var descendants = await GetAllDescendantsAsync(gameId, rootId);
+
+        foreach (var comment in descendants)
+        {
+            comment.Body = DeletedMessage;
+        }
+
+        _unitOfWork.Comments.UpdateRange(descendants);
+        await _unitOfWork.SaveChangesAsync();
+
+        return descendants;
+    }
+
+    public async Task<List<Comment>> GetAllDescendantsAsync(Guid gameId, Guid rootId)
+    {
+        var comments = await _unitOfWork.Comments.GetAllByGameIdAsync(gameId) ?? new List<Comment>();
+        var descendants = new List<Comment>();
+
+        var lookup = comments
+            .Where(c => c.ParentCommentId.HasValue)
+            .ToLookup(c => c.ParentCommentId!.Value);
+
+        void Traverse(Guid parentId)
+        {
+            foreach (var child in lookup[parentId])
+            {
+                descendants.Add(child);
+                Traverse(child.Id);
+            }
+        }
+
+        Traverse(rootId);
+        return descendants;
     }
 
     private static string BuildReplyBody(Comment parent, string replyText)
     {
-        var authorName = parent.Name;
-        return $"[{authorName}], {replyText}";
+        return $"[{parent.Name}], {replyText}";
     }
 
     private static string BuildQuoteBody(Comment parent, string quoteText)
     {
-        return $"\"{parent.Body}\", {quoteText}";
+        return $"[{parent.Body}], {quoteText}";
     }
 
     private List<CommentResponseDto> BuildTree(List<Comment> all, Guid? parentId)
@@ -149,19 +187,5 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
                 ChildComments = BuildTree(all, c.Id),
             })
             .ToList();
-    }
-
-    private async Task CascadeDeleteMessageAsync(Guid parentId)
-    {
-        var children = await _unitOfWork.Comments.GetChildrenAsync(parentId);
-
-        foreach (var child in children)
-        {
-            child.Body = DeletedMessage;
-            await _unitOfWork.Comments.UpdateAsync(child);
-            await CascadeDeleteMessageAsync(child.Id);
-        }
-
-        await _unitOfWork.SaveChangesAsync();
     }
 }

@@ -1,4 +1,3 @@
-// CommentRepository.cs
 using GameStore.Data;
 using GameStore.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +12,7 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
     {
         return await _dbContext.Comments
             .Where(c => c.GameId == gameId)
+            .OrderBy(c => c.CreatedAt)
             .ToListAsync();
     }
 
@@ -24,13 +24,11 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
     public async Task AddAsync(Comment comment)
     {
         await _dbContext.Comments.AddAsync(comment);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Comment comment)
     {
         _dbContext.Comments.Update(comment);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<Ban?> GetActiveBanAsync(string userName)
@@ -44,7 +42,6 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
     public async Task AddBanAsync(Ban ban)
     {
         await _dbContext.Bans.AddAsync(ban);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<List<Comment>?> GetChildrenAsync(Guid parentId)
@@ -54,9 +51,8 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
             .ToListAsync();
     }
 
-    public async Task UpdateRangeAsync(IEnumerable<Comment> comments)
+    public void UpdateRange(IEnumerable<Comment> comments)
     {
         _dbContext.Comments.UpdateRange(comments);
-        await _dbContext.SaveChangesAsync();
     }
 }

@@ -120,8 +120,6 @@ export class GameDetailPage implements OnInit {
     });
   }
 
-  // ── Reply / Quote ────────────────────────────────────────────────────────────
-
   setReply(comment: GameComment): void {
     this.parentId = comment.id;
     this.action = 'reply';
@@ -143,13 +141,10 @@ export class GameDetailPage implements OnInit {
   }
 
   private scrollToForm(): void {
-    // Give Angular a tick to render the context banner before scrolling
     setTimeout(() => {
       document.getElementById('add-comment-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
   }
-
-  // ── Submit ───────────────────────────────────────────────────────────────────
 
   submitComment(): void {
     if (!this.newName.trim() || !this.newBody.trim()) return;
@@ -173,10 +168,8 @@ export class GameDetailPage implements OnInit {
       },
       error: (err) => {
         this.submitting = false;
-        // 403 is the conventional status for a banned user; fall back to the
-        // server's message or a generic string if nothing more specific comes back.
         const serverMessage = err?.error?.message ?? err?.error ?? null;
-        if (err?.status === 403 || (typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('ban'))) {
+        if (err?.status === 400 || (typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('ban'))) {
           this.commentErrorMessage = `"${this.newName}" is banned and cannot post comments.`;
         } else {
           this.commentErrorMessage = 'Failed to post comment. Please try again.';
@@ -186,15 +179,15 @@ export class GameDetailPage implements OnInit {
     });
   }
 
-  // ── Delete ───────────────────────────────────────────────────────────────────
-
   deleteComment(id: string): void {
     this.commentService.deleteComment(this.key, id).subscribe({
       next: () => this.loadComments(),
+      error: () => {
+        this.commentErrorMessage = 'Failed to delete comment.';
+        this.changeDetector.markForCheck();
+      },
     });
   }
-
-  // ── Ban ──────────────────────────────────────────────────────────────────────
 
   openBan(comment: GameComment): void {
     this.banTargetName = comment.name;
@@ -225,8 +218,6 @@ export class GameDetailPage implements OnInit {
     this.banTargetName = '';
     this.selectedDuration = '';
   }
-
-  // ── Download / Cart ──────────────────────────────────────────────────────────
 
   downloadFile(): void {
     if (!this.key) return;
