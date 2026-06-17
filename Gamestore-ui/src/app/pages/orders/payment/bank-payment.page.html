@@ -1,0 +1,48 @@
+<section class="page">
+
+  <div class="page-header">
+    <h1>Bank Payment</h1>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+
+      <!-- LOADING -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Generating invoice...</p>
+      </div>
+
+      <!-- ERROR -->
+      <mat-error *ngIf="errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+
+      <!-- INFO -->
+      <div *ngIf="!loading">
+        <p>
+          This payment method will generate a PDF invoice containing:
+        </p>
+
+        <ul>
+          <li>User ID</li>
+          <li>Order ID</li>
+          <li>Creation date</li>
+          <li>Validity period</li>
+          <li>Total sum</li>
+        </ul>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="pay()">
+
+          <mat-icon>download</mat-icon>
+          Generate Invoice (PDF)
+        </button>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+</section>

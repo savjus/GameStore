@@ -1,0 +1,190 @@
+// ── Page layout ────────────────────────────────────────────────────────────────
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+// ── Game card ──────────────────────────────────────────────────────────────────
+
+.game-card {
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.45;
+      margin-bottom: 0.1rem;
+    }
+  }
+
+  .description {
+    font-size: 0.95rem;
+    opacity: 0.75;
+    margin-bottom: 1rem;
+    line-height: 1.55;
+  }
+
+  .actions-bottom {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}
+
+// ── Comments card ──────────────────────────────────────────────────────────────
+
+.comments-card {
+  mat-card-title {
+    margin-bottom: 1rem;
+  }
+}
+
+.no-comments {
+  font-size: 0.9rem;
+  opacity: 0.45;
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+// ── Ban panel ──────────────────────────────────────────────────────────────────
+
+.ban-panel {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.05);
+
+  .ban-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+
+    .ban-name {
+      color: #f87171;
+    }
+  }
+
+  .ban-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
+
+// ── Add comment form ───────────────────────────────────────────────────────────
+
+.add-comment-form {
+  margin-top: 1.5rem;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    opacity: 0.9;
+  }
+}
+
+.context-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  font-size: 0.88rem;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .clear-btn {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+  }
+
+  &.reply-banner {
+    background: rgba(124, 158, 255, 0.1);
+    border: 1px solid rgba(124, 158, 255, 0.25);
+    color: #7c9eff;
+    align-items: center;
+  }
+
+  &.quote-banner {
+    background: rgba(167, 139, 250, 0.08);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    color: #a78bfa;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    .quote-banner-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+
+      .clear-btn {
+        margin-left: auto;
+      }
+    }
+  }
+}
+
+.quoted-body {
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  border-left: 3px solid rgba(167, 139, 250, 0.5);
+  font-style: italic;
+  font-size: 0.85rem;
+  opacity: 0.75;
+  line-height: 1.5;
+  color: inherit;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-divider {
+  margin: 1.25rem 0;
+}

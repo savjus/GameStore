@@ -1,0 +1,41 @@
+<ul class="comment-list" [class.nested]="depth > 0">
+  <li *ngFor="let c of comments" class="comment-item">
+
+    <div class="comment-bubble" [class.deleted]="c.body === 'A comment/quote was deleted'">
+
+      <div class="comment-header">
+        <span class="comment-author">{{ c.name }}</span>
+      </div>
+
+      <p class="comment-body">{{ c.body }}</p>
+
+      <div class="comment-actions" *ngIf="c.body !== 'A comment/quote was deleted'">
+        <button mat-button class="action-btn reply-btn" (click)="reply.emit(c)" title="Reply">
+          <mat-icon>reply</mat-icon> Reply
+        </button>
+        <button mat-button class="action-btn quote-btn" (click)="quote.emit(c)" title="Quote">
+          <mat-icon>format_quote</mat-icon> Quote
+        </button>
+        <button mat-button class="action-btn delete-btn" (click)="delete.emit(c.id)" title="Delete">
+          <mat-icon>delete_outline</mat-icon> Delete
+        </button>
+        <button mat-button class="action-btn ban-btn" (click)="ban.emit(c)" title="Ban user">
+          <mat-icon>block</mat-icon> Ban
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Recursively render children at the next depth -->
+    <app-comment-thread
+      *ngIf="c.childComments.length > 0"
+      [comments]="c.childComments"
+      [depth]="depth + 1"
+      (reply)="reply.emit($event)"
+      (quote)="quote.emit($event)"
+      (delete)="delete.emit($event)"
+      (ban)="ban.emit($event)"
+    />
+
+  </li>
+</ul>
