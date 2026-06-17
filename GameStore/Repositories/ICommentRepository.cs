@@ -16,7 +16,7 @@ public interface ICommentRepository
 
     Task AddBanAsync(Ban ban);
 
-    Task<List<Comment>?> GetChildrenAsync(Guid parentId);
+    Task<List<Comment>> GetChildrenAsync(Guid parentId);
 
     Task UpdateRange(IEnumerable<Comment> comments);
 }
