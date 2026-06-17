@@ -16,5 +16,5 @@ public class Comment
 
     public required Guid GameId { get; set; }
 
-    public Game Game { get; set; }
+    public Game? Game { get; set; }
 }

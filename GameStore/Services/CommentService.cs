@@ -103,7 +103,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
         comment.Body = DeletedMessage;
         await _unitOfWork.Comments.UpdateAsync(comment);
-        await CascadeDeleteMessageAsync(comment.Id);
+        await CascadeDeleteMessageAsync(game.Id, comment.Id);
 
         return ServiceResult.Success(StatusCodes.Status200OK);
     }
@@ -124,6 +124,43 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
         await _unitOfWork.Comments.AddBanAsync(ban);
         return ServiceResult.Success(StatusCodes.Status200OK);
+    }
+
+    public async Task<List<Comment>> CascadeDeleteMessageAsync(Guid gameId, Guid rootId)
+    {
+        var descendants = await GetAllDescendantsAsync(gameId, rootId);
+
+        foreach (var comment in descendants)
+        {
+            comment.Body = DeletedMessage;
+        }
+
+        _unitOfWork.Comments.UpdateRange(descendants);
+        await _unitOfWork.SaveChangesAsync();
+
+        return descendants;
+    }
+
+    public async Task<List<Comment>> GetAllDescendantsAsync(Guid gameId, Guid rootId)
+    {
+        var comments = await _unitOfWork.Comments.GetAllByGameIdAsync(gameId);
+        var descendants = new List<Comment>();
+
+        var lookup = comments
+            .Where(c => c.ParentCommentId.HasValue)
+            .ToLookup(c => c.ParentCommentId!.Value);
+
+        void Traverse(Guid parentId)
+        {
+            foreach (var child in lookup[parentId])
+            {
+                descendants.Add(child);
+                Traverse(child.Id);
+            }
+        }
+
+        Traverse(rootId);
+        return descendants;
     }
 
     private static string BuildReplyBody(Comment parent, string replyText)
