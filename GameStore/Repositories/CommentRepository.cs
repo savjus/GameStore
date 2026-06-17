@@ -24,7 +24,7 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
 
     public Task AddAsync(Comment comment)
     {
-        _dbContext.Comments.AddAsync(comment);
+        _dbContext.Comments.Add(comment);
         return Task.CompletedTask;
     }
 
@@ -44,7 +44,7 @@ public class CommentRepository(GameStoreDbContext dbContext) : ICommentRepositor
 
     public Task AddBanAsync(Ban ban)
     {
-        _dbContext.Bans.AddAsync(ban);
+        _dbContext.Bans.Add(ban);
         return Task.CompletedTask;
     }
 

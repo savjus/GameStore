@@ -19,7 +19,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
     public IEnumerable<string> GetBanDurations() => BanDurations.Keys;
 
-    public async Task<ServiceResult> AddCommentAsync(string gameKey, CommentRequestDto dto)
+    public async Task<ServiceResult> AddCommentAsync(string gameKey, CommentRequestDto request)
     {
         var game = await _unitOfWork.Games.GetByKeyAsync(gameKey);
         if (game is null)
@@ -27,7 +27,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
             return ServiceResult.Fail(StatusCodes.Status404NotFound, $"Game '{gameKey}' not found.");
         }
 
-        var activeBan = await _unitOfWork.Comments.GetActiveBanAsync(dto.Comment.Name);
+        var activeBan = await _unitOfWork.Comments.GetActiveBanAsync(request.Comment.Name);
         if (activeBan is not null)
         {
             return ServiceResult.Fail(
@@ -35,11 +35,11 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
                 "User is banned and cannot post comments.");
         }
 
-        string body = dto.Comment.Body;
+        string body = request.Comment.Body;
 
-        if (dto.ParentId.HasValue)
+        if (request.ParentId.HasValue)
         {
-            var parent = await _unitOfWork.Comments.GetByIdAsync(dto.ParentId.Value);
+            var parent = await _unitOfWork.Comments.GetByIdAsync(request.ParentId.Value);
             if (parent is null)
             {
                 return ServiceResult.Fail(
@@ -47,21 +47,21 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
                     "Parent comment not found.");
             }
 
-            var action = dto.Action?.Trim().ToLower();
+            var action = request.Action?.Trim().ToLower();
 
             body = action switch
             {
-                "reply" => BuildReplyBody(parent, dto.Comment.Body),
-                "quote" => BuildQuoteBody(parent, dto.Comment.Body),
-                _ => dto.Comment.Body,
+                "reply" => BuildReplyBody(parent, request.Comment.Body),
+                "quote" => BuildQuoteBody(parent, request.Comment.Body),
+                _ => request.Comment.Body,
             };
         }
 
         var comment = new Comment
         {
-            Name = dto.Comment.Name,
+            Name = request.Comment.Name,
             Body = body,
-            ParentCommentId = dto.ParentId,
+            ParentCommentId = request.ParentId,
             GameId = game.Id,
         };
 
@@ -145,7 +145,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
 
     public async Task<List<Comment>> GetAllDescendantsAsync(Guid gameId, Guid rootId)
     {
-        var comments = await _unitOfWork.Comments.GetAllByGameIdAsync(gameId) ?? new List<Comment>();
+        var comments = await _unitOfWork.Comments.GetAllByGameIdAsync(gameId) ?? [];
         var descendants = new List<Comment>();
 
         var lookup = comments
@@ -175,7 +175,7 @@ public class CommentService(IUnitOfWork unitOfWork) : ICommentService
         return $"[{parent.Body}], {quoteText}";
     }
 
-    private List<CommentResponseDto> BuildTree(List<Comment> all, Guid? parentId)
+    private static List<CommentResponseDto> BuildTree(List<Comment> all, Guid? parentId)
     {
         return all
             .Where(c => c.ParentCommentId == parentId)

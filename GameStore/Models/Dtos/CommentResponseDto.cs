@@ -12,5 +12,5 @@ public class CommentResponseDto
     [Required]
     public string Body { get; set; } = string.Empty;
 
-    public List<CommentResponseDto> ChildComments { get; set; } = new();
+    public List<CommentResponseDto> ChildComments { get; set; } = [];
 }

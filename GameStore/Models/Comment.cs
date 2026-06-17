@@ -14,7 +14,7 @@ public class Comment
 
     public Comment? ParentComment { get; set; }
 
-    public ICollection<Comment> ChildComments { get; set; } = new List<Comment>();
+    public ICollection<Comment> ChildComments { get; set; } = [];
 
     public required Guid GameId { get; set; }
 

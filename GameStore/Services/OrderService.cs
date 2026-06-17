@@ -208,8 +208,8 @@ public class OrderService(IUnitOfWork unitOfWork,
     {
         var paymentMethods = new PaymentMethodsResponseDto
         {
-            PaymentMethods = new List<PaymentMethodDto>
-            {
+            PaymentMethods =
+            [
                 new PaymentMethodDto
                 {
                     ImageUrl = "https://via.placeholder.com/150?text=Bank",
@@ -228,7 +228,7 @@ public class OrderService(IUnitOfWork unitOfWork,
                     Title = "Visa",
                     Description = "Pay using Visa card",
                 },
-            },
+            ],
         };
 
         return Task.FromResult(ServiceResult.Success(paymentMethods, StatusCodes.Status200OK));
@@ -266,7 +266,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         }
         else if (request.Method.Equals("Visa", StringComparison.OrdinalIgnoreCase))
         {
-            return await ProcessVisaPaymentInternalAsync(customerId, order, request.Model!);
+            return await ProcessVisaPaymentInternalAsync(order, request.Model!);
         }
         else
         {
@@ -317,7 +317,7 @@ public class OrderService(IUnitOfWork unitOfWork,
             await _unitOfWork.SaveChangesAsync();
         }
 
-        return await ProcessVisaPaymentInternalAsync(customerId, order, cardDetails);
+        return await ProcessVisaPaymentInternalAsync(order, cardDetails);
     }
 
     public async Task<ServiceResult<(byte[] Content, string FileName)>> GenerateBankPaymentInvoiceAsync(Guid customerId, Order order)
@@ -482,8 +482,7 @@ public class OrderService(IUnitOfWork unitOfWork,
         }
     }
 
-    private async Task<ServiceResult<Order>> ProcessVisaPaymentInternalAsync(
-        Guid customerId, Order order, VisaCardDetailsDto cardDetails)
+    private async Task<ServiceResult<Order>> ProcessVisaPaymentInternalAsync(Order order, VisaCardDetailsDto cardDetails)
     {
         if (!IsValidVisaCardDetails(cardDetails))
         {
@@ -499,12 +498,11 @@ public class OrderService(IUnitOfWork unitOfWork,
                 "Visa payment URL is not configured.");
         }
 
-        var sum = await CalculateOrderSumAsync(order);
         var retryCount = GetPaymentRetryCount();
 
         var httpClient = _httpClientFactory.CreateClient();
 
-        var lastError = await ExecuteVisaWithRetry(httpClient, microserviceUrl, customerId, order, cardDetails, sum, retryCount);
+        var lastError = await ExecuteVisaWithRetry(httpClient, microserviceUrl, order, cardDetails, retryCount);
 
         return await FinalizeVisaResult(order, lastError);
     }
@@ -512,10 +510,8 @@ public class OrderService(IUnitOfWork unitOfWork,
     private async Task<string?> ExecuteVisaWithRetry(
         HttpClient httpClient,
         string url,
-        Guid customerId,
         Order order,
         VisaCardDetailsDto cardDetails,
-        decimal sum,
         int retryCount)
     {
         string? lastError = null;

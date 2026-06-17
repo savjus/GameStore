@@ -299,7 +299,7 @@ public class CommentServiceTests
         var commentsRepo = new Mock<ICommentRepository>();
         commentsRepo.Setup(r => r.GetByIdAsync(parentId)).ReturnsAsync(parent);
         commentsRepo.Setup(r => r.GetChildrenAsync(parentId)).ReturnsAsync([child]);
-        commentsRepo.Setup(r => r.GetAllByGameIdAsync(gameId)).ReturnsAsync(new List<Comment> { parent, child });
+        commentsRepo.Setup(r => r.GetAllByGameIdAsync(gameId)).ReturnsAsync([parent, child]);
 
         var service = CreateService(gamesRepo, commentsRepo);
         await service.DeleteCommentAsync(gameKey, parentId);
