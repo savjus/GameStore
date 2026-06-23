@@ -357,11 +357,11 @@ public class OrderService(IUnitOfWork unitOfWork,
                                 table.Cell().Text(value);
                             }
 
-                            AddRow("User ID:",        customerId.ToString());
-                            AddRow("Order ID:",       order.Id.ToString());
-                            AddRow("Creation Date:",  order.Date.ToString("yyyy-MM-dd HH:mm:ss"));
-                            AddRow("Validity Date:",  expiryDate.ToString("yyyy-MM-dd"));
-                            AddRow("Amount:",         $"{sum:F2}");
+                            AddRow("User ID:", customerId.ToString());
+                            AddRow("Order ID:", order.Id.ToString());
+                            AddRow("Creation Date:", order.Date.ToString("yyyy-MM-dd HH:mm:ss"));
+                            AddRow("Validity Date:", expiryDate.ToString("yyyy-MM-dd"));
+                            AddRow("Amount:", $"{sum:F2}");
                         });
                     });
                 });

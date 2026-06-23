@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Game, GameUpsertRequest } from '../models/game';
+import { Game, GameFilter, GameUpsertRequest, PagedGamesResponse } from '../models/game';
 import { Genre } from '../models/genre';
 import { Platform } from '../models/platform';
 import { Publisher } from '../models/publisher';
@@ -16,8 +16,33 @@ export class GameService {
     private readonly apiUrls: ApiUrlService
   ) {}
 
-  getAll(): Observable<Game[]> {
-    return this.http.get<Game[]>(this.apiUrls.games());
+  getAll(filter?: GameFilter): Observable<PagedGamesResponse> {
+    let params = new HttpParams();
+    if (filter) {
+      if (filter.genreIds?.length) filter.genreIds.forEach(id => params = params.append('genreIds', id));
+      if (filter.platformIds?.length) filter.platformIds.forEach(id => params = params.append('platformIds', id));
+      if (filter.publisherIds?.length) filter.publisherIds.forEach(id => params = params.append('publisherIds', id));
+      if (filter.minPrice != null) params = params.set('minPrice', filter.minPrice);
+      if (filter.maxPrice != null) params = params.set('maxPrice', filter.maxPrice);
+      if (filter.publishDateFilter) params = params.set('publishDateFilter', filter.publishDateFilter);
+      if (filter.name) params = params.set('name', filter.name);
+      if (filter.sortBy) params = params.set('sortBy', filter.sortBy);
+      if (filter.pageSize) params = params.set('pageSize', filter.pageSize);
+      if (filter.page != null) params = params.set('page', filter.page);
+    }
+    return this.http.get<PagedGamesResponse>(this.apiUrls.games(), { params });
+  }
+
+  getPaginationOptions(): Observable<string[]> {
+    return this.http.get<string[]>(this.apiUrls.gamePaginationOptions());
+  }
+
+  getSortingOptions(): Observable<string[]> {
+    return this.http.get<string[]>(this.apiUrls.gameSortingOptions());
+  }
+
+  getPublishDateFilterOptions(): Observable<string[]> {
+    return this.http.get<string[]>(this.apiUrls.gamePublishDateFilterOptions());
   }
 
   getByKey(key: string): Observable<Game> {

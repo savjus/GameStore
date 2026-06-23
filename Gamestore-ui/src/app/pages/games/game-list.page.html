@@ -4,124 +4,178 @@
       <h1>Games</h1>
       <p>Manage the game catalog and availability.</p>
     </div>
-
-    <button
-      mat-raised-button
-      color="primary"
-      [routerLink]="['/games/add']">
-
-      <mat-icon>add</mat-icon>
-      Add Game
-    </button>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="toggleFilters()" [matTooltip]="showFilters ? 'Hide filters' : 'Show filters'">
+        <mat-icon>filter_list</mat-icon>
+        Filters
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/games/add']">
+        <mat-icon>add</mat-icon>
+        Add Game
+      </button>
+    </div>
   </div>
 
+  @if (showFilters) {
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filters-grid">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="nameInput" placeholder="Min 3 characters" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Genres</mat-label>
+          <mat-select [(ngModel)]="filter.genreIds" multiple>
+            @for (g of genres; track g.id) {
+              <mat-option [value]="g.id">{{ g.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Platforms</mat-label>
+          <mat-select [(ngModel)]="filter.platformIds" multiple>
+            @for (p of platforms; track p.id) {
+              <mat-option [value]="p.id">{{ p.type }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Publishers</mat-label>
+          <mat-select [(ngModel)]="filter.publisherIds" multiple>
+            @for (p of publishers; track p.id) {
+              <mat-option [value]="p.id">{{ p.companyName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Min Price</mat-label>
+          <input matInput type="number" [(ngModel)]="filter.minPrice" placeholder="0.00"/>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Max Price</mat-label>
+          <input matInput type="number" [(ngModel)]="filter.maxPrice" placeholder="0.00"/>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Publish Date</mat-label>
+          <mat-select [(ngModel)]="filter.publishDateFilter">
+            <mat-option [value]="undefined">Any</mat-option>
+            @for (opt of publishDateOptions; track opt) {
+              <mat-option [value]="opt">{{ opt }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sort By</mat-label>
+          <mat-select [(ngModel)]="filter.sortBy">
+            <mat-option [value]="undefined">Default</mat-option>
+            @for (opt of sortingOptions; track opt) {
+              <mat-option [value]="opt">{{ opt }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Page Size</mat-label>
+          <mat-select [(ngModel)]="filter.pageSize">
+            @for (opt of paginationOptions; track opt) {
+              <mat-option [value]="opt">{{ opt }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <div class="filter-actions">
+        <button mat-raised-button color="primary" (click)="applyFilters()">Apply</button>
+        <button mat-stroked-button (click)="resetFilters()">Reset</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <!-- Table -->
   <mat-card>
     <mat-card-content>
 
-      <div *ngIf="loading" class="loading">
-        <mat-progress-spinner diameter="40"></mat-progress-spinner>
-      </div>
+      @if (loading) {
+        <div class="loading">
+          <mat-progress-spinner diameter="40" mode="indeterminate" />
+        </div>
+      }
 
-      <table
-        mat-table
-        [dataSource]="dataSource"
-        class="mat-elevation-z1"
-        *ngIf="!loading">
+      @if (!loading) {
+        <table mat-table [dataSource]="games" class="mat-elevation-z1">
 
-        <!-- Name -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
-          <td mat-cell *matCellDef="let game">
-            {{ game.name }}
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let game">{{ game.name }}</td>
+          </ng-container>
 
-        <!-- Key -->
-        <ng-container matColumnDef="key">
-          <th mat-header-cell *matHeaderCellDef>Key</th>
-          <td mat-cell *matCellDef="let game">
-            {{ game.key }}
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="key">
+            <th mat-header-cell *matHeaderCellDef>Key</th>
+            <td mat-cell *matCellDef="let game">{{ game.key }}</td>
+          </ng-container>
 
-        <!-- Price -->
-        <ng-container matColumnDef="price">
-          <th mat-header-cell *matHeaderCellDef>Price</th>
-          <td mat-cell *matCellDef="let game">
-            {{ game.price }}
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>Price</th>
+            <td mat-cell *matCellDef="let game">{{ game.price }}</td>
+          </ng-container>
 
-        <!-- Discount -->
-        <ng-container matColumnDef="discount">
-          <th mat-header-cell *matHeaderCellDef>Discount</th>
-          <td mat-cell *matCellDef="let game">
-            {{ game.discount }}
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="discount">
+            <th mat-header-cell *matHeaderCellDef>Discount</th>
+            <td mat-cell *matCellDef="let game">{{ game.discount }}</td>
+          </ng-container>
 
-        <!-- Stock -->
-        <ng-container matColumnDef="unitInStock">
-          <th mat-header-cell *matHeaderCellDef>Stock</th>
-          <td mat-cell *matCellDef="let game">
-            {{ game.unitInStock }}
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="unitInStock">
+            <th mat-header-cell *matHeaderCellDef>Stock</th>
+            <td mat-cell *matCellDef="let game">{{ game.unitInStock }}</td>
+          </ng-container>
 
-        <!-- Actions -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let game">
+              <div class="actions">
+                <a mat-stroked-button color="primary" [routerLink]="['/games', game.key]">
+                  <mat-icon>visibility</mat-icon> View
+                </a>
+                <a mat-stroked-button color="accent" [routerLink]="['/games', game.key, 'update']">
+                  <mat-icon>edit</mat-icon> Edit
+                </a>
+                <a mat-stroked-button color="warn" [routerLink]="['/games', game.key, 'delete']">
+                  <mat-icon>delete</mat-icon> Delete
+                </a>
+              </div>
+            </td>
+          </ng-container>
 
-          <td mat-cell *matCellDef="let game">
-            <div class="actions">
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
 
-              <a
-                mat-stroked-button
-                color="primary"
-                [routerLink]="['/games', game.key]">
+        @if (filter.pageSize !== 'all') {
+          <mat-paginator
+            [length]="totalItems"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage - 1"
+            [hidePageSize]="true"
+            (page)="onPageChange($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        }
 
-                <mat-icon>visibility</mat-icon>
-                View
-              </a>
-
-              <a
-                mat-stroked-button
-                color="accent"
-                [routerLink]="['/games', game.key, 'update']">
-
-                <mat-icon>edit</mat-icon>
-                Edit
-              </a>
-
-              <a
-                mat-stroked-button
-                color="warn"
-                [routerLink]="['/games', game.key, 'delete']">
-
-                <mat-icon>delete</mat-icon>
-                Delete
-              </a>
-
-            </div>
-          </td>
-        </ng-container>
-
-        <!-- Table rows -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-      </table>
-
-      <!-- Paginator -->
-      <mat-paginator
-        [pageSize]="10"
-        [pageSizeOptions]="[5, 10, 25]"
-        showFirstLastButtons>
-      </mat-paginator>
-
-      <mat-error *ngIf="errorMessage">
-        {{ errorMessage }}
-      </mat-error>
+        @if (errorMessage) {
+          <p class="error">{{ errorMessage }}</p>
+        }
+      }
 
     </mat-card-content>
   </mat-card>

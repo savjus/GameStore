@@ -48,6 +48,7 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<GameStoreDbContext>();
     dbContext.Database.Migrate();
+    await DatabaseSeeder.SeedAsync(dbContext);
 }
 
 // Configure the HTTP request pipeline.

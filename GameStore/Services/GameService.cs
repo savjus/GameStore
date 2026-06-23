@@ -3,6 +3,7 @@ using System.Text.Json;
 using GameStore.Data;
 using GameStore.Models;
 using GameStore.Models.Dtos;
+using GameStore.Pipeline;
 
 namespace GameStore.Services;
 
@@ -19,12 +20,18 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
                 "Game key is required.");
         }
 
-        var game = await _unitOfWork.Games.GetByKeyAsync(key);
-        return game == null
-            ? ServiceResult.Fail<GameResponseDto>(
+        var game = await _unitOfWork.Games.GetByKeyTrackingAsync(key);
+        if (game == null)
+        {
+            return ServiceResult.Fail<GameResponseDto>(
                 StatusCodes.Status404NotFound,
-                "Game not found.")
-            : ServiceResult.Success(MapToResponse(game), StatusCodes.Status200OK);
+                "Game not found.");
+        }
+
+        game.ViewCount++;
+        await _unitOfWork.SaveChangesAsync();
+
+        return ServiceResult.Success(MapToResponse(game), StatusCodes.Status200OK);
     }
 
     public async Task<ServiceResult<GameResponseDto>> GetGameByIdAsync(Guid id)
@@ -387,6 +394,60 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
             StatusCodes.Status200OK);
     }
 
+    public async Task<ServiceResult<PagedGamesResponseDto>> GetFilteredGamesAsync(GameFilterRequest filter)
+    {
+        var query = _unitOfWork.Games.GetQueryable();
+        var context = new GameFilterContext(query, filter);
+        var pipeline = new GameFilterPipeline();
+        pipeline.Execute(context);
+
+        var games = context.Query.ToList();
+        var currentPage = string.Equals(filter.PageSize, "all", StringComparison.OrdinalIgnoreCase)
+            ? 1
+            : (filter.Page < 1 ? 1 : filter.Page);
+
+        var response = new PagedGamesResponseDto
+        {
+            Games = games.Select(MapToResponse).ToList(),
+            TotalPages = context.TotalPages == 0 ? 1 : context.TotalPages,
+            CurrentPage = currentPage,
+        };
+
+        return await Task.FromResult(ServiceResult.Success(response, StatusCodes.Status200OK));
+    }
+
+    public Task<ServiceResult<List<string>>> GetPaginationOptionsAsync()
+    {
+        var options = new List<string> { "10", "20", "50", "100", "all" };
+        return Task.FromResult(ServiceResult.Success(options, StatusCodes.Status200OK));
+    }
+
+    public Task<ServiceResult<List<string>>> GetSortingOptionsAsync()
+    {
+        var options = new List<string>
+        {
+            "Most popular",
+            "Most commented",
+            "Price ASC",
+            "Price DESC",
+            "New",
+        };
+        return Task.FromResult(ServiceResult.Success(options, StatusCodes.Status200OK));
+    }
+
+    public Task<ServiceResult<List<string>>> GetPublishDateFilterOptionsAsync()
+    {
+        var options = new List<string>
+        {
+            "last week",
+            "last month",
+            "last year",
+            "2 years",
+            "3 years",
+        };
+        return Task.FromResult(ServiceResult.Success(options, StatusCodes.Status200OK));
+    }
+
     private static GameResponseDto MapToResponse(Game game)
     {
         return new GameResponseDto
@@ -398,6 +459,9 @@ public class GameService(IUnitOfWork unitOfWork) : IGameService
             Price = game.Price,
             UnitInStock = game.UnitInStock,
             Discount = game.Discount,
+            ViewCount = game.ViewCount,
+            CommentsCount = game.Comments.Count,
+            CreatedAt = game.CreatedAt,
         };
     }
 

@@ -4,7 +4,7 @@ namespace GameStore.Services;
 
 public interface ICommentService
 {
-    Task<ServiceResult> AddCommentAsync(string gameKey,  CommentRequestDto request);
+    Task<ServiceResult> AddCommentAsync(string gameKey, CommentRequestDto request);
 
     Task<ServiceResult<List<CommentResponseDto>>> GetCommentsByGameKeyAsync(string gameKey);
 

@@ -56,10 +56,12 @@ public partial class GameServiceTests
         };
 
         var gameRepository = new Mock<IGameRepository>();
-        gameRepository.Setup(repo => repo.GetByKeyAsync(game.Key))
+        gameRepository.Setup(repo => repo.GetByKeyTrackingAsync(game.Key))
             .ReturnsAsync(game);
 
-        var service = CreateService(gameRepository: gameRepository);
+        var unitOfWork = CreateUnitOfWork(gameRepository);
+        unitOfWork.Setup(u => u.SaveChangesAsync()).ReturnsAsync(0);
+        var service = new GameService(unitOfWork.Object);
 
         var result = await service.GetGameByKeyAsync(game.Key);
 

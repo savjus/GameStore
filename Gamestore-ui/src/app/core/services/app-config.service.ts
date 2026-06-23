@@ -46,6 +46,9 @@ export interface AppConfig {
   deleteComment: string;
   getBanDurations: string;
   banUser: string;
+  gamePaginationOptionsApiUrl: string;
+  gameSortingOptionsApiUrl: string;
+  gamePublishDateFilterOptionsApiUrl: string;
 }
 
 @Injectable({

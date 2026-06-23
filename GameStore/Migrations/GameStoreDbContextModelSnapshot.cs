@@ -83,6 +83,9 @@ namespace GameStore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -106,6 +109,9 @@ namespace GameStore.Migrations
                     b.Property<int>("UnitInStock")
                         .HasColumnType("int");
 
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Key")
@@ -119,35 +125,41 @@ namespace GameStore.Migrations
                         new
                         {
                             Id = new Guid("7d3c8e2f-4b6a-4d9f-8e2c-5a7b9c1d3e4f"),
+                            CreatedAt = new DateTime(2026, 6, 23, 12, 12, 28, 509, DateTimeKind.Utc).AddTicks(1961),
                             Description = "Experience an intimate, grounded, cooperative, and playable Campaign.",
                             Discount = 0,
                             Key = "cod-mw",
                             Name = "Call of Duty: Modern Warfare",
                             Price = 59.99m,
                             PublisherId = new Guid("f5b8c1a0-9f3c-4e2d-b5a6-3c7d8e9f0a1b"),
-                            UnitInStock = 100
+                            UnitInStock = 100,
+                            ViewCount = 0
                         },
                         new
                         {
                             Id = new Guid("2f4e6a8c-9b1d-4c3f-7e9a-1b5d8c2f4a6e"),
+                            CreatedAt = new DateTime(2026, 6, 23, 12, 12, 28, 509, DateTimeKind.Utc).AddTicks(1973),
                             Description = "Become a legendary Viking warrior.",
                             Discount = 10,
                             Key = "ac-valhalla",
                             Name = "Assassin's Creed Valhalla",
                             Price = 49.99m,
                             PublisherId = new Guid("9c8b7a6f-5e4d-3c2b-1a09-f8e7d6c5b4a3"),
-                            UnitInStock = 75
+                            UnitInStock = 75,
+                            ViewCount = 0
                         },
                         new
                         {
                             Id = new Guid("5a9f2b8d-3c7e-4a1f-6d9c-2e5b7a1f4c8d"),
+                            CreatedAt = new DateTime(2026, 6, 23, 12, 12, 28, 509, DateTimeKind.Utc).AddTicks(1977),
                             Description = "Play with life! Control the Sims' destiny and explore the world.",
                             Discount = 0,
                             Key = "sims-4",
                             Name = "The Sims 4",
                             Price = 39.99m,
                             PublisherId = new Guid("a1b2c3d4-e5f6-4a8b-9c0d-1e2f3a4b5c6d"),
-                            UnitInStock = 150
+                            UnitInStock = 150,
+                            ViewCount = 0
                         });
                 });
 
