@@ -16,6 +16,10 @@ public class Game
 
     public int Discount { get; set; }
 
+    public int ViewCount { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     public Guid PublisherId { get; set; }
 
     public Publisher? Publisher { get; set; }

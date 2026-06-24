@@ -15,4 +15,10 @@ public class GameResponseDto
     public int UnitInStock { get; set; }
 
     public int Discount { get; set; }
+
+    public int ViewCount { get; set; }
+
+    public int CommentsCount { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }

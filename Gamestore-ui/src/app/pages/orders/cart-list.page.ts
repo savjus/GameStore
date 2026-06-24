@@ -10,7 +10,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatError } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderGame } from '../../core/models/orderGame';
-import { Method, PaymentMethod } from '../../core/models/paymentMethod';
+import { PaymentMethod } from '../../core/models/paymentMethod';
 import { GameService } from '../../core/services/game.service';
 
 @Component({

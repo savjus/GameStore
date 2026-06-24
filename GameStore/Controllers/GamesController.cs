@@ -29,9 +29,36 @@ public class GamesController(IGameService gameService) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<GameResponseDto>>> GetAllGames()
+    public async Task<ActionResult<PagedGamesResponseDto>> GetAllGames([FromQuery] GameFilterRequest filter)
     {
-        var result = await _gameService.GetAllGamesAsync();
+        var result = await _gameService.GetFilteredGamesAsync(filter);
+        return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Value)
+            : StatusCode(result.StatusCode, result.Error);
+    }
+
+    [HttpGet("pagination-options")]
+    public async Task<ActionResult<List<string>>> GetPaginationOptions()
+    {
+        var result = await _gameService.GetPaginationOptionsAsync();
+        return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Value)
+            : StatusCode(result.StatusCode, result.Error);
+    }
+
+    [HttpGet("sorting-options")]
+    public async Task<ActionResult<List<string>>> GetSortingOptions()
+    {
+        var result = await _gameService.GetSortingOptionsAsync();
+        return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Value)
+            : StatusCode(result.StatusCode, result.Error);
+    }
+
+    [HttpGet("publish-date-filter-options")]
+    public async Task<ActionResult<List<string>>> GetPublishDateFilterOptions()
+    {
+        var result = await _gameService.GetPublishDateFilterOptionsAsync();
         return result.IsSuccess
             ? StatusCode(result.StatusCode, result.Value)
             : StatusCode(result.StatusCode, result.Error);

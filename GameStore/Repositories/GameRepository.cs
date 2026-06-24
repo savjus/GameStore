@@ -80,4 +80,13 @@ public class GameRepository(GameStoreDbContext dbContext) : IGameRepository
     {
         return _dbContext.Games.CountAsync();
     }
+
+    public IQueryable<Game> GetQueryable()
+    {
+        return _dbContext.Games
+            .Include(g => g.GameGenres)
+            .Include(g => g.GamePlatforms)
+            .Include(g => g.Comments)
+            .AsNoTracking();
+    }
 }

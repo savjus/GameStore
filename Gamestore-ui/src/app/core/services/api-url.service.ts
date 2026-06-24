@@ -175,6 +175,18 @@ export class ApiUrlService {
     return this.buildUrl(this.config.settings.banUser)
   }
 
+  gamePaginationOptions(): string {
+    return this.buildUrl(this.config.settings.gamePaginationOptionsApiUrl);
+  }
+
+  gameSortingOptions(): string {
+    return this.buildUrl(this.config.settings.gameSortingOptionsApiUrl);
+  }
+
+  gamePublishDateFilterOptions(): string {
+    return this.buildUrl(this.config.settings.gamePublishDateFilterOptionsApiUrl);
+  }
+
   private buildUrl(template: string, params?: Record<string, string>): string {
     const baseUrl = this.config.settings.baseApiUrl.replace(/\/+$/, '');
     const path = params ? this.replaceParams(template, params) : template;

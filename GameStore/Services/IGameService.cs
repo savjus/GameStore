@@ -25,4 +25,12 @@ public interface IGameService
     Task<ServiceResult<List<PlatformResponseDto>>> GetPlatformsByGameKeyAsync(string key);
 
     Task<ServiceResult<GameFileDto>> GetGameFileAsync(string key);
+
+    Task<ServiceResult<PagedGamesResponseDto>> GetFilteredGamesAsync(GameFilterRequest filter);
+
+    Task<ServiceResult<List<string>>> GetPaginationOptionsAsync();
+
+    Task<ServiceResult<List<string>>> GetSortingOptionsAsync();
+
+    Task<ServiceResult<List<string>>> GetPublishDateFilterOptionsAsync();
 }

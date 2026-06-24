@@ -29,4 +29,6 @@ public interface IGameRepository
     Task<bool> KeyExistsAsync(string gameKey);
 
     Task<int> GetTotalCountAsync();
+
+    IQueryable<Game> GetQueryable();
 }

@@ -47,5 +47,9 @@
   "getAllComments": "/games/{key}/comments",
   "deleteComment": "/games/{key}/comments/{id}",
   "getBanDurations": "/comments/ban/durations",
-  "banUser": "/comments/ban"
+  "banUser": "/comments/ban",
+
+  "gamePaginationOptionsApiUrl": "/games/pagination-options",
+  "gameSortingOptionsApiUrl": "/games/sorting-options",
+  "gamePublishDateFilterOptionsApiUrl": "/games/publish-date-filter-options"
 }
